@@ -1,0 +1,4 @@
+Flask
+pyodbc
+flask_jwt_extended
+flask_cors
