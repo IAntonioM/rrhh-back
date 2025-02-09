@@ -15,12 +15,12 @@ def handle_sql_error(e):
 @auth_bp.route('/register', methods=['POST'])
 @handle_response
 def register():
-    current_user = get_jwt_identity()
-    if not current_user:
-        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+    #current_user = get_jwt_identity()
+    #if not current_user:
+     #   return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
         
     data = request.get_json()
-    success, message = UserModel.create_user(data, current_user, request.remote_addr)
+    success, message = UserModel.create_user(data, "DBA", request.remote_addr)
     return jsonify({
         'success': success,
         'message': message
