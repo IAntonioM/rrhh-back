@@ -67,6 +67,29 @@ def get_users():
         'data': users_list
     }), 200
 
+@auth_bp.route('/user', methods=['GET'])
+@jwt_required()  # Requiere que el JWT esté presente y sea válido
+@handle_response(include_data=True)  # Este decorador lo usas para manejar la respuesta, si es necesario
+def get_user():
+    # Obtener el ID del usuario desde el JWT
+    user = get_jwt_identity()  # Esto te da el `user_id` de quien hizo la solicitud
+    print(user)
+    # Usamos la función get_user_by_id para obtener los datos del usuario con el ID
+    user_data = UserModel.get_user_by_id(user)
+    
+    # Si no se encuentra el usuario, devolvemos un error 404
+    if not user_data:
+        return jsonify({
+            'success': False,
+            'message': 'Usuario no encontrado.'
+        }), 404
+    
+    # Devolver los datos del usuario como respuesta
+    return jsonify({
+        'success': True,
+        'data': user_data
+    }), 200
+
 
 
 # from flask import Blueprint, request, jsonify

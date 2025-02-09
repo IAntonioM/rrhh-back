@@ -118,3 +118,31 @@ class UserModel:
             
         finally:
             conn.close()
+
+    @staticmethod
+    def get_user_by_id(user):
+        conn = get_db_connection()
+        try:
+            cursor = conn.cursor()
+            cursor.execute('''
+                EXEC [dbo].[sp_usuarios] 
+                    @accion = 5,
+                    @username = ?
+            ''', (user,))
+            user = cursor.fetchone()
+            
+            # Si no se encuentra el usuario
+            if not user:
+                return None
+            
+            # Devolver todos los datos del usuario como un diccionario
+            return {
+                'id': user[0],
+                'username': user[1],
+                'rol_id': user[2],
+                'estado': user[3],
+                'IdPersonal': user[10]  # IdPersonal está en el índice 10 (columna 11)
+            }
+            
+        finally:
+            conn.close()
