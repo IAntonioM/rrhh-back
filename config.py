@@ -1,10 +1,13 @@
 import pyodbc
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 DB_CONFIG = {
-    'server': 'DESKTOP-VLON2SB\\SQLEXPRESS',
-    'database': 'BASE2',
-    'username': 'cuzco',
-    'password': '123456'
+    'server': os.getenv('DB_SERVER'),
+    'database': os.getenv('DB_NAME'),
+    'username': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD')
 }
 
 CONN_STRING = (f"DRIVER={{SQL Server}};SERVER={DB_CONFIG['server']};"

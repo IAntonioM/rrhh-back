@@ -1,0 +1,13 @@
+# Entorno Virtual
+env/
+venv/
+
+# Configuración y Variables de Entorno
+*.env
+__pycache__/
+
+# Archivos generados
+*.pyc
+*.pyo
+*.log
+.DS_Store

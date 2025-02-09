@@ -85,3 +85,36 @@ class UserModel:
             
         finally:
             conn.close()
+
+    @staticmethod
+    def authenticate_by_id(user_id, password):
+        conn = get_db_connection()
+        try:
+            cursor = conn.cursor()
+            cursor.execute('''
+                EXEC [dbo].[sp_usuarios] 
+                    @accion = 4,
+                    @id = ?
+            ''', (user_id,))
+            user = cursor.fetchone()
+            
+            if not user or not check_password_hash(user[1], password):
+                return None
+            
+            # Devolver todos los datos del usuario
+            return {
+                'id': user[0],
+                'username': user[1],
+                'rol_id': user[2],
+                'estado': user[3],
+                'fecha_reg': user[4],
+                'operador_reg': user[5],
+                'estacion_reg': user[6],
+                'fecha_act': user[7],
+                'operador_act': user[8],
+                'estacion_act': user[9],
+                'IdPersonal': user[10]  # Suponiendo que el IdPersonal está en la columna 10
+            }
+            
+        finally:
+            conn.close()

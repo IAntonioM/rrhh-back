@@ -2,3 +2,5 @@ Flask
 pyodbc
 flask_jwt_extended
 flask_cors
+python-dotenv
+pytz
