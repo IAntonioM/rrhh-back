@@ -37,39 +37,43 @@ def update_datos(id):
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
     data = request.get_json()
-
-    # Validar que el 'updateType' esté presente en los datos
+    
+    print(f"Received data: {data}")  # Debug: print received data
+    
+    # Validate that 'updateTipo' is present in the data
     updateTipo = data.get('updateTipo', None)
 
     if not updateTipo:
         return jsonify({
             'success': False,
             'message': 'El tipo de actualización (updateType) es obligatorio'
-        }), 400
+        }), 409
 
-    # Validar que el idEmpleado esté presente en los datos
+    # Validate that idEmpleado is present
     if not data.get('idEmpleado'):
         return jsonify({
             'success': False,
             'message': 'El ID del empleado es obligatorio'
-        }), 400
+        }), 409
 
+    # Handle update based on 'updateTipo'
     if updateTipo == 'dp':
-        # Llamar al método para actualizar los datos personales
+        # Call method to update personal data
         success, message = EmpleadoModel.update_datosPersonales(data, current_user, request.remote_addr)
     elif updateTipo == 'e':
-        # Llamar al método para actualizar los datos generales del empleado
+        # Call method to update employee data
         success, message = EmpleadoModel.update_empleado(data, current_user, request.remote_addr)
     else:
         return jsonify({
             'success': False,
             'message': 'Tipo de actualización no válido. Usa "dp" para datos personales o "e" para datos generales.'
-        }), 400
+        }), 409
     
     return jsonify({
         'success': success,
         'message': message
-    }), 200 if success else 400
+    }), 200 if success else 409
+
 
 
 @empleado_bp.route('/update-e/<int:id>', methods=['PUT'])

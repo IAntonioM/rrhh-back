@@ -4,15 +4,35 @@ import re
 from datetime import datetime
 from config import get_db_connection
 from ..utils.audit import AuditFields
+from ..utils.auditv2 import AuditFieldsv2
+from ..utils.convertir_a_fecha_sql import convertir_a_fecha_sql
+import os
+from dotenv import load_dotenv
+import pytz
+
+# Cargar variables desde el archivo .env
+load_dotenv()
+
+# Obtener la zona horaria desde .env (por defecto America/Lima)
+TIMEZONE = os.getenv('APP_TIMEZONE', 'America/Lima')
+tz = pytz.timezone(TIMEZONE)
 
 class EmpleadoModel:
     @staticmethod
     def create_empleado(data, current_user, remote_addr):
         conn = get_db_connection()
         try:
+            fecha_nacimiento = data.get('fecha_nacimiento', None)
+            
+            if fecha_nacimiento == "":
+                print(data)
+                fecha_nacimiento = None
+            
             # Añadir auditoría a los datos
             data = AuditFields.add_audit_fields(data, current_user, remote_addr)
-
+                    
+            current_date = datetime.now(tz)  # Usar la zona horaria configurada
+        
             cursor = conn.cursor()
             cursor.execute('''
                 EXEC [Planilla].[sp_Empleados] 
@@ -43,10 +63,10 @@ class EmpleadoModel:
                     @operador_act = ?,
                     @flag_estado = 1
             ''', (
-                data['codEmpleado'], data['idCondicionLaboral'], datetime.utcnow(), data['idEstado'], 
+                data['codEmpleado'], data['idCondicionLaboral'], current_date.strftime('%Y-%m-%d %H:%M:%S'), data['idEstado'], 
                 data['apellido_paterno'], 
                 data['apellido_materno'], data['nombres'], data['idSexo'], 
-                data['fecha_nacimiento'], data['idEstadoCivil'], data['telefono_fijo'], 
+                fecha_nacimiento, data['idEstadoCivil'], data['telefono_fijo'], 
                 data['celular'], data['dni'], data['ruc'], data['idDistrito'], 
                 data['direccion'], data['email'], data['foto'], data['fecha_reg'], 
                 data['estacion_reg'], data['operador_reg'], data['fecha_act'], 
@@ -65,7 +85,7 @@ class EmpleadoModel:
             conn.close()
 
     @staticmethod
-    def update_empleado(data, current_user, remote_addr):
+    def update_empleado2(data, current_user, remote_addr):
         conn = get_db_connection()
         try:
             # Añadir auditoría a los datos
@@ -118,12 +138,12 @@ class EmpleadoModel:
             ))
 
             conn.commit()
-            return True, 'Empleado actualizado con éxito'
+            return True, 'Empleado registrado con éxito'
         
         except pyodbc.ProgrammingError as e:
             error_msg = str(e)
             matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
-            return False, matches.group(1).strip() if matches else 'Error al actualizar empleado'
+            return False, matches.group(1).strip() if matches else 'Error al registrar empleado'
         
         finally:
             conn.close()
@@ -132,14 +152,18 @@ class EmpleadoModel:
     def update_datosPersonales(data, current_user, remote_addr):
         conn = get_db_connection()
         try:
-            # Añadir auditoría a los datos
+            # Add audit fields to the data
             data = AuditFields.add_audit_fields(data, current_user, remote_addr)
-            fecha_nacimiento = data.get('fecha_nacimiento', None)  # Valor predeterminado: None si no existe
-            idEstadoCivil = data.get('idEstadoCivil', None)  # Valor p
+            
+            fecha_nacimiento = data.get('fecha_nacimiento', None)  # Default to None if not present
+            idEstadoCivil = data.get('idEstadoCivil', None)  # Default to None if not present
+            
+            print(f"Executing stored procedure with data: {data}")  # Debug: print data to be sent
+            
             cursor = conn.cursor()
             cursor.execute('''
                 EXEC [Planilla].[sp_Empleados] 
-                    @accion = 4,  -- Usamos la acción 4 para actualizar solo datos personales
+                    @accion = 4,  -- Action 4 for updating only personal data
                     @idEmpleado = ?, 
                     @apellido_paterno = ?, 
                     @apellido_materno = ?, 
@@ -165,7 +189,7 @@ class EmpleadoModel:
                 data['apellido_materno'], 
                 data['nombres'], 
                 data['idSexo'], 
-                fecha_nacimiento , 
+                fecha_nacimiento, 
                 idEstadoCivil, 
                 data['telefono_fijo'], 
                 data['celular'], 
@@ -182,15 +206,12 @@ class EmpleadoModel:
             ))
 
             conn.commit()
-            return True, 'Datos personales del empleado actualizados con éxito'
-        
-        except pyodbc.ProgrammingError as e:
-            error_msg = str(e)
-            matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
-            return False, matches.group(1).strip() if matches else 'Error al actualizar empleado'
-        
-        finally:
-            conn.close()
+            return True, "Datos personales actualizados con éxito"
+        except Exception as e:
+            print(f"Error: {str(e)}")  # Debug: print error if the update fails
+            conn.rollback()
+            return False, f"Error al actualizar datos personales: {str(e)}"
+
 
 
     @staticmethod
@@ -222,6 +243,7 @@ class EmpleadoModel:
 
             # Convertir los resultados a una lista de diccionarios
             return [{
+                # Datos de la tabla de empleados
                 'idEmpleado': e[0],
                 'codEmpleado': e[1],
                 'fecha_ingreso': e[2],
@@ -231,6 +253,8 @@ class EmpleadoModel:
                 'idEstado': e[6],
                 'idMeta': e[7],
                 'descMeta': e[8],
+
+                # Datos de DatosPersonales
                 'idDatosPersonales': e[9],
                 'apellido_paterno': e[10],
                 'apellido_materno': e[11],
@@ -239,28 +263,38 @@ class EmpleadoModel:
                 'telefono_fijo': e[14],
                 'celular': e[15],
                 'email': e[16],
-                'centroCosto_nombre': e[17],
-                'condicionLaboral_nombre': e[18],
-                'cargo_nombre': e[19],
-                'estado': e[20],
-                'current_page': e[21],
-                'last_page': e[22],
-                'per_page': e[23],
-                'total': e[24],
-                'idCargo': e[25],
-                'idCondicionLaboral': e[26],
-                'ruc': e[27],
-                'idSexo': e[28],
-                'idDistrito': e[29],
-                'idEmpleado': e[30],
-                'idCentroCosto': e[31],
-                'fecha_ingreso': e[32],
-                'fecha_cese': e[30],
-                'fecha_suspension': e[31],
-                'fecha_reingreso': e[32],
-                'direccion': e[33],
-                'foto': e[34],
+                'ruc': e[17],
+                'idSexo': e[18],
+                'idDistrito': e[19],
+                'fecha_nacimiento': e[20],
+                'direccion': e[21],
+                'foto': e[22],
+
+                # Datos de tblCentroCosto (nombre del centro de costo)
+                'centroCosto_nombre': e[23],
+
+                # Datos de tblCondicionLaboral (nombre de la condición laboral)
+                'condicionLaboral_nombre': e[24],
+
+                # Datos de tblCargo (nombre del cargo)
+                'cargo_nombre': e[25],
+
+                # Estado de empleado
+                'estado': e[26],
+
+                # Información de paginación
+                'current_page': e[27],
+                'last_page': e[28],
+                'per_page': e[29],
+                'total': e[30],
+
+                # Relaciones adicionales
+                'idCargo': e[31],
+                'idCondicionLaboral': e[32],
+                'idCentroCosto': e[33],
+                'idEstadoCivil':e[34]
             } for e in empleados]
+
 
         except pyodbc.ProgrammingError as e:
             error_msg = str(e)
@@ -270,78 +304,116 @@ class EmpleadoModel:
         finally:
             conn.close()
 
-
     @staticmethod
     def update_empleado(data, current_user, remote_addr):
+        print("update_empleado correcto")
+        print(data)
         conn = get_db_connection()
         try:
             # Añadir auditoría a los datos
-            data = AuditFields.add_audit_fields(data, current_user, remote_addr)
+            data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
             
             # Extraer los datos de la solicitud
             idEmpleado = data.get('idEmpleado', None)
+            codEmpleado = data.get('codEmpleado', None)
             idCondicionLaboral = data.get('idCondicionLaboral', None)
             idCargo = data.get('idCargo', None)
             idCentroCosto = data.get('idCentroCosto', None)
-            fecha_ingreso = data.get('fecha_ingreso', None)
-            fecha_cese = data.get('fecha_cese', None)
-            fecha_suspension = data.get('fecha_suspension', None)
-            fecha_reingreso = data.get('fecha_reingreso', None)
-            idEstado = data.get('idEstado', None)
             idMeta = data.get('idMeta', None)
             descMeta = data.get('descMeta', None)
             flag_estado = data.get('flag_estado', None)
+            idDatosPersonales = data.get('idDatosPersonales', None)
+            
+            # Nuevos campos añadidos
+            idSede = data.get('idSede', None)
+            idsubcentro = data.get('idsubcentro', None)
+            nro_resolucion = data.get('nro_resolucion', None)
+            # Obtener las fechas de la data
+            fecha_ingreso = data.get('fecha_ingreso', None)
+            fecha_cese = data.get('fecha_cese', None)
+            fecha_resolucion = data.get('fecha_resolucion', None)
+
+            # Convertir las fechas a formato SQL en la zona horaria de Perú
+            fecha_ingreso_sql = convertir_a_fecha_sql(fecha_ingreso)
+            fecha_cese_sql = convertir_a_fecha_sql(fecha_cese)
+            fecha_resolucion_sql = convertir_a_fecha_sql(fecha_resolucion)
+            codigoRegimenPensionarioSUNAT = data.get('codigoRegimenPensionarioSUNAT', None)
+            idTipoComisionAFP = data.get('idTipoComisionAFP', None)
+            cuspp = data.get('cuspp', None)
+            idBanco = data.get('idBanco', None)
+            nrocta = data.get('nrocta', None)
+            Id_meta = data.get('Id_meta', None)
+            Id_actividad = data.get('Id_actividad', None)
+            Id_clasificador = data.get('Id_clasificador', None)
+            Id_nivel = data.get('Id_nivel', None)
             
             # Cursor para ejecutar el procedimiento almacenado
             cursor = conn.cursor()
-
+            
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
-                    @accion = 5,  -- Usamos la acción 5 para actualizar los datos en Planilla.Empleado
-                    @idEmpleado = ?, 
-                    @codEmpleado = ?, 
-                    @idCondicionLaboral = ?, 
-                    @idCargo = ?, 
-                    @idCentroCosto = ?, 
-                    @fecha_ingreso = ?, 
-                    @fecha_cese = ?, 
-                    @fecha_suspension = ?, 
-                    @fecha_reingreso = ?, 
-                    @idEstado = ?, 
-                    @idMeta = ?, 
-                    @descMeta = ?, 
-                    @flag_estado = ?, 
-                    @idDatosPersonales = ?  -- Este campo lo estamos pasando como parte de los datos
+                EXEC [Planilla].[sp_DatosLaborales]
+                    @Accion = 5,
+                    @idDatosPersonales = ?,
+                    @flag_estado = ?,
+                    @idCondicionLaboral = ?,
+                    @idCargo = ?,
+                    @idCentroCosto = ?,
+                    @idMeta = ?,
+                    @descMeta = ?,
+                    @codEmpleado = ?,
+                    @idSede = ?,
+                    @idsubcentro = ?,
+                    @nro_resolucion =?,
+                    @fecha_ingreso =?,
+                    @fecha_cese =?,
+                    @fecha_resolucion = ?,
+                    @codigoRegimenPensionarioSUNAT = ?,
+                    @idTipoComisionAFP = ?,
+                    @cuspp = ?,
+                    @idBanco = ?,
+                    @nrocta = ?,
+                    @Id_meta = ?,
+                    @Id_actividad = ?,
+                    @Id_clasificador = ?,
+                    @Id_nivel = ?
             ''', (
-                data['idEmpleado'],
-                data['codEmpleado'], 
-                idCondicionLaboral, 
-                idCargo, 
-                idCentroCosto, 
-                fecha_ingreso, 
-                fecha_cese, 
-                fecha_suspension, 
-                fecha_reingreso, 
-                idEstado, 
-                idMeta, 
-                descMeta, 
+                idDatosPersonales,
                 flag_estado,
-                data['idDatosPersonales']  # Asegúrate de pasar este campo si es necesario
+                idCondicionLaboral,
+                idCargo,
+                idCentroCosto,
+                idMeta,
+                descMeta,
+                codEmpleado,
+                idSede,
+                idsubcentro,
+                nro_resolucion,
+                fecha_ingreso_sql,
+                fecha_cese_sql,
+                fecha_resolucion_sql,
+                codigoRegimenPensionarioSUNAT,
+                idTipoComisionAFP,
+                cuspp,
+                idBanco,
+                nrocta,
+                Id_meta,
+                Id_actividad,
+                Id_clasificador,
+                Id_nivel
             ))
-
+            
             # Confirmar los cambios en la base de datos
             conn.commit()
             return True, 'Datos del empleado actualizados con éxito'
-        
+            
         except pyodbc.ProgrammingError as e:
             error_msg = str(e)
             matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
-            return False, matches.group(1).strip() if matches else 'Error al actualizar empleado'
-        
+            return False, matches.group(1).strip() 
+            
         finally:
             conn.close()
 
-    
     @staticmethod
     def get_empleados_datosLaborales(filtros):
         conn = get_db_connection()
