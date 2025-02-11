@@ -3,7 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models.empleado import EmpleadoModel  # Modelo Empleado
 from ..utils.error_handlers import handle_response
 import re
-
+import uuid
+from flask import send_file
 empleado_bp = Blueprint('empleado', __name__)
 
 # Handler para errores SQL
@@ -11,6 +12,89 @@ def handle_sql_error(e):
     error_msg = str(e)
     matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
     return matches.group(1).strip() if matches else 'Error en la operación'
+
+
+
+
+
+
+
+import os
+from datetime import datetime
+from werkzeug.utils import secure_filename
+empleado_bp = Blueprint('empleado', __name__)
+
+def save_employee_image(file):
+    upload_folder = os.path.join('personal', 'usuario_img')
+    os.makedirs(upload_folder, exist_ok=True)
+
+    filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}"
+    secure_filename_result = secure_filename(filename)
+    filepath = os.path.join(upload_folder, secure_filename_result)
+    
+    file.save(filepath)
+
+    return os.path.join('personal', 'usuario_img', secure_filename_result)
+
+
+# @empleado_bp.route('/create', methods=['POST'])
+# @jwt_required()
+# @handle_response
+# def create_empleado():
+#     current_user = get_jwt_identity()
+#     if not current_user:
+#         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+    
+#     # Check if file is present
+#     if 'foto_img' not in request.files:
+#         return jsonify({'success': False, 'message': 'No se proporcionó imagen'}), 400
+    
+#     file = request.files['foto_img']
+#     data = request.form.to_dict()
+    
+#     # Save image and update data
+#     if file:
+#         data['foto'] = save_employee_image(file, data.get('dni', 'unknown'))
+    
+#     success, message = EmpleadoModel.create_empleado(data, current_user, request.remote_addr)
+#     return jsonify({
+#         'success': success,
+#         'message': message
+#     }), 201 if success else 409
+
+
+@empleado_bp.route('/imagen', methods=['POST'])
+@jwt_required()
+@handle_response
+def create_foto_img():
+    current_user = get_jwt_identity()
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+    if 'foto_img' not in request.files:
+        return jsonify({'success': False, 'message': 'No se proporcionó imagen'}), 400
+
+    file = request.files['foto_img']
+    
+    try:
+        image_path = save_employee_image(file)
+        return jsonify({
+            'success': True,
+            'message': 'Imagen subida exitosamente',
+            'path': image_path
+        }), 201
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+        
+@empleado_bp.route('/imagen/<path:filename>', methods=['GET'])
+def mostrar_imagen(filename):
+    try:
+        return send_file(filename, mimetype='image/png')
+    except FileNotFoundError:
+        return jsonify({'error': 'Imagen no encontrada'}), 404
 
 @empleado_bp.route('/create', methods=['POST'])
 @jwt_required()
@@ -110,7 +194,8 @@ def get_empleados():
         'cargo': request.args.get('cargo') or None,
         'condicionLaboral': request.args.get('condicionLaboral') or None,
         'nombreApellido': request.args.get('nombreApellido') or None,
-        'centroCosto': request.args.get('centroCosto') or None
+        'centroCosto': request.args.get('centroCosto') or None,
+        'dni': request.args.get('dni') or None
     }
     
     current_page = int(request.args.get('current_page', 1))

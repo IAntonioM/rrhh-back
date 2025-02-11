@@ -224,6 +224,7 @@ class EmpleadoModel:
                     @accion = 3,
                     @estado = ?,
                     @cargo = ?,
+                    @dni = ?,
                     @condicionLaboral = ?,
                     @nombreApellido = ?,
                     @centroCosto = ?,
@@ -232,6 +233,7 @@ class EmpleadoModel:
             ''', (
                 filtros.get('estado', None), 
                 filtros.get('cargo', None), 
+                filtros.get('dni', None), 
                 filtros.get('condicionLaboral', None),
                 filtros.get('nombreApellido', None), 
                 filtros.get('centroCosto', None), 
