@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import pytz
 from dotenv import load_dotenv
@@ -14,7 +14,7 @@ timezone = pytz.timezone(APP_TIMEZONE)
 def convertir_a_fecha_sql(fecha_str):
     if fecha_str is None:
         return None
-
+    
     # Intentar convertir el formato ISO 8601
     try:
         fecha = datetime.strptime(fecha_str, '%Y-%m-%dT%H:%M:%S.%fZ')  # Para formato '2025-02-08T05:00:00.000Z'
@@ -23,13 +23,16 @@ def convertir_a_fecha_sql(fecha_str):
             fecha = datetime.strptime(fecha_str, '%a, %d %b %Y %H:%M:%S GMT')  # Para formato 'Mon, 10 Feb 2025 00:00:00 GMT'
         except ValueError:
             return None
-
+    
     # Localizar la fecha como UTC
     fecha = pytz.utc.localize(fecha)
     
     # Convertir a la zona horaria de Perú
     tz = pytz.timezone('America/Lima')
     fecha_peru = fecha.astimezone(tz)
+    
+    # Sumar un día
+    fecha_peru = fecha_peru + timedelta(days=1)
     
     # Devolver la fecha en formato adecuado para SQL
     return fecha_peru.strftime('%Y-%m-%d %H:%M:%S')

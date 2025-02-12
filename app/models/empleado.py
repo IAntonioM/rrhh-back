@@ -336,7 +336,9 @@ class EmpleadoModel:
             fecha_resolucion = data.get('fecha_resolucion', None)
 
             # Convertir las fechas a formato SQL en la zona horaria de Perú
+            print(fecha_ingreso)
             fecha_ingreso_sql = convertir_a_fecha_sql(fecha_ingreso)
+            print(fecha_ingreso)
             fecha_cese_sql = convertir_a_fecha_sql(fecha_cese)
             fecha_resolucion_sql = convertir_a_fecha_sql(fecha_resolucion)
             codigoRegimenPensionarioSUNAT = data.get('codigoRegimenPensionarioSUNAT', None)
@@ -479,5 +481,39 @@ class EmpleadoModel:
         finally:
             conn.close()
 
+    @staticmethod
+    def update_estado_empleado(idEmpleado,idNuevoEstado, current_user, remote_addr):
+        conn = get_db_connection()
+        try:
+            # Añadir auditoría a los datos
+            data={};
+            # Si tienes una función para añadir campos de auditoría, puedes agregarla aquí
+            data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
+            cursor = conn.cursor()
+            print(data)
+            cursor.execute('''
+                EXEC [Planilla].[sp_Empleados] 
+                @accion = 6, 
+                    @idEstado = ?, 
+                    @idEmpleado = ?, 
+                    @fecha_modificacion = ?, 
+                    @estacion_modificacion = ?, 
+                    @operador_modificacion = ?
+            ''', (
+                idNuevoEstado, 
+                idEmpleado,
+                data['fecha_modificacion'],       # Nueva fecha de modificación
+                data['estacion_modificacion'],    # Estación de modificación
+                data['operador_modificacion']     # Operador de la modificación
+            ))
 
-
+            conn.commit()
+            return True, 'Estado del empleado actualizado con éxito'
+        
+        except pyodbc.ProgrammingError as e:
+            error_msg = str(e)
+            matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
+            return False, matches.group(1).strip() if matches else 'Error al actualizar el estado del empleado'
+        
+        finally:
+            conn.close()
