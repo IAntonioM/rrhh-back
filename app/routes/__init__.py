@@ -13,6 +13,8 @@ from app.routes.emp_concepto import emp_concepto_bp
 from app.routes.banco import banco_bp
 from app.routes.sede import sede_bp
 from app.routes.regimenPensionarioSUNAT import regimen_pensionario_bp
+from app.routes.Egresos import egresos
+from app.routes.Ingresos import ingresos
 
 # Función para registrar todas las rutas
 def register_blueprints(app):
@@ -29,3 +31,5 @@ def register_blueprints(app):
     app.register_blueprint(banco_bp, url_prefix='/api/banco')
     app.register_blueprint(sede_bp, url_prefix='/api/sede')
     app.register_blueprint(regimen_pensionario_bp, url_prefix='/api/regimen_pensionario_sunat')
+    app.register_blueprint(egresos, url_prefix='/api/egresos')
+    app.register_blueprint(ingresos, url_prefix='/api/ingresos')
