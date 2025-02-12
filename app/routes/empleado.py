@@ -237,3 +237,21 @@ def get_datos_empleado():
         'success': True,
         'data': empleados_list
     }), 200
+
+
+@empleado_bp.route('/<int:idEmpleado>/<int:idNuevoEstado>/estado', methods=['PATCH'])
+@jwt_required()
+@handle_response
+def update_estado_empleado(idEmpleado, idNuevoEstado):
+    current_user = get_jwt_identity()
+    
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+    # Llamar al método para actualizar el estado del empleado
+    success, message = EmpleadoModel.update_estado_empleado(idEmpleado, idNuevoEstado, current_user, request.remote_addr)
+    
+    return jsonify({
+        'success': success,
+        'message': message
+    }), 200 if success else 400
