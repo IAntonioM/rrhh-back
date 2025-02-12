@@ -54,7 +54,7 @@ def change_status_ingreso(idConcepto):
 @ingresos.route('/list', methods=['GET'])
 @jwt_required()
 @handle_response(include_data=True)
-def list_egresos():
+def list_Egresos():
     # Obtener parámetros de paginación
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
@@ -67,7 +67,7 @@ def list_egresos():
     filtros['current_page'] = page
     filtros['per_page'] = per_page
     
-    result = Ingresos.list_egresos(filtros)
+    result = Ingresos.list_ingresos(filtros)
     
     if isinstance(result, dict):
         return jsonify({
