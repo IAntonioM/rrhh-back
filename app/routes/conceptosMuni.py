@@ -42,3 +42,22 @@ def get_conceptos_muni():
 def get_conceptos_muni_active():
     conceptos_muni_active = ConceptosMuniModel.get_conceptos_muni_active()
     return jsonify({'success': True, 'data': conceptos_muni_active}), 200
+
+@conceptos_muni_bp.route('/filter-tipo-condi', methods=['GET'])
+@jwt_required()
+@handle_response(include_data=True)
+def get_conceptos_muni_tip_cond():
+    # Extract query parameters
+    id_empleado = request.args.get('idEmpleado', type=int)  # Get the idEmpleado from query parameters
+    tipo = request.args.get('tipo', default=None, type=str)  # Optional parameter for tipo
+
+    if not id_empleado:
+        return jsonify({'success': False, 'message': 'idEmpleado is required'}), 400
+
+    # Call the stored procedure
+    conceptos_muni_active = ConceptosMuniModel.get_conceptos_muni_by_employee(id_empleado, tipo)
+    
+    if conceptos_muni_active is False:
+        return jsonify({'success': False, 'message': 'Error retrieving data from database'}), 500
+
+    return jsonify({'success': True, 'data': conceptos_muni_active}), 200
