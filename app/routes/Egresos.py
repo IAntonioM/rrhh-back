@@ -3,9 +3,9 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models.Egresos import Egresos
 from ..utils.error_handlers import handle_response
 
-egresos = Blueprint('egresos', __name__)
+egresos_bp = Blueprint('egresos', __name__)
 
-@egresos.route('/create', methods=['POST'])
+@egresos_bp.route('/create', methods=['POST'])
 @jwt_required()
 @handle_response
 def create_egreso():
@@ -26,7 +26,7 @@ def create_egreso():
     success, message = Egresos.create_egreso(data, current_user, request.remote_addr)
     return jsonify({'success': success, 'message': message}), 201 if success else 409
 
-@egresos.route('/update/<int:idConcepto>', methods=['PUT'])
+@egresos_bp.route('/update/<int:idConcepto>', methods=['PUT'])
 @jwt_required()
 @handle_response
 def update_egreso(idConcepto):
@@ -39,7 +39,7 @@ def update_egreso(idConcepto):
     success, message = Egresos.update_egreso(data, current_user, request.remote_addr)
     return jsonify({'success': success, 'message': message}), 200 if success else 409
 
-@egresos.route('/status/<int:idConcepto>', methods=['PUT'])
+@egresos_bp.route('/status/<int:idConcepto>', methods=['PUT'])
 @jwt_required()
 @handle_response
 def change_status_egreso(idConcepto):
@@ -50,12 +50,12 @@ def change_status_egreso(idConcepto):
     success, message = Egresos.delete_egreso(idConcepto)
     return jsonify({'success': success, 'message': message}), 200 if success else 409
 
-@egresos.route('/list', methods=['GET'])
+@egresos_bp.route('/list', methods=['GET'])
 @jwt_required()
 @handle_response(include_data=True)
 def list_egresos():
     # Obtener parámetros de paginación
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get('current_page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
     
     # Solo permitir los filtros válidos

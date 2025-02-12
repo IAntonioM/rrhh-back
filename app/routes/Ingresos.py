@@ -3,9 +3,9 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models.Ingresos import Ingresos
 from ..utils.error_handlers import handle_response
 
-ingresos = Blueprint('ingresos', __name__)
+ingresos_bp = Blueprint('ingresos', __name__)
 
-@ingresos.route('/create', methods=['POST'])
+@ingresos_bp.route('/create', methods=['POST'])
 @jwt_required()
 @handle_response
 def create_ingreso():
@@ -27,7 +27,7 @@ def create_ingreso():
     success, message = Ingresos.create_Ingreso(data, current_user, request.remote_addr)
     return jsonify({'success': success, 'message': message}), 201 if success else 409
 
-@ingresos.route('/update/<int:idConcepto>', methods=['PUT'])
+@ingresos_bp.route('/update/<int:idConcepto>', methods=['PUT'])
 @jwt_required()
 @handle_response
 def update_ingreso(idConcepto):
@@ -40,7 +40,7 @@ def update_ingreso(idConcepto):
     success, message = Ingresos.update_Ingreso(data, current_user, request.remote_addr)
     return jsonify({'success': success, 'message': message}), 200 if success else 409
 
-@ingresos.route('/status/<int:idConcepto>', methods=['PUT'])
+@ingresos_bp.route('/status/<int:idConcepto>', methods=['PUT'])
 @jwt_required()
 @handle_response
 def change_status_ingreso(idConcepto):
@@ -51,16 +51,16 @@ def change_status_ingreso(idConcepto):
     success, message = Ingresos.delete_Ingreso(idConcepto)  # Internamente hace el update de flag_estado
     return jsonify({'success': success, 'message': message}), 200 if success else 409
 
-@ingresos.route('/list', methods=['GET'])
+@ingresos_bp.route('/list', methods=['GET'])
 @jwt_required()
 @handle_response(include_data=True)
 def list_Egresos():
     # Obtener parámetros de paginación
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get('current_page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
     
     # Solo permitir los filtros válidos
-    valid_filters = ['codigoPDT', 'codigoInterno', 'concepto']
+    valid_filters = ['idCondicionLaboral','codigoPDT', 'codigoInterno', 'concepto']
     filtros = {k: v for k, v in request.args.items() if k in valid_filters}
     
     # Agregar parámetros de paginación a los filtros
