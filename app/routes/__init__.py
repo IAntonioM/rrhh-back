@@ -15,6 +15,7 @@ from app.routes.sede import sede_bp
 from app.routes.regimenPensionarioSUNAT import regimen_pensionario_bp
 from app.routes.Egresos import egresos_bp
 from app.routes.Ingresos import ingresos_bp
+from app.routes.conceptoPDT import conceptos_bp
 
 # Función para registrar todas las rutas
 def register_blueprints(app):
@@ -33,3 +34,4 @@ def register_blueprints(app):
     app.register_blueprint(regimen_pensionario_bp, url_prefix='/api/regimen_pensionario_sunat')
     app.register_blueprint(egresos_bp, url_prefix='/api/egresos')
     app.register_blueprint(ingresos_bp, url_prefix='/api/ingresos')
+    app.register_blueprint(conceptos_bp, url_prefix='/api/conceptosPDT')
