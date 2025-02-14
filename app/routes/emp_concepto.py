@@ -26,16 +26,23 @@ def create_emp_concepto():
         'message': message
     }), 201 if success else 409
 
-@emp_concepto_bp.route('/update', methods=['PUT'])
+@emp_concepto_bp.route('/update/<int:id>', methods=['PUT'])
 @jwt_required()
 @handle_response
-def update_emp_concepto():
+def update_emp_concepto(id):
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
     
+    # Obtenemos los datos del cuerpo de la solicitud
     data = request.get_json()
+    
+    # Agregar el id de la URL al diccionario de datos
+    data['idEmpConcepto'] = id
+    
+    # Llamamos al método que actualiza el concepto
     success, message = EmpConceptoModel.update_emp_concepto(data, current_user, request.remote_addr)
+    
     return jsonify({
         'success': success,
         'message': message
@@ -56,14 +63,36 @@ def get_emp_conceptos():
 @handle_response(include_data=True)
 def get_filtered_emp_conceptos():
     # Obtener los parámetros de la query string
-    codEmpleado = request.args.get('codEmpleado', default=None, type=str)
+    idEmpleado = request.args.get('idEmpleado', default=None, type=str)
     tipo = request.args.get('tipo', default=None, type=str)
 
     # Llamar al método de la clase para obtener los conceptos filtrados
-    emp_conceptos_list = EmpConceptoModel.consult_emp_concepto_tipo_cod(codEmpleado=codEmpleado, tipo=tipo)
+    emp_conceptos_list = EmpConceptoModel.consult_emp_concepto_tipo_cod(idEmpleado=idEmpleado, tipo=tipo)
 
     return jsonify({
         'success': True,
         'data': emp_conceptos_list
     }), 200
 
+@emp_concepto_bp.route('/<int:idEmpConcepto>/<int:idNuevoEstado>/estado', methods=['PATCH'])
+@jwt_required()
+@handle_response  # Si tienes un decorador personalizado para manejar la respuesta
+def update_estado_emp_concepto(idEmpConcepto, idNuevoEstado):
+    current_user = get_jwt_identity()  # Obtener el usuario autenticado a través del JWT
+    
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+    # Llamar al método para actualizar el estado del EmpConcepto
+    success, message = EmpConceptoModel.update_estado_emp_concepto(
+        idEmpConcepto, 
+        idNuevoEstado, 
+        current_user, 
+        request.remote_addr
+    )
+
+    # Devolver la respuesta JSON
+    return jsonify({
+        'success': success,
+        'message': message
+    }), 200 if success else 400

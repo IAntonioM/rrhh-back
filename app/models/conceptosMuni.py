@@ -227,7 +227,8 @@ class ConceptosMuniModel:
                 'estacion_modificacion': c[15],
                 'operador_modificacion': c[16],
                 'flag_estado': c[17],
-                'flag_apldialab': c[18]
+                'flag_apldialab': c[18],
+                # 'condicion_laboral_nombre': c[19]
             } for c in conceptos_muni]
 
         except pyodbc.ProgrammingError as e:

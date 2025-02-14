@@ -16,7 +16,7 @@ class EmpConceptoModel:
             cursor.execute('''
                 EXEC [Planilla].[sp_EmpConceptos] 
                     @accion = 1, 
-                    @codEmpleado = ?, 
+                    @idEmpleado = ?, 
                     @tipo = ?, 
                     @idConcepto = ?, 
                     @idTipoMonto = ?, 
@@ -38,7 +38,7 @@ class EmpConceptoModel:
                     @flag_estado = 1, 
                     @flag_descuento = 0
             ''', (
-                 data['codEmpleado'], data['tipo'], data['idConcepto'], data['idTipoMonto'], 
+                 data['idEmpleado'], data['tipo'], data['idConcepto'], data['idTipoMonto'], 
                 data['monto'], data['secuencia'], data['flag_ATM'], data['periodo_mes_desde'], data['periodo_anio_desde'],
                 data['periodo_mes_hasta'], data['periodo_anio_hasta'], data['comentario'], 
                 data['fecha_registro'], data['estacion_registro'], data['operador_registro'], data['fecha_modificacion'],
@@ -55,6 +55,46 @@ class EmpConceptoModel:
             
         finally:
             conn.close()
+    @staticmethod
+    def update_estado_emp_concepto(idEmpConcepto, idNuevoEstado, current_user, remote_addr):
+        conn = get_db_connection()
+        try:
+            # Añadir auditoría a los datos
+            data = {}
+            # Si tienes una función para añadir campos de auditoría, puedes agregarla aquí
+            data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
+            
+            cursor = conn.cursor()
+            print(data)
+            
+            cursor.execute('''
+                EXEC [Planilla].[sp_EmpConceptos] 
+                @accion = 4, 
+                @idEmpConcepto = ?, 
+                @estado = ?, 
+                @fecha_modificacion = ?, 
+                @estacion_modificacion = ?, 
+                @operador_modificacion = ?
+            ''', (
+                idEmpConcepto, 
+                idNuevoEstado,
+                data['fecha_modificacion'],        # Nueva fecha de modificación
+                data['estacion_modificacion'],     # Estación de modificación
+                data['operador_modificacion']      # Operador de la modificación
+            ))
+
+            conn.commit()
+            return True, 'Estado de EmpConcepto actualizado con éxito'
+        
+        except pyodbc.ProgrammingError as e:
+            error_msg = str(e)
+            matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
+            return False, matches.group(1).strip() if matches else 'Error al actualizar el estado de EmpConcepto'
+        
+        finally:
+            conn.close()
+
+
 
     @staticmethod
     def update_emp_concepto(data, current_user, remote_addr):
@@ -68,7 +108,6 @@ class EmpConceptoModel:
                 EXEC [Planilla].[sp_EmpConceptos] 
                     @accion = 2, 
                     @idEmpConcepto = ?, 
-                    @codEmpleado = ?, 
                     @tipo = ?, 
                     @idConcepto = ?, 
                     @idTipoMonto = ?, 
@@ -80,22 +119,25 @@ class EmpConceptoModel:
                     @periodo_mes_hasta = ?, 
                     @periodo_anio_hasta = ?, 
                     @comentario = ?, 
-                    @estado = ?, 
-                    @fecha_registro = ?, 
-                    @estacion_registro = ?, 
-                    @operador_registro = ?, 
                     @fecha_modificacion = ?, 
                     @estacion_modificacion = ?, 
-                    @operador_modificacion = ?, 
-                    @flag_estado = ?, 
-                    @flag_descuento = ?
+                    @operador_modificacion = ?
             ''', (
-                data['idEmpConcepto'], data['codEmpleado'], data['tipo'], data['idConcepto'],
-                data['idTipoMonto'], data['monto'], data['secuencia'], data['flag_ATM'], data['periodo_mes_desde'], 
-                data['periodo_anio_desde'], data['periodo_mes_hasta'], data['periodo_anio_hasta'], data['comentario'],
-                data['estado'], data['fecha_registro'], data['estacion_registro'], data['operador_registro'],
-                data['fecha_modificacion'], data['estacion_modificacion'], data['operador_modificacion'],
-                data['flag_estado'], data['flag_descuento']
+                data['idEmpConcepto'], 
+                data['tipo'], 
+                data['idConcepto'],
+                data['idTipoMonto'], 
+                data['monto'], 
+                data['secuencia'], 
+                data['flag_ATM'], 
+                data['periodo_mes_desde'], 
+                data['periodo_anio_desde'], 
+                data['periodo_mes_hasta'], 
+                data['periodo_anio_hasta'], 
+                data['comentario'], 
+                data['fecha_modificacion'], 
+                data['estacion_modificacion'], 
+                data['operador_modificacion']
             ))
 
             conn.commit()
@@ -108,6 +150,7 @@ class EmpConceptoModel:
             
         finally:
             conn.close()
+
 
     @staticmethod
     def get_emp_conceptos_list():
@@ -155,7 +198,7 @@ class EmpConceptoModel:
         finally:
             conn.close()
     @staticmethod
-    def consult_emp_concepto_tipo_cod(codEmpleado=None, tipo=None):
+    def consult_emp_concepto_tipo_cod(idEmpleado=None, tipo=None):
         conn = get_db_connection()
         try:
             cursor = conn.cursor()
@@ -163,9 +206,9 @@ class EmpConceptoModel:
             cursor.execute('''
                 EXEC [Planilla].[sp_EmpConceptos] 
                     @accion = 5,
-                    @codEmpleado = ?, 
+                    @idEmpleado = ?, 
                     @tipo = ?;
-            ''', (codEmpleado, tipo))  # Pasar los parámetros como tuplas
+            ''', (idEmpleado, tipo))  # Pasar los parámetros como tuplas
 
             conceptos = cursor.fetchall()
 
@@ -193,11 +236,13 @@ class EmpConceptoModel:
                 'operador_modificacion': c[19], 
                 'flag_estado': c[20], 
                 'flag_descuento': c[21],
-                'concepto_nombres': c[22],  # Nombre del concepto
-                'tipoMonto_nombre': c[23],  # Nombre del tipo de monto
-                'secuencia_nombre': c[24],   # Nombre de la secuencia
-                'concepto_codigoInterno': c[25],   # Nombre de la secuencia
+                'idEmpleado': c[22],  # idEmpleado
+                'concepto_nombres': c[23],  # Nombre del concepto
+                'tipoMonto_nombre': c[24],  # Nombre del tipo de monto
+                'secuencia_nombre': c[25],   # Nombre de la secuencia
+                'concepto_codigoInterno': c[26],   # Código interno del concepto
             } for c in conceptos]
+
 
         except pyodbc.ProgrammingError as e:
             error_msg = str(e)
