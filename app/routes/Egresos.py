@@ -15,7 +15,7 @@ def create_egreso():
 
     data = request.get_json()
     required_fields = [
-        'idCondicionLaboral', 'codigoPDT', 'codigoInterno', 
+        'idCondicionLaboral', 'codigoPDT',    
         'concepto', 'tipoCalculo', 'idTipoMonto', 
         'flag_ATM', 'monto', 'flag_apldialab'
     ]

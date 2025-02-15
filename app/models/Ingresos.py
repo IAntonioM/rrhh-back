@@ -70,11 +70,6 @@ class Ingresos:
                        for row in results]
                 
                 return {'data': data, 'pagination': pagination}
-
-        except pyodbc.Error as e:
-            error_msg = str(e)
-            matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
-            return False, matches.group(1).strip() if matches else 'Error en la operación'
         finally:
             conn.close()
 
