@@ -49,7 +49,16 @@ class Egresos:
             if accion in ['CREATE', 'UPDATE', 'DELETE']:
                 conn.commit()
                 result = cursor.fetchone()
-                return True, result[0] if result else 'Operación exitosa'
+                try:
+                    result = cursor.fetchone()
+                    message = result[0] if result else 'Operación exitosa'
+                except:
+                    # Si no hay resultados para fetch, aún así consideramos exitosa la operación
+                    message = 'Operación completada exitosamente'
+                return {
+                    'success': True,
+                    'message': result[0] if result else 'Operación exitosa'
+                }
             else:
                 # Para LIST, necesitamos procesar la metadata de paginación
                 results = cursor.fetchall()
@@ -71,6 +80,12 @@ class Egresos:
                        for row in results]
                 
                 return {'data': data, 'pagination': pagination}
+            
+        except Exception as e:
+            return {
+                'success': False,
+                'message': str(e)
+            }
         finally:
             conn.close()
 

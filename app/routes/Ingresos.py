@@ -60,7 +60,7 @@ def list_Egresos():
     per_page = request.args.get('per_page', 10, type=int)
     
     # Solo permitir los filtros válidos
-    valid_filters = ['idCondicionLaboral','codigoPDT', 'codigoInterno', 'concepto']
+    valid_filters = ['idCondicionLaboral', 'codigoPDT', 'codigoInterno', 'concepto']
     filtros = {k: v for k, v in request.args.items() if k in valid_filters}
     
     # Agregar parámetros de paginación a los filtros
@@ -69,12 +69,14 @@ def list_Egresos():
     
     result = Ingresos.list_ingresos(filtros)
     
-    if isinstance(result, dict):
+    if not result.get('success', False):
         return jsonify({
-            'success': True,
-            'data': result['data'],
-            'pagination': result['pagination']
-        }), 200
-    else:
-        success, message = result
-        return jsonify({'success': success, 'message': message}), 409
+            'success': False,
+            'message': result.get('message', 'Error al obtener los datos')
+        }), 500
+        
+    return jsonify({
+        'success': True,
+        'data': result.get('data', []),
+        'pagination': result.get('pagination', {})
+    }), 200

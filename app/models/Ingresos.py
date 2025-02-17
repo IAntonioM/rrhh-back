@@ -48,28 +48,52 @@ class Ingresos:
             if accion in ['CREATE', 'UPDATE', 'DELETE']:
                 conn.commit()
                 result = cursor.fetchone()
-                return True, result[0] if result else 'Operación exitosa'
-            else:
-                # Para LIST, necesitamos procesar la metadata de paginación
-                results = cursor.fetchall()
-                if not results:
-                    return []
-                
-                # El SP devuelve la metadata de paginación en cada fila
-                pagination = {
-                    'current_page': results[0].current_page,
-                    'last_page': results[0].last_page,
-                    'per_page': results[0].per_page,
-                    'total': results[0].total
+                return {
+                    'success': True,
+                    'message': result[0] if result else 'Operación exitosa'
                 }
+            else:  # Para LIST
+                columns = [column[0] for column in cursor.description]
+                results = cursor.fetchall()
                 
-                # Convertir los resultados a diccionario excluyendo los campos de paginación
-                data = [dict((column[0], value) 
-                           for column, value in zip(cursor.description, row)
-                           if column[0] not in ['current_page', 'last_page', 'per_page', 'total']) 
-                       for row in results]
+                if not results:
+                    return {
+                        'success': True,
+                        'data': [],
+                        'pagination': {
+                            'current_page': params.get('current_page', 1),
+                            'last_page': 1,
+                            'per_page': params.get('per_page', 10),
+                            'total': 0
+                        }
+                    }
+
+                # Convertir los resultados a diccionario
+                data = []
+                pagination = {}
                 
-                return {'data': data, 'pagination': pagination}
+                for row in results:
+                    row_dict = {}
+                    for i, value in enumerate(row):
+                        column_name = columns[i]
+                        if column_name in ['current_page', 'last_page', 'per_page', 'total']:
+                            pagination[column_name] = value
+                        else:
+                            row_dict[column_name] = value
+                    data.append(row_dict)
+
+                return {
+                    'success': True,
+                    'data': data,
+                    'pagination': pagination
+                }
+
+        except Exception as e:
+            print(f"Error en execute_sp: {str(e)}")  # Para debugging
+            return {
+                'success': False,
+                'message': str(e)
+            }
         finally:
             conn.close()
 
