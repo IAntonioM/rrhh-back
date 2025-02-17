@@ -13,7 +13,7 @@ class MenuModel:
 
             cursor = conn.cursor()
             cursor.execute(''' 
-                EXEC [Accesos].[sp_menu] 
+                EXEC [Seguridad].[sp_menu] 
                     @accion = 1,  -- Acción 1 para insertar un nuevo menú
                     @nombre = ?, 
                     @url = ?, 
@@ -54,7 +54,7 @@ class MenuModel:
 
             cursor = conn.cursor()
             cursor.execute(''' 
-                EXEC [Accesos].[sp_menu] 
+                EXEC [Seguridad].[sp_menu] 
                     @accion = 2,  -- Acción 2 para actualizar un menú
                     @id = ?, 
                     @nombre = ?, 
@@ -94,7 +94,7 @@ class MenuModel:
         try:
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Accesos].[sp_menu] 
+                EXEC [Seguridad].[sp_menu] 
                     @accion = 3, 
                     @nombre = ?, 
                     @url = ?, 
@@ -134,7 +134,8 @@ class MenuModel:
                 'current_page': m[14], 
                 'last_page': m[15], 
                 'per_page': m[16], 
-                'total': m[17]
+                'total': m[17],
+                'menu_padre_nombre': m[18],
             } for m in menus]
 
         except pyodbc.ProgrammingError as e:
@@ -162,7 +163,7 @@ class MenuModel:
 
             cursor = conn.cursor()
             cursor.execute(''' 
-                EXEC [Accesos].[sp_menu] 
+                EXEC [Seguridad].[sp_menu] 
                     @accion = 4,  -- Acción 4 para cambiar el estado
                     @id = ?, 
                     @estado = ? 
@@ -185,7 +186,7 @@ class MenuModel:
         try:
             cursor = conn.cursor()
             cursor.execute(''' 
-                EXEC [Accesos].[sp_menu] 
+                EXEC [Seguridad].[sp_menu] 
                     @accion = 5,  -- Acción 5 para eliminar un menú
                     @id = ?
             ''', (id,))
@@ -204,14 +205,16 @@ class MenuModel:
 
 
     @staticmethod
-    def get_menus_list_complete():
+    def get_menus_list_complete(filtros):
         conn = get_db_connection()
         try:
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Accesos].[sp_menu] 
-                    @accion = 6
+                EXEC [Seguridad].[sp_menu] 
+                    @accion = 6,
+                    @padre_id = ?
             ''', (
+                filtros.get('padre_id', None)
             ))
 
             menus = cursor.fetchall()

@@ -17,6 +17,8 @@ from app.routes.Egresos import egresos_bp
 from app.routes.Ingresos import ingresos_bp
 from app.routes.conceptoPDT import conceptos_bp
 from app.routes.tipoMonto import tipoMonto_bp
+from app.routes.acceso import acceso_bp
+from app.routes.rol import rol_bp
 
 # Función para registrar todas las rutas
 def register_blueprints(app):
@@ -37,3 +39,5 @@ def register_blueprints(app):
     app.register_blueprint(ingresos_bp, url_prefix='/api/ingresos')
     app.register_blueprint(conceptos_bp, url_prefix='/api/conceptosPDT')
     app.register_blueprint(tipoMonto_bp, url_prefix='/api/tipoMonto')
+    app.register_blueprint(acceso_bp, url_prefix='/api/acceso')
+    app.register_blueprint(rol_bp, url_prefix='/api/rol')
