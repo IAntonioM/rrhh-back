@@ -88,16 +88,6 @@ def delete_rol(rol_id):
         'message': message
     }), 200 if success else 409
 
-@rol_bp.route('/list', methods=['GET'])
-@jwt_required()
-@handle_response(include_data=True)
-def get_roles_list():
-    # Opción de obtener todos los roles (sin filtros)
-    roles = RolModel.get_roles_list_complete()
-    return jsonify({
-        'success': True,
-        'data': roles
-    }), 200
 
 @rol_bp.route('/<int:id>/<int:estado>/estado', methods=['PATCH'])
 @jwt_required()
@@ -114,3 +104,17 @@ def update_rol_status(id, estado):
         'success': success,
         'message': message
     }), 200 if success else 409
+
+@rol_bp.route('/list', methods=['GET'])
+@jwt_required()
+@handle_response(include_data=True)
+def get_menus_list():
+    filtros = {
+        #'padre_id': request.args.get('padre_id') or None,
+    }
+    # Optionally accept query parameters to filter menus (e.g., active, by parent_id, etc.)
+    roles = RolModel.get_active_roles()
+    return jsonify({
+        'success': True,
+        'data': roles
+    }), 200

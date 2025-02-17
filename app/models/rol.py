@@ -188,13 +188,7 @@ class RolModel:
             return [{
                 'id': r[0],
                 'nombre': r[1],
-                'estado': r[2],
-                'fecha_registro': r[3],
-                'estacion_registro': r[4],
-                'operador_registro': r[5],
-                'fecha_modificacion': r[6],
-                'estacion_modificacion': r[7],
-                'operador_modificacion': r[8],
+                'estado': r[2]
             } for r in roles]
 
         except pyodbc.ProgrammingError as e:
@@ -204,3 +198,5 @@ class RolModel:
 
         finally:
             conn.close()
+
+            

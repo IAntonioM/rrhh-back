@@ -20,6 +20,7 @@ from app.routes.conceptoPDT import conceptos_bp
 from app.routes.tipoMonto import tipoMonto_bp
 from app.routes.acceso import acceso_bp
 from app.routes.rol import rol_bp
+from app.routes.usuario import usuario_bp
 
 # Función para registrar todas las rutas
 def register_blueprints(app):
@@ -43,3 +44,5 @@ def register_blueprints(app):
     app.register_blueprint(tipoMonto_bp, url_prefix='/api/tipoMonto')
     app.register_blueprint(acceso_bp, url_prefix='/api/acceso')
     app.register_blueprint(rol_bp, url_prefix='/api/rol')
+    app.register_blueprint(usuario_bp, url_prefix='/api/usuario')
+
