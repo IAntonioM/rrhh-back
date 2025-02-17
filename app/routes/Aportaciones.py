@@ -1,14 +1,14 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models.Egresos import Egresos
+from ..models.aportaciones import Aportaciones
 from ..utils.error_handlers import handle_response
 
-egresos_bp = Blueprint('egresos', __name__)
+aportaciones_bp = Blueprint('aportaciones', __name__)
 
-@egresos_bp.route('/create', methods=['POST'])
+@aportaciones_bp.route('/create', methods=['POST'])
 @jwt_required()
 @handle_response
-def create_egreso():
+def create_aportacion():
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
@@ -23,37 +23,37 @@ def create_egreso():
         if field not in data:
             return jsonify({'success': False, 'message': f'Campo requerido: {field}'}), 400
 
-    success, message = Egresos.create_egreso(data, current_user, request.remote_addr)
+    success, message = Aportaciones.create_aportacion(data, current_user, request.remote_addr)
     return jsonify({'success': success, 'message': message}), 201 if success else 409
 
-@egresos_bp.route('/update/<int:idConcepto>', methods=['PUT'])
+@aportaciones_bp.route('/update/<int:idConcepto>', methods=['PUT'])
 @jwt_required()
 @handle_response
-def update_egreso(idConcepto):
+def update_aportacion(idConcepto):
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
     data = request.get_json()
     data['idConcepto'] = idConcepto
-    success, message = Egresos.update_egreso(data, current_user, request.remote_addr)
+    success, message = Aportaciones.update_aportacion(data, current_user, request.remote_addr)
     return jsonify({'success': success, 'message': message}), 200 if success else 409
 
-@egresos_bp.route('/status/<int:idConcepto>', methods=['PUT'])
+@aportaciones_bp.route('/status/<int:idConcepto>', methods=['PUT'])
 @jwt_required()
 @handle_response
-def change_status_egreso(idConcepto):
+def change_status_aportacion(idConcepto):
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
-    success, message = Egresos.delete_egreso(idConcepto)
+    success, message = Aportaciones.delete_aportacion(idConcepto)
     return jsonify({'success': success, 'message': message}), 200 if success else 409
 
-@egresos_bp.route('/list', methods=['GET'])
+@aportaciones_bp.route('/list', methods=['GET'])
 @jwt_required()
 @handle_response(include_data=True)
-def list_egresos():
+def list_aportacions():
     # Obtener parámetros de paginación
     page = request.args.get('current_page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
@@ -66,7 +66,7 @@ def list_egresos():
     filtros['current_page'] = page
     filtros['per_page'] = per_page
     
-    result = Egresos.list_egresos(filtros)
+    result = Aportaciones.list_aportacions(filtros)
     
     if isinstance(result, dict):
         return jsonify({
@@ -78,11 +78,11 @@ def list_egresos():
         success, message = result
         return jsonify({'success': success, 'message': message}), 409
     
-@egresos_bp.route('/totallist', methods=['GET'])
+@aportaciones_bp.route('/totallist', methods=['GET'])
 @jwt_required()
 @handle_response()
-def list_Total_egresos():
-    result = Egresos.list_total_egresos()
+def list_Total_aportacions():
+    result = Aportaciones.list_total_aportacions()
     
     if isinstance(result, dict):
         return jsonify({

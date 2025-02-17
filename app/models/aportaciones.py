@@ -3,7 +3,7 @@ import re
 from config import get_db_connection
 from ..utils.auditv2 import AuditFieldsv2
 
-class Egresos:
+class Aportaciones:
     @staticmethod
     def execute_sp(accion, params=None):
         conn = get_db_connection()
@@ -11,18 +11,18 @@ class Egresos:
             cursor = conn.cursor()
             
             if accion == 'TOTALLIST':
-                cursor.execute("EXEC [dbo].[sp_Egresos] @accion = ?", (accion,))
+                cursor.execute("EXEC [dbo].[sp_Aportaciones] @accion = ?", (accion,))
             else:
                 cursor.execute('''
-                    EXEC [dbo].[sp_Egresos] 
+                    EXEC [dbo].[sp_Aportaciones] 
                         @accion = ?, 
                         @idConcepto = ?, 
-                        @idCondicionLaboral = ?, 
+                        @idCondicionLaboral = ?,    
                         @ccodcpto_Anterior = ?, 
                         @codigoPDT = ?, 
                         @codigoInterno = ?, 
                         @concepto = ?, 
-                        @tipo = 'E', 
+                        @tipo = 'A', 
                         @tipoCalculo = ?, 
                         @idTipoMonto = ?, 
                         @flag_ATM = ?, 
@@ -85,24 +85,24 @@ class Egresos:
             conn.close()
 
     @staticmethod
-    def create_egreso(data, current_user, remote_addr):
+    def create_aportacion(data, current_user, remote_addr):
         data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
-        return Egresos.execute_sp('CREATE', data)
+        return Aportaciones.execute_sp('CREATE', data)
 
     @staticmethod
-    def update_egreso(data, current_user, remote_addr):
+    def update_aportacion(data, current_user, remote_addr):
         data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
-        return Egresos.execute_sp('UPDATE', data)
+        return Aportaciones.execute_sp('UPDATE', data)
 
     @staticmethod
-    def delete_egreso(idConcepto):
-        return Egresos.execute_sp('DELETE', {'idConcepto': idConcepto, 'flag_estado': 0})
+    def delete_aportacion(idConcepto):
+        return Aportaciones.execute_sp('DELETE', {'idConcepto': idConcepto, 'flag_estado': 0})
 
     @staticmethod
-    def list_egresos(filtros=None):
+    def list_aportacions(filtros=None):
         filtros = filtros or {}
-        return Egresos.execute_sp('LIST', filtros)
+        return Aportaciones.execute_sp('LIST', filtros)
 
     @staticmethod
-    def list_total_egresos():
-        return Egresos.execute_sp('TOTALLIST')
+    def list_total_aportacions():
+        return Aportaciones.execute_sp('TOTALLIST')

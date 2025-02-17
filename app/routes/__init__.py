@@ -15,6 +15,7 @@ from app.routes.sede import sede_bp
 from app.routes.regimenPensionarioSUNAT import regimen_pensionario_bp
 from app.routes.Egresos import egresos_bp
 from app.routes.Ingresos import ingresos_bp
+from app.routes.Aportaciones import aportaciones_bp
 from app.routes.conceptoPDT import conceptos_bp
 from app.routes.tipoMonto import tipoMonto_bp
 from app.routes.acceso import acceso_bp
@@ -37,6 +38,7 @@ def register_blueprints(app):
     app.register_blueprint(regimen_pensionario_bp, url_prefix='/api/regimen_pensionario_sunat')
     app.register_blueprint(egresos_bp, url_prefix='/api/egresos')
     app.register_blueprint(ingresos_bp, url_prefix='/api/ingresos')
+    app.register_blueprint(aportaciones_bp, url_prefix='/api/aportaciones')
     app.register_blueprint(conceptos_bp, url_prefix='/api/conceptosPDT')
     app.register_blueprint(tipoMonto_bp, url_prefix='/api/tipoMonto')
     app.register_blueprint(acceso_bp, url_prefix='/api/acceso')
