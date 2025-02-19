@@ -2,7 +2,7 @@ import pyodbc
 import re
 from config import get_db_connection
 from ..utils.auditv2 import AuditFieldsv2
-
+from werkzeug.security import generate_password_hash, check_password_hash
 class UsuarioModel:
     
     @staticmethod
@@ -11,7 +11,7 @@ class UsuarioModel:
         try:
             # Añadir campos de auditoría
             data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
-
+            data['password'] = generate_password_hash(data['password'])
             cursor = conn.cursor()
             cursor.execute(''' 
                 EXEC [Seguridad].[sp_usuarios] 
@@ -26,12 +26,12 @@ class UsuarioModel:
                     @fecha_modificacion = ?, 
                     @estacion_modificacion = ?, 
                     @operador_modificacion = ?, 
-                    @IdEmpleado = ?
+                    @idEmpleado = ?
             ''', (
                 data['username'], data['password'], data['rol_id'], data['estado'], 
                 data['fecha_registro'], data['estacion_registro'], data['operador_registro'], 
                 data['fecha_modificacion'], data['estacion_modificacion'], data['operador_modificacion'],
-                data['IdEmpleado']
+                data['idEmpleado']
             ))
 
             conn.commit()
@@ -52,10 +52,15 @@ class UsuarioModel:
             # Añadir campos de auditoría
             data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
 
+            # Verificar si 'password' existe y no es None antes de encriptarla
+            password_hashed = None
+            if 'password' in data and data['password']:
+                password_hashed = generate_password_hash(data['password'])
+
             cursor = conn.cursor()
             cursor.execute(''' 
                 EXEC [Seguridad].[sp_usuarios] 
-                    @accion = 2,  -- Acción 2 para actualizar un usuario
+                    @accion = 2, 
                     @id = ?, 
                     @username = ?, 
                     @password = ?, 
@@ -67,22 +72,30 @@ class UsuarioModel:
                     @fecha_modificacion = ?, 
                     @estacion_modificacion = ?, 
                     @operador_modificacion = ?, 
-                    @IdEmpleado = ?
+                    @idEmpleado = ?
             ''', (
-                data['id'], data['username'], data['password'], data['rol_id'], data['estado'], 
-                data['fecha_registro'], data['estacion_registro'], data['operador_registro'], 
-                data['fecha_modificacion'], data['estacion_modificacion'], data['operador_modificacion'],
-                data['IdEmpleado']
+                data.get('id'),
+                data.get('username'),
+                password_hashed,  # Ahora puede ser None si no se envió
+                data.get('rol_id'),
+                data.get('estado'),
+                data.get('fecha_registro'),
+                data.get('estacion_registro'),
+                data.get('operador_registro'),
+                data.get('fecha_modificacion'),
+                data.get('estacion_modificacion'),
+                data.get('operador_modificacion'),
+                data.get('idEmpleado')
             ))
 
             conn.commit()
             return True, 'Usuario actualizado con éxito'
-            
+
         except pyodbc.ProgrammingError as e:
             error_msg = str(e)
             matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
             return False, matches.group(1).strip() if matches else 'Error al actualizar usuario'
-            
+
         finally:
             conn.close()
 
@@ -95,12 +108,14 @@ class UsuarioModel:
                 EXEC [Seguridad].[sp_usuarios] 
                     @accion = 3,  -- Acción 3 para listar usuarios con filtros
                     @username = ?, 
+                    @nombre_completo = ?, 
                     @estado = ?, 
                     @rol_id = ?, 
                     @current_page = ?, 
                     @per_page = ?
             ''', (
                 filtros.get('username', None),
+                filtros.get('nombre_completo', None),
                 filtros.get('estado', None),
                 filtros.get('rol_id', None),
                 current_page,
@@ -121,13 +136,17 @@ class UsuarioModel:
                 'fecha_modificacion': u[7],
                 'estacion_modificacion': u[8],
                 'operador_modificacion': u[9],
-                'IdEmpleado': u[10],
+                'idEmpleado': u[10],
 
                 # Paginación
                 'current_page': u[11],
                 'last_page': u[12],
                 'per_page': u[13],
                 'total': u[14],
+                'area': u[15],
+                'rol_nombre': u[16],
+                'dni': u[17],
+                'nombres': u[18],
             } for u in usuarios]
 
         except pyodbc.ProgrammingError as e:
@@ -220,7 +239,7 @@ class UsuarioModel:
                 'fecha_modificacion': u[7],
                 'estacion_modificacion': u[8],
                 'operador_modificacion': u[9],
-                'IdEmpleado': u[10],
+                'idEmpleado': u[10],
             } for u in usuarios]
 
         except pyodbc.ProgrammingError as e:

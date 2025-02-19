@@ -52,6 +52,7 @@ def get_usuarios():
         'username': request.args.get('username') or None,
         'estado': request.args.get('estado') or None,
         'rol_id': request.args.get('rol_id') or None,
+        'nombre_completo': request.args.get('nombre_completo') or None,
     }
     
     current_page = int(request.args.get('current_page', 1))
