@@ -249,3 +249,31 @@ class UsuarioModel:
             
         finally:
             conn.close()
+
+
+    @staticmethod
+    def get_by_username(username):
+        try:
+            # Obtiene la conexión a la BD
+            with get_db_connection() as conn:
+                with conn.cursor() as cursor:
+                    # Consulta para obtener rol_id
+                    query = "SELECT rol_id FROM Seguridad.usuarios WHERE username = ?"
+                    cursor.execute(query, (username,))
+                    
+                    # Obtiene un solo resultado
+                    row = cursor.fetchone()
+
+                    # Si se encontró un resultado, devolverlo como diccionario
+                    if row:
+                        return {"rol_id": row[0]}
+                    
+                    return None
+
+        except pyodbc.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            return None
+

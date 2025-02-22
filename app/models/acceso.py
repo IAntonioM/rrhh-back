@@ -221,3 +221,37 @@ class AccesoModel:
 
         finally:
             conn.close()
+    
+    @staticmethod
+    def get_accesos_por_menu(filtros):
+        conn = get_db_connection()  # Suponiendo que tienes esta función para obtener la conexión
+        try:
+            cursor = conn.cursor()
+            # Ejecutamos la consulta con la acción 7 y el parámetro menu_id
+            cursor.execute('''
+                EXEC [Seguridad].[sp_acceso]
+                    @accion = 7, -- Acción 7 para obtener accesos por menu_id
+                    @menu_id = ? -- Pasamos el menu_id como parámetro
+            ''', (
+                filtros.get('menu_id', None), 
+            ))
+
+            accesos = cursor.fetchall()
+
+            # Devuelve los accesos con la estructura que necesitas
+            return [{
+                'id': a[0],
+                'tipo': a[1],
+                'nombre': a[2],
+                'menu_id': a[3],
+                'objeto_id': a[4],
+                'estado': a[5],
+            } for a in accesos]
+
+        except pyodbc.ProgrammingError as e:
+            error_msg = str(e)
+            matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
+            return False, matches.group(1).strip() if matches else 'Error al obtener accesos por menu_id'
+
+        finally:
+            conn.close()

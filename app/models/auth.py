@@ -49,8 +49,8 @@ class UserModel:
         try:
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [dbo].[sp_usuarios] 
-                    @accion = 4,
+                EXEC [Seguridad].[sp_usuarios] 
+                    @accion = 6,
                     @username = ?
             ''', (username,))
             user = cursor.fetchone()

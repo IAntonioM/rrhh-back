@@ -116,3 +116,16 @@ def update_acceso_status(id, estado):
         'success': success,
         'message': message
     }), 200 if success else 409
+
+
+@acceso_bp.route('/menu', methods=['GET'])
+@jwt_required()  # Si estás usando JWT para proteger la ruta
+def get_accesos_por_menu():
+    filtros = {
+        'menu_id': request.args.get('menu_id') or None,
+    }
+    accesos_list = AccesoModel.get_accesos_por_menu(filtros)
+    return jsonify({
+        'success': True,
+        'data': accesos_list
+    }), 200
