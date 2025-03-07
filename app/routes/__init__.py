@@ -22,6 +22,11 @@ from app.routes.acceso import acceso_bp
 from app.routes.rol import rol_bp
 from app.routes.usuario import usuario_bp
 from app.routes.rolmenu import rol_menu_bp
+from app.routes.rolmenuacceso import rol_menu_acceso_bp
+from app.routes.trayectoria_laboral import trayectoria_laboral_bp
+from app.routes.composicion_familiar import composicion_familiar_bp
+from app.routes.vinculo_familiar import vinculo_familiar_bp
+from app.routes.estado_civil import estado_civil_bp
 
 # Función para registrar todas las rutas
 def register_blueprints(app):
@@ -47,4 +52,9 @@ def register_blueprints(app):
     app.register_blueprint(rol_bp, url_prefix='/api/rol')
     app.register_blueprint(usuario_bp, url_prefix='/api/usuario')
     app.register_blueprint(rol_menu_bp, url_prefix='/api/rol_menu')
+    app.register_blueprint(rol_menu_acceso_bp, url_prefix='/api/rol_menu_acceso')
+    app.register_blueprint(trayectoria_laboral_bp, url_prefix='/api/trayectoria_laboral')
+    app.register_blueprint(composicion_familiar_bp, url_prefix='/api/composicion_familiar')
+    app.register_blueprint(vinculo_familiar_bp, url_prefix='/api/vinculo_familiar')
+    app.register_blueprint(estado_civil_bp, url_prefix='/api/estado_civil')
 
