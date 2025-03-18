@@ -3,6 +3,7 @@ import re
 from config import get_db_connection
 from ..utils.auditv2 import AuditFieldsv2
 
+
 class ComposicionFamiliarModel:
     SP_NAME = "[dbo].[sp_composicion_familiar]"
     ACTIONS = {
@@ -20,14 +21,14 @@ class ComposicionFamiliarModel:
             'id', 'idEmpleado', 'apellido_paterno', 'apellido_materno', 'nombres',
             'fecha_nacimiento', 'idVinculo', 'idEstadoCivil', 'ocupacion',
             'fecha_registro', 'estacion_registro', 'operador_registro', 
-            'fecha_modificacion', 'estacion_modificacion', 'operador_modificacion',
-            'current_page', 'last_page', 'per_page', 'total','otro','vinculo_nombre','estadocivil_nombre'
+            'fecha_modificacion', 'estacion_modificacion', 'operador_modificacion','estado',
+            'current_page', 'last_page', 'per_page', 'total','vinculo_nombre','estadocivil_nombre'
         ],
         "list_active": [
             'id', 'idEmpleado', 'apellido_paterno', 'apellido_materno', 'nombres',
             'fecha_nacimiento', 'idVinculo', 'idEstadoCivil', 'ocupacion',
             'fecha_registro', 'estacion_registro', 'operador_registro', 
-            'fecha_modificacion', 'estacion_modificacion', 'operador_modificacion'
+            'fecha_modificacion','estado', 'estacion_modificacion', 'operador_modificacion'
         ]
     }
 
@@ -108,7 +109,8 @@ class ComposicionFamiliarModel:
             'operador_registro': data['operador_registro'],
             'fecha_modificacion': data['fecha_modificacion'],
             'estacion_modificacion': data['estacion_modificacion'],
-            'operador_modificacion': data['operador_modificacion']
+            'operador_modificacion': data['operador_modificacion'],
+            'estado': data['estado']
         }
         
         result = ComposicionFamiliarModel._execute_sp(
@@ -134,7 +136,8 @@ class ComposicionFamiliarModel:
             'ocupacion': data['ocupacion'],
             'fecha_modificacion': data['fecha_modificacion'],
             'estacion_modificacion': data['estacion_modificacion'],
-            'operador_modificacion': data['operador_modificacion']
+            'operador_modificacion': data['operador_modificacion'],
+            'estado': data['estado']
         }
         
         result = ComposicionFamiliarModel._execute_sp(

@@ -17,7 +17,7 @@ load_dotenv()
 TIMEZONE = os.getenv('APP_TIMEZONE', 'America/Lima')
 tz = pytz.timezone(TIMEZONE)
 
-class EmpleadoModel:
+class TercerosModel:
     @staticmethod
     def create_empleado(data, current_user, remote_addr):
         conn = get_db_connection()
@@ -35,7 +35,7 @@ class EmpleadoModel:
         
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
+                EXEC [Planilla].[sp_Terceros] 
                     @accion = 1,
                     @codEmpleado = ?, 
                     @idCondicionLaboral = ?, 
@@ -95,7 +95,7 @@ class EmpleadoModel:
 
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
+                EXEC [Planilla].[sp_Terceros] 
                     @accion = 2,
                     @idEmpleado = ?, 
                     @codEmpleado = ?, 
@@ -164,7 +164,7 @@ class EmpleadoModel:
             
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
+                EXEC [Planilla].[sp_Terceros] 
                     @accion = 4,  -- Action 4 for updating only personal data
                     @idEmpleado = ?, 
                     @apellido_paterno = ?, 
@@ -222,7 +222,7 @@ class EmpleadoModel:
         try:
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
+                EXEC [Planilla].[sp_Terceros] 
                     @accion = 3,
                     @estado = ?,
                     @cargo = ?,
@@ -494,7 +494,7 @@ class EmpleadoModel:
             cursor = conn.cursor()
             print(data)
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
+                EXEC [Planilla].[sp_Terceros] 
                 @accion = 6, 
                     @idEstado = ?, 
                     @idEmpleado = ?, 

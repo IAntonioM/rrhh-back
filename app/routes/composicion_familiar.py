@@ -21,6 +21,7 @@ def create_composicion_familiar():
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
     data = request.get_json()
+    
     success, message = ComposicionFamiliarModel.create_composicion_familiar(data, current_user, request.remote_addr)
     return jsonify({
         'success': success,
