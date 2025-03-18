@@ -357,7 +357,7 @@ class TercerosModel:
             cursor = conn.cursor()
             
             cursor.execute('''
-                EXEC [Planilla].[sp_DatosLaborales]
+                EXEC [Planilla].[sp_DatosLaborales_terceros]
                     @Accion = 5,
                     @idDatosPersonales = ?,
                     @flag_estado = ?,
