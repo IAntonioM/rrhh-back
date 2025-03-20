@@ -208,11 +208,15 @@ class TercerosModel:
             ))
 
             conn.commit()
-            return True, "Datos personales actualizados con éxito"
-        except Exception as e:
-            print(f"Error: {str(e)}")  # Debug: print error if the update fails
-            conn.rollback()
-            return False, f"Error al actualizar datos personales: {str(e)}"
+            return True, 'Datos Personales actualizados Correctamente'
+        
+        except pyodbc.ProgrammingError as e:
+            error_msg = str(e)
+            matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
+            return False, matches.group(1).strip() if matches else 'Error al registrar empleado'
+        
+        finally:
+            conn.close()
 
 
 
