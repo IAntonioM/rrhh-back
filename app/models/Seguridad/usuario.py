@@ -1,7 +1,7 @@
 import pyodbc
 import re
 from config import get_db_connection
-from ..utils.auditv2 import AuditFieldsv2
+from ...utils.auditv2 import AuditFieldsv2
 from werkzeug.security import generate_password_hash, check_password_hash
 class UsuarioModel:
     

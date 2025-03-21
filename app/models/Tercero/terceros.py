@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 from config import get_db_connection
 from ..utils.audit import AuditFields
-from ..utils.auditv2 import AuditFieldsv2
+from ...utils.auditv2 import AuditFieldsv2
 from ..utils.convertir_a_fecha_sql import convertir_a_fecha_sql
 import os
 from dotenv import load_dotenv
