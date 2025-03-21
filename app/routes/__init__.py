@@ -31,6 +31,7 @@ from app.routes.terceros import terceros_bp
 from app.routes.orden_servicio import orden_servicio_bp
 from app.routes.configuracion import configuraciones_bp
 from app.routes.ordenServicio import orden_servicio_bpv2
+from app.routes.reporte import reporte_blueprint
 
 # Función para registrar todas las rutas
 def register_blueprints(app):
@@ -65,4 +66,6 @@ def register_blueprints(app):
     app.register_blueprint(orden_servicio_bp, url_prefix='/api/orden-servicio')
     app.register_blueprint(configuraciones_bp, url_prefix='/api/configuracion')
     app.register_blueprint(orden_servicio_bpv2, url_prefix='/apiv2/orden-servicio')
+    app.register_blueprint(reporte_blueprint, url_prefix='/api/reporte')
+
 
