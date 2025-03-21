@@ -66,3 +66,12 @@ htmlcov/
 .nox/
 coverage.xml
 *.cover
+
+
+# Archivos de __pycache__ en carpetas específicas
+routes/__pycache__/
+request/__pycache__/
+models/__pycache__/
+config/__pycache__/
+templates/__pycache__/
+utils/__pycache__/
