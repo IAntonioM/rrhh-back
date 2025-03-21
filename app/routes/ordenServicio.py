@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models.ordenServicio import OrdenServicioModel
 from ..utils.error_handlers import handle_response
+from ..request.CreateOrdenServicioRequest import CreateOrdenServicioRequest
 
 orden_servicio_bpv2 = Blueprint('orden_servicio_bpv2', __name__)
 
@@ -14,7 +15,11 @@ def create_orden_servicio():
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
-    data = request.get_json()  # Get the data sent in the request body
+    data = request.get_json()
+    
+    valid_data, error_message = CreateOrdenServicioRequest.validate(data)
+    if not valid_data:
+        return jsonify({'success': False, 'message': error_message}), 409
     success, message = OrdenServicioModel.create_orden_servicio(data, current_user, request.remote_addr)
     return jsonify({
         'success': success,
@@ -48,6 +53,16 @@ def get_ordenes_servicio():
         'id_datos_personales': request.args.get('id_datos_personales') or None,
         'id_estado_servicio': request.args.get('id_estado_servicio') or None,
         'estado': request.args.get('estado') or None,
+        # Añadir filtros existentes adicionales
+        'id_tipo_presupuesto': request.args.get('id_tipo_presupuesto') or None,
+        'id_proceso_seleccion': request.args.get('id_proceso_seleccion') or None,
+        'concepto': request.args.get('concepto') or None,
+        # Nuevos filtros
+        'mes': request.args.get('mes') or None,
+        'dia': request.args.get('dia') or None,
+        'anio': request.args.get('anio') or None,
+        'dni': request.args.get('dni') or None,
+        'nombres': request.args.get('nombres') or None,
     }
     
     current_page = int(request.args.get('current_page', 1))

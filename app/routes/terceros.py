@@ -125,9 +125,9 @@ def update_datos(id):
     if updateTipo == 'dp':
         # Call method to update personal data
         success, message = TercerosModel.update_datosPersonales(data, current_user, request.remote_addr)
-    elif updateTipo == 'e':
+     # elif updateTipo == 'e':
         # Call method to update employee data
-        success, message = TercerosModel.update_empleado(data, current_user, request.remote_addr)
+       #   success, message = TercerosModel.update_empleado(data, current_user, request.remote_addr)
     else:
         return jsonify({
             'success': False,

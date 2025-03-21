@@ -4,7 +4,7 @@ from config import get_db_connection
 from ..utils.auditv2 import AuditFieldsv2
 
 class OrdenServicioModel:
-    SP_NAME = "[Terceros].[orden_servicio]"
+    SP_NAME = "[Terceros].[sp_orden_servicio]"
     ACTIONS = {
         "create": 1,
         "update": 2,
@@ -28,8 +28,12 @@ class OrdenServicioModel:
             'num_servicio', 'id_estado_servicio', 'cuadro_adq', 'nro_proc_select', 'id_orden_recepcion', 
             'fecha_recepcion', 'numero_contrato', 'fecha_contrato', 'doc_siaf', 'resumen_adq', 'id_concepto', 
             'justificacion_compra', 'id_osce', 'contenido_osce', 'id_moneda', 'tipo_cambio', 'igv_estado',
-            'fecha_orden', 'fecha_mejor_pago', 'num_cert_siga', 'monto', 'current_page', 'last_page', 
-            'per_page', 'total'
+            'fecha_orden', 'fecha_mejor_pago', 'num_cert_siga', 'monto', 
+            'MES', 'DIA', 'anio', 'DNI', 'proveedor_nombres',
+            # New fields
+            'centroCosto_nombre', 'cargo_nombre', 'concepto_servicio', 'estado_os',
+            # Pagination info
+            'current_page', 'last_page', 'per_page', 'total'
         ],
         "list_active": [
             'id', 'id_datos_personales', 'id_cargo', 'id_area', 'id_sede', 'id_banco', 'id_meta', 'num_cuenta',
@@ -43,7 +47,7 @@ class OrdenServicioModel:
             'num_servicio', 'id_estado_servicio', 'cuadro_adq', 'nro_proc_select', 'id_orden_recepcion', 
             'fecha_recepcion', 'numero_contrato', 'fecha_contrato', 'doc_siaf', 'resumen_adq', 'id_concepto', 
             'justificacion_compra', 'id_osce', 'contenido_osce', 'id_moneda', 'tipo_cambio', 'igv_estado',
-            'fecha_orden', 'fecha_mejor_pago', 'num_cert_siga', 'monto'
+            'fecha_orden', 'fecha_mejor_pago', 'num_cert_siga', 'monto','proovedor_nombres'
         ]
     }
 
@@ -170,9 +174,9 @@ class OrdenServicioModel:
     @staticmethod
     def update_orden_servicio(data, current_user, remote_addr):
         data = OrdenServicioModel._prepare_audit_data(data, current_user, remote_addr)
-        
+    
         params = {
-            'id': data['id'], 
+            'id': data['id'],  # Este es obligatorio, es el ID de la orden de servicio
             'id_datos_personales': data['id_datos_personales'], 
             'id_cargo': data.get('id_cargo'),
             'id_area': data.get('id_area'),
@@ -183,8 +187,7 @@ class OrdenServicioModel:
             'descripcion': data.get('descripcion'),
             'fecha_inicio': data.get('fecha_inicio'),
             'fecha_termino': data.get('fecha_termino'),
-            'estado': data.get('estado'),
-            # Adding missing parameters
+            'estado': data.get('estado'),  # Si se quiere actualizar el estado, se mantiene
             'id_tipo_presupuesto': data.get('id_tipo_presupuesto'),
             'id_proceso_seleccion': data.get('id_proceso_seleccion'),
             'id_tipo_operacion': data.get('id_tipo_operacion'),
@@ -192,10 +195,33 @@ class OrdenServicioModel:
             'id_tipo_consumo': data.get('id_tipo_consumo'),
             'numero_certificacion_siga': data.get('numero_certificacion_siga'),
             'concepto': data.get('concepto'),
-            # End of missing parameters
+            
+            # Campos adicionales
             'fecha_modificacion': data.get('fecha_modificacion'),
             'estacion_modificacion': data.get('estacion_modificacion'),
-            'operador_modificacion': data.get('operador_modificacion')
+            'operador_modificacion': data.get('operador_modificacion'),
+            
+            'num_servicio': data.get('num_servicio'),
+            'id_estado_servicio': data.get('id_estado_servicio'),
+            'cuadro_adq': data.get('cuadro_adq'),
+            'nro_proc_select': data.get('nro_proc_select'),
+            'id_orden_recepcion': data.get('id_orden_recepcion'),
+            'fecha_recepcion': data.get('fecha_recepcion'),
+            'numero_contrato': data.get('numero_contrato'),
+            'fecha_contrato': data.get('fecha_contrato'),
+            'doc_siaf': data.get('doc_siaf'),
+            'resumen_adq': data.get('resumen_adq'),
+            'id_concepto': data.get('id_concepto'),
+            'justificacion_compra': data.get('justificacion_compra'),
+            'id_osce': data.get('id_osce'),
+            'contenido_osce': data.get('contenido_osce'),
+            'id_moneda': data.get('id_moneda'),
+            'tipo_cambio': data.get('tipo_cambio'),
+            'igv_estado': data.get('igv_estado'),
+            'fecha_orden': data.get('fecha_orden'),
+            'fecha_mejor_pago': data.get('fecha_mejor_pago'),
+            'num_cert_siga': data.get('num_cert_siga'),
+            'monto': data.get('monto')
         }
         
         result = OrdenServicioModel._execute_sp(
@@ -205,6 +231,7 @@ class OrdenServicioModel:
         
         return result if isinstance(result, tuple) else (True, 'Orden de servicio actualizada con éxito')
 
+
     @staticmethod
     def get_ordenes_servicio_filter(filtros, current_page, per_page):
         params = {
@@ -213,17 +240,23 @@ class OrdenServicioModel:
             'id_datos_personales': filtros.get('id_datos_personales', None),
             'id_estado_servicio': filtros.get('id_estado_servicio', None),
             'estado': filtros.get('estado', None),
-            # Add missing filter parameters
+            # Añadir filtros existentes adicionales
             'id_tipo_presupuesto': filtros.get('id_tipo_presupuesto', None),
             'id_proceso_seleccion': filtros.get('id_proceso_seleccion', None),
             'concepto': filtros.get('concepto', None),
-            # End of missing filter parameters
+            # Nuevos filtros
+            'mes': filtros.get('mes', None),
+            'dia': filtros.get('dia', None),
+            'anio': filtros.get('anio', None),
+            'dni': filtros.get('dni', None),
+            'nombres': filtros.get('nombres', None),
+            # Parámetros de paginación
             'current_page': current_page,
             'per_page': per_page
         }
         
         result = OrdenServicioModel._execute_sp(
-            OrdenServicioModel.ACTIONS["list"], 
+            OrdenServicioModel.ACTIONS["list"],
             params,
             fetch=True
         )
