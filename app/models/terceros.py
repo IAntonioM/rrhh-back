@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 from config import get_db_connection
 from ..utils.audit import AuditFields
-from ...utils.auditv2 import AuditFieldsv2
+from ..utils.auditv2 import AuditFieldsv2
 from ..utils.convertir_a_fecha_sql import convertir_a_fecha_sql
 import os
 from dotenv import load_dotenv
@@ -17,7 +17,7 @@ load_dotenv()
 TIMEZONE = os.getenv('APP_TIMEZONE', 'America/Lima')
 tz = pytz.timezone(TIMEZONE)
 
-class EmpleadoModel:
+class TercerosModel:
     @staticmethod
     def create_empleado(data, current_user, remote_addr):
         conn = get_db_connection()
@@ -35,7 +35,7 @@ class EmpleadoModel:
         
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
+                EXEC [Planilla].[sp_Terceros] 
                     @accion = 1,
                     @codEmpleado = ?, 
                     @idCondicionLaboral = ?, 
@@ -95,7 +95,7 @@ class EmpleadoModel:
 
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
+                EXEC [Planilla].[sp_Terceros] 
                     @accion = 2,
                     @idEmpleado = ?, 
                     @codEmpleado = ?, 
@@ -164,7 +164,7 @@ class EmpleadoModel:
             
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
+                EXEC [Planilla].[sp_Terceros] 
                     @accion = 4,  -- Action 4 for updating only personal data
                     @idEmpleado = ?, 
                     @apellido_paterno = ?, 
@@ -226,89 +226,73 @@ class EmpleadoModel:
         try:
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
+                EXEC [Planilla].[sp_Terceros] 
                     @accion = 3,
-                    @estado = ?,
-                    @cargo = ?,
                     @dni = ?,
-                    @condicionLaboral = ?,
                     @nombreApellido = ?,
                     @centroCosto = ?,
                     @current_page = ?,
                     @per_page = ?
             ''', (
-                filtros.get('estado', None), 
-                filtros.get('cargo', None), 
-                filtros.get('dni', None), 
-                filtros.get('condicionLaboral', None),
+                filtros.get('dni', None),
                 filtros.get('nombreApellido', None), 
                 filtros.get('centroCosto', None), 
                 current_page, 
                 per_page
             ))
-
+            
             empleados = cursor.fetchall()
-
-            # Convertir los resultados a una lista de diccionarios
+            
+            # Convertir los resultados a una lista de diccionarios según la estructura real
             return [{
-                # Datos de la tabla de empleados
-                'idEmpleado': e[0],
-                'codEmpleado': e[1],
-                'fecha_ingreso': e[2],
-                'fecha_cese': e[3],
-                'fecha_suspension': e[4],
-                'fecha_reingreso': e[5],
-                'idEstado': e[6],
-                'idMeta': e[7],
-                'descMeta': e[8],
-
-                # Datos de DatosPersonales
-                'idDatosPersonales': e[9],
-                'apellido_paterno': e[10],
-                'apellido_materno': e[11],
-                'nombres': e[12],
-                'dni': e[13],
-                'telefono_fijo': e[14],
-                'celular': e[15],
-                'email': e[16],
-                'ruc': e[17],
-                'idSexo': e[18],
-                'idDistrito': e[19],
-                'fecha_nacimiento': e[20],
-                'direccion': e[21],
-                'foto': e[22],
-
-                # Datos de tblCentroCosto (nombre del centro de costo)
-                'centroCosto_nombre': e[23],
-
-                # Datos de tblCondicionLaboral (nombre de la condición laboral)
-                'condicionLaboral_nombre': e[24],
-
-                # Datos de tblCargo (nombre del cargo)
-                'cargo_nombre': e[25],
-
-                # Estado de empleado
-                'estado': e[26],
-
-                # Información de paginación
-                'current_page': e[27],
-                'last_page': e[28],
-                'per_page': e[29],
-                'total': e[30],
-
-                # Relaciones adicionales
-                'idCargo': e[31],
-                'idCondicionLaboral': e[32],
-                'idCentroCosto': e[33],
-                'idEstadoCivil':e[34]
-            } for e in empleados]
-
-
+            # Datos de DatosPersonales
+            'idDatosPersonales': e[0],
+            'apellido_paterno': e[1],
+            'apellido_materno': e[2],
+            'nombres': e[3],
+            'dni': e[4],
+            'telefono_fijo': e[5],
+            'celular': e[6],
+            'email': e[7],
+            'ruc': e[8],
+            'idSexo': e[9],
+            'idDistrito': e[10],
+            'fecha_nacimiento': e[11],
+            'direccion': e[12],
+            'foto': e[13],
+            
+            # Datos de tblCentroCosto (nombre del centro de costo)
+            'centroCosto_nombre': e[14],
+            
+            # Datos de tblCargo (nombre del cargo)
+            'cargo_nombre': e[15],
+            
+            # Estado  
+            'estado': e[16],
+            
+            # IDs relacionados
+            'id_cargo': e[17],
+            'centroCosto_id': e[18],
+            'idEstadoCivil': e[19],
+            
+            # Campos adicionales según el procedimiento SQL
+            'num_servicio': e[20],
+            'id_estado_servicio': e[21],
+            'concepto_servicio': e[22],
+            'estado_os': e[23],
+            
+            # Información de paginación
+            'current_page': e[24] if len(e) > 24 else current_page,
+            'last_page': e[25] if len(e) > 25 else 1,
+            'per_page': e[26] if len(e) > 26 else per_page,
+            'total': e[27] if len(e) > 27 else len(empleados)
+        } for e in empleados]
+            
         except pyodbc.ProgrammingError as e:
             error_msg = str(e)
             matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
             return {'error': matches.group(1).strip() if matches else 'Error al obtener empleados'}
-        
+            
         finally:
             conn.close()
 
@@ -361,7 +345,7 @@ class EmpleadoModel:
             cursor = conn.cursor()
             
             cursor.execute('''
-                EXEC [Planilla].[sp_DatosLaborales]
+                EXEC [Planilla].[sp_DatosLaborales_terceros]
                     @Accion = 5,
                     @idDatosPersonales = ?,
                     @flag_estado = ?,
@@ -498,7 +482,7 @@ class EmpleadoModel:
             cursor = conn.cursor()
             print(data)
             cursor.execute('''
-                EXEC [Planilla].[sp_Empleados] 
+                EXEC [Planilla].[sp_Terceros] 
                 @accion = 6, 
                     @idEstado = ?, 
                     @idEmpleado = ?, 

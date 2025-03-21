@@ -39,7 +39,7 @@ class ReporteService:
         """Verifica si la plantilla existe"""
         return os.path.exists(os.path.join(self.template_dir, plantilla_nombre))
     
-    def generar_pdf(self, plantilla_nombre, parametros, datos):
+    def generar_pdf(self, plantilla_nombre, parametros, datos,usuario_current):
         """
         Genera un PDF usando WeasyPrint basado en una plantilla HTML y datos
         """
@@ -49,6 +49,7 @@ class ReporteService:
         # Renderizar la plantilla con los datos
         html_content = template.render(
             datos=datos,
+            usuario_current=usuario_current,
             parametros=parametros,
             fecha_generacion=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         )

@@ -1,17 +1,25 @@
 # controllers/reporte_controller.py
 from flask import Blueprint, request, send_file, jsonify
 from app.services.reporte  import ReporteService
+from ..models.usuario  import UsuarioModel
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 reporte_blueprint = Blueprint('reporte', __name__)
 reporte_service = ReporteService()
 
 
 @reporte_blueprint.route('', methods=['POST'])
+@jwt_required()
 def generar_reporte():
     try:
+        current_user = get_jwt_identity()
+        if not current_user:
+            return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
         # Obtener datos del cuerpo de la solicitud
         data = request.json or {}
-        
+        # Buscar la información del usuario en la base de datos
+        filtros = {'username': current_user}
+        usuario_current = UsuarioModel.get_usuarios_filter(filtros, current_page=1, per_page=1)
         # Extraer la información estructurada
         plantilla_nombre = data.pop('plantilla', 'default.html')
         params_str = data.pop('params', '')
@@ -41,7 +49,7 @@ def generar_reporte():
         
         # Generar el PDF
         output_file, download_name = reporte_service.generar_pdf(
-            plantilla_nombre, parametros, datos
+            plantilla_nombre, parametros, datos, usuario_current
         )
         
         # Enviar el archivo PDF al cliente
