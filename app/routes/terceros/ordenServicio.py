@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ...models.terceros.ordenServicio import OrdenServicioModel
 from ...utils.error_handlers import handle_response
-from ...request.CreateOrdenServicioRequest import CreateOrdenServicioRequest
+from ...request.terceros.CreateOrdenServicioRequest import CreateOrdenServicioRequest
 
 orden_servicio_bpv2 = Blueprint('orden_servicio_bpv2', __name__)
 

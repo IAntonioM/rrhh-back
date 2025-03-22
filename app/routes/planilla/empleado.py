@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ...models.planilla.empleado import EmpleadoModel  # Modelo Empleado
-from ...request.CreateEmpleadoRequest import CreateEmpleadoRequest
+from ...request.empleado.CreateEmpleadoRequest import CreateEmpleadoRequest
 from ...utils.error_handlers import handle_response
 import re
 import uuid
