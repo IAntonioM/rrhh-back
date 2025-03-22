@@ -166,7 +166,6 @@ class TercerosModel:
             cursor.execute('''
                 EXEC [Planilla].[sp_Terceros] 
                     @accion = 4,  -- Action 4 for updating only personal data
-                    @idEmpleado = ?, 
                     @apellido_paterno = ?, 
                     @apellido_materno = ?, 
                     @nombres = ?, 
@@ -183,10 +182,10 @@ class TercerosModel:
                     @foto = ?, 
                     @fecha_act = ?, 
                     @estacion_act = ?, 
-                    @operador_act = ?, 
-                    @idCondicionLaboral = ?
+                    @operador_act = ? , 
+                    @idDatosPersonales = ?
+                           
             ''', (
-                data['idEmpleado'], 
                 data['apellido_paterno'], 
                 data['apellido_materno'], 
                 data['nombres'], 
@@ -204,7 +203,7 @@ class TercerosModel:
                 data['fecha_act'], 
                 data['estacion_act'], 
                 data['operador_act'], 
-                data['idCondicionLaboral']
+                data['idDatosPersonales']
             ))
 
             conn.commit()
@@ -213,7 +212,7 @@ class TercerosModel:
         except pyodbc.ProgrammingError as e:
             error_msg = str(e)
             matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
-            return False, matches.group(1).strip() if matches else 'Error al registrar empleado'
+            return False, matches.group(1).strip() if matches else 'Error al registrar empleado'+error_msg
         
         finally:
             conn.close()

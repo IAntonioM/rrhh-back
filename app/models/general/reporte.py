@@ -1,17 +1,29 @@
 import pyodbc
 import re
 from config import get_db_connection
-
 class ReporteModel:
+    # Mapeo de plantillas a procedimientos
+    plantilla_to_procedure = {
+        'default.html': 'sp_GenerarReporte',
+        'orden_servicio.html': 'sp_GenerarReporte',
+        'plantilla3.html': 'sp_GenerarReporte3',
+        # Puedes seguir agregando más plantillas y procedimientos aquí
+    }
+
     @staticmethod
-    def ejecutar_procedimiento_reporte(parametros):
+    def ejecutar_procedimiento_reporte(parametros, plantilla_nombre):
         """
-        Ejecuta un procedimiento almacenado para generar datos de reporte
-        con número dinámico de parámetros
+        Ejecuta un procedimiento almacenado basado en la plantilla
         """
         conn = get_db_connection()
         try:
             cursor = conn.cursor()
+            
+            # Determinar el procedimiento almacenado basado en la plantilla
+            procedimiento = ReporteModel.plantilla_to_procedure.get(plantilla_nombre)
+            
+            if not procedimiento:
+                raise Exception(f"No hay procedimiento definido para la plantilla {plantilla_nombre}")
             
             # Preparar los parámetros para el procedimiento
             params = []
@@ -26,7 +38,7 @@ class ReporteModel:
                     param_placeholders.append(f"@{key} = ?")
             
             # Construir la llamada al procedimiento
-            proc_call = f"EXEC [dbo].[sp_GenerarReporte] {', '.join(param_placeholders)}"
+            proc_call = f"EXEC [dbo].[{procedimiento}] {', '.join(param_placeholders)}"
             
             # Ejecutar el procedimiento
             cursor.execute(proc_call, params)

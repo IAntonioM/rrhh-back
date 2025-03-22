@@ -26,7 +26,7 @@ from werkzeug.utils import secure_filename
 empleado_bp = Blueprint('empleado', __name__)
 
 def save_employee_image(file):
-    upload_folder = os.path.join('personal', 'usuario_img')
+    upload_folder = os.path.join('app','storage', 'img_perfil')
     os.makedirs(upload_folder, exist_ok=True)
 
     filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}"
@@ -35,33 +35,7 @@ def save_employee_image(file):
     
     file.save(filepath)
 
-    return os.path.join('personal', 'usuario_img', secure_filename_result)
-
-
-# @empleado_bp.route('/create', methods=['POST'])
-# @jwt_required()
-# @handle_response
-# def create_empleado():
-#     current_user = get_jwt_identity()
-#     if not current_user:
-#         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-    
-#     # Check if file is present
-#     if 'foto_img' not in request.files:
-#         return jsonify({'success': False, 'message': 'No se proporcionó imagen'}), 400
-    
-#     file = request.files['foto_img']
-#     data = request.form.to_dict()
-    
-#     # Save image and update data
-#     if file:
-#         data['foto'] = save_employee_image(file, data.get('dni', 'unknown'))
-    
-#     success, message = EmpleadoModel.create_empleado(data, current_user, request.remote_addr)
-#     return jsonify({
-#         'success': success,
-#         'message': message
-#     }), 201 if success else 409
+    return os.path.join('app','storage', 'img_perfil', secure_filename_result)
 
 
 @empleado_bp.route('/imagen', methods=['POST'])

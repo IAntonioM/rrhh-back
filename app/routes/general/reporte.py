@@ -45,7 +45,7 @@ def generar_reporte():
             return jsonify({'error': f'Plantilla {plantilla_nombre} no encontrada'}), 404
             
         # Ejecutar el procedimiento almacenado con los parámetros
-        datos = reporte_service.ejecutar_procedimiento(parametros)
+        datos = reporte_service.ejecutar_procedimiento(parametros, plantilla_nombre)
         
         # Generar el PDF
         output_file, download_name = reporte_service.generar_pdf(

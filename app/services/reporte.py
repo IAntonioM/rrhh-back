@@ -10,9 +10,9 @@ class ReporteService:
     def __init__(self):
         # Rutas de directorios
         self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.template_dir = os.path.join(self.base_dir, 'templates')
-        self.static_dir = os.path.join(self.base_dir, 'static')
-        self.output_dir = os.path.join(self.base_dir, 'output')
+        self.template_dir = os.path.join(self.base_dir, 'storage','templates')
+        self.static_dir = os.path.join(self.base_dir, 'storage','templates','static')
+        self.output_dir = os.path.join(self.base_dir, 'storage','temp_pdf')
         
         # Asegurarnos que los directorios existan
         os.makedirs(self.template_dir, exist_ok=True)
@@ -24,11 +24,11 @@ class ReporteService:
             loader=jinja2.FileSystemLoader(self.template_dir)
         )
     
-    def ejecutar_procedimiento(self, parametros):
+    def ejecutar_procedimiento(self, parametros, plantilla_nombre):
         """
-        Ejecuta el procedimiento almacenado a través del modelo
+        Ejecuta el procedimiento almacenado asociado a la plantilla
         """
-        success, result = ReporteModel.ejecutar_procedimiento_reporte(parametros)
+        success, result = ReporteModel.ejecutar_procedimiento_reporte(parametros, plantilla_nombre)
         
         if not success:
             raise Exception(result)  # Propagar el error con el mensaje del SQL Server

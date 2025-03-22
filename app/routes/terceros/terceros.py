@@ -115,10 +115,10 @@ def update_datos(id):
         }), 409
 
     # Validate that idEmpleado is present
-    if not data.get('idEmpleado'):
+    if not data.get('idDatosPersonales'):
         return jsonify({
             'success': False,
-            'message': 'El ID del empleado es obligatorio'
+            'message': 'El ID del PErsonal es obligatorio'
         }), 409
 
     # Handle update based on 'updateTipo'
