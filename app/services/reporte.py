@@ -4,7 +4,7 @@ import tempfile
 from datetime import datetime
 import jinja2
 from weasyprint import HTML, CSS
-from ..models.reporte import ReporteModel
+from ..models.general.reporte import ReporteModel
 
 class ReporteService:
     def __init__(self):
