@@ -6,3 +6,5 @@ python-dotenv
 pytz
 jinja2
 weasyprint
+pandas
+xlsxwriter

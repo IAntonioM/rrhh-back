@@ -38,7 +38,8 @@ class ReporteModel:
                     param_placeholders.append(f"@{key} = ?")
             
             # Construir la llamada al procedimiento
-            proc_call = f"EXEC [dbo].[{procedimiento}] {', '.join(param_placeholders)}"
+            proc_call = f"EXEC {procedimiento} {', '.join(param_placeholders)}"
+            print(proc_call)
             
             # Ejecutar el procedimiento
             cursor.execute(proc_call, params)
@@ -58,5 +59,50 @@ class ReporteModel:
             error_detail = matches.group(1).strip() if matches else 'Error al ejecutar procedimiento'
             return False, error_detail
             
+        finally:
+            conn.close()
+            
+    @staticmethod
+    def ejecutar_procedimiento_reporte_excel(parametros, procedure_name):
+        """
+        Ejecuta un procedimiento almacenado con parámetros dinámicos
+        """
+        conn = get_db_connection()
+        try:
+            cursor = conn.cursor()
+
+            # Preparar los parámetros para el procedimiento
+            params = []
+            param_placeholders = []
+
+            # Excluir parámetros específicos si es necesario
+            excluded_params = ['plantilla', 'version']
+
+            for key, value in parametros.items():
+                if key not in excluded_params:
+                    params.append(value)
+                    param_placeholders.append(f"@{key} = ?")
+
+            # Construir la llamada al procedimiento
+            proc_call = f"EXEC {procedure_name} {', '.join(param_placeholders)}"
+            print(proc_call)
+            # Ejecutar el procedimiento
+            cursor.execute(proc_call, params)
+
+            # Obtener los resultados
+            columns = [column[0] for column in cursor.description]
+            results = []
+
+            print("FIN1111")
+            for row in cursor.fetchall():
+                results.append(dict(zip(columns, row)))
+        
+            return True, results
+        except pyodbc.Error as e:
+            error_msg = str(e)
+            matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
+            error_detail = matches.group(1).strip() if matches else 'Error al ejecutar procedimiento'
+            return False, error_detail
+
         finally:
             conn.close()

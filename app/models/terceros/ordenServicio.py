@@ -11,7 +11,7 @@ class OrdenServicioModel:
         "list": 3,
         "change_status": 4,
         "delete": 5,
-        "list_active": 6
+        
     }
     
     # Mapeo de columnas para cada tipo de consulta
@@ -264,10 +264,12 @@ class OrdenServicioModel:
         return OrdenServicioModel._map_result_to_dict(result, "list")
 
     @staticmethod
-    def change_orden_servicio_status(id, estado, current_user, remote_addr):
+    def change_orden_servicio_status(num_service, current_user, remote_addr, estado):
         params = {
-            'id': id,
-            'estado': estado
+            'estacion_modificacion': remote_addr,
+            'operador_modificacion': current_user,
+            'num_servicio': num_service,  # Make sure this is the primary identifier
+            'estado': estado,
         }
         
         result = OrdenServicioModel._execute_sp(
@@ -278,17 +280,33 @@ class OrdenServicioModel:
         return result if isinstance(result, tuple) else (True, 'Estado de la orden de servicio actualizado con éxito')
 
     @staticmethod
-    def delete_orden_servicio(id, current_user, remote_addr):
+    def delete_orden_servicio(num_service, current_user, remote_addr, estado):
+        # Explicitly log or print the parameters to verify they're correct
+        print(f"Delete Params: num_service={num_service}, current_user={current_user}, remote_addr={remote_addr}, estado={estado}")
+
         params = {
-            'id': id
+            'num_servicio': num_service,  # Make sure this is the primary identifier
+            'estado': estado,
+            'estacion_modificacion': remote_addr,
+            'operador_modificacion': current_user,
         }
         
-        result = OrdenServicioModel._execute_sp(
-            OrdenServicioModel.ACTIONS["delete"], 
-            params
-        )
+        try:
+            result = OrdenServicioModel._execute_sp(
+                OrdenServicioModel.ACTIONS["delete"], 
+                params
+            )
+            
+            # Add more detailed error checking
+            if result is None:
+                return False, "No se pudo eliminar la orden de servicio"
+            
+            return result if isinstance(result, tuple) else (True, 'Orden de servicio eliminada con éxito')
         
-        return result if isinstance(result, tuple) else (True, 'Orden de servicio eliminada con éxito')
+        except Exception as e:
+            # Log the full exception for debugging
+            print(f"Error in delete_orden_servicio: {str(e)}")
+            return False, f"Error al eliminar la orden de servicio: {str(e)}"
 
     @staticmethod
     def get_active_ordenes_servicio():

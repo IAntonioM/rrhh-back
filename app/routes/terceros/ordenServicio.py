@@ -75,28 +75,55 @@ def get_ordenes_servicio():
     }), 200
 
 # Route to get a single order service by its ID
-@orden_servicio_bpv2.route('/<int:id>', methods=['GET'])
-@jwt_required()
-@handle_response
-def get_orden_servicio(id):
-    orden_servicio = OrdenServicioModel.get_orden_servicio(id)
-    if not orden_servicio:
-        return jsonify({'success': False, 'message': 'Orden de servicio no encontrada'}), 404
-    return jsonify({
-        'success': True,
-        'data': orden_servicio
-    }), 200
-
+# @orden_servicio_bpv2.route('/<int:id>', methods=['GET'])
+# @jwt_required()
+# @handle_response
+# def get_orden_servicio(id):
+#     orden_servicio = OrdenServicioModel.get_orden_servicio(id)
+#     if not orden_servicio:
+#         return jsonify({'success': False, 'message': 'Orden de servicio no encontrada'}), 404
+#     return jsonify({
+#         'success': True,
+#         'data': orden_servicio
+#     }), 200
+    
 # Route to delete an order service by its ID
-@orden_servicio_bpv2.route('/delete/<int:id>', methods=['DELETE'])
+@orden_servicio_bpv2.route('/<string:num_service>/<string:estado>/estado', methods=['PATCH'])
 @jwt_required()
 @handle_response
-def delete_orden_servicio(id):
+def finalizar_orden_servicio(estado, num_service):
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
-    success, message = OrdenServicioModel.delete_orden_servicio(id, current_user, request.remote_addr)
+    success, message = OrdenServicioModel.change_orden_servicio_status(
+        
+        estado ,
+        current_user, 
+        request.remote_addr, 
+        num_service, )
+    return jsonify({
+        'success': success,
+        'message': message
+    }), 200 if success else 409
+
+@orden_servicio_bpv2.route('/<string:num_service>/<string:estado>/delete', methods=['PATCH'])
+@jwt_required()
+@handle_response
+def delete_orden_servicio(estado, num_service):
+    current_user = get_jwt_identity()
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+    print('estado'+estado)
+    print('os'+num_service)
+    success, message = OrdenServicioModel.delete_orden_servicio(
+        
+        estado ,
+        current_user, 
+        request.remote_addr, 
+        num_service, 
+    )
+    
     return jsonify({
         'success': success,
         'message': message

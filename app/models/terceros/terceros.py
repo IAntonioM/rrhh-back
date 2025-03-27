@@ -230,12 +230,14 @@ class TercerosModel:
                     @dni = ?,
                     @nombreApellido = ?,
                     @centroCosto = ?,
+                    @estado = ?,
                     @current_page = ?,
                     @per_page = ?
             ''', (
                 filtros.get('dni', None),
                 filtros.get('nombreApellido', None), 
                 filtros.get('centroCosto', None), 
+                filtros.get('estado', None), 
                 current_page, 
                 per_page
             ))
@@ -284,7 +286,8 @@ class TercerosModel:
             'current_page': e[24] if len(e) > 24 else current_page,
             'last_page': e[25] if len(e) > 25 else 1,
             'per_page': e[26] if len(e) > 26 else per_page,
-            'total': e[27] if len(e) > 27 else len(empleados)
+            'total': e[27] if len(e) > 27 else len(empleados),
+            'estado_descripcion': e[28],
         } for e in empleados]
             
         except pyodbc.ProgrammingError as e:

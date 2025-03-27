@@ -1,0 +1,23 @@
+{
+    "procedure_name": "Terceros.sp_orden_servicio",
+    "filename_template": "Reporte_Orden_Servicio_{fecha}.xlsx",
+    "columns": {
+        "num_servicio": "Nro O/S",
+        "DNI": "DNI",
+        "proveedor_nombres": "Proveedor",
+        "concepto_servicio": "Concepto",
+        "estado_os": "Estado O/S",
+        "fecha_orden": "Fecha O/S"
+    },
+
+    "column_formats": {
+
+    },
+    "styles": {
+        "header": {
+            "bold": true,
+            "bg_color": "#2ea2cc",
+            "font_color": "white"
+        }
+    }
+}
