@@ -1,13 +1,12 @@
 {
-    "procedure_name": "Locadores.sp_registro_locadores",
+    "procedure_name": "Locadores.sp_registro_locadores_reporte",
     "filename_template": "Reporte_locadores_general_{fecha}.xlsx",
     "columns": {
-        "locador_dni": "locador_dni",
-        "locador_nombres": "locador_nombres",
-        "locador_sexo": "locador_sexo",
-        "area_nombre": "area_nombre",
-        "cargo_nombre": "cargo_nombre",
-        "monto": "monto"
+        "DNI": "DNI",
+        "locador_nombres": "Locador",
+        "centroCosto_nombre": "Area",
+        "cargo_nombre": "Cargo",
+        "monto": "Monto"
     },
 
     "column_formats": {
