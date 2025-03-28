@@ -217,67 +217,97 @@
         <span class="label">Concepto:</span> {{ datos[0].concepto_nombre }}
     </div>
 
-    <table>
+    <table style="text-align: center; width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="text-align: center;">Código</th>
+            <th style="text-align: center;">Unid. Med.</th>
+            <th style="text-align: center;">Descripción</th>
+            <th style="text-align: center; padding: 10px;">Valor Total S/</th>
+        </tr>
+    </thead>
+    <tbody style="min-height: 400px; height: auto;">
+        <tr>
+            <td>
+                {% for item in datos %}
+                    {{ item.id_concepto }}
+                {% endfor %}
+                <br><br><br><br><br>
+            </td>
+            <td>
+                {% for item in datos %}
+                    SERVICIO<br>
+                {% endfor %}
+                <br><br><br><br><br>
+            </td>
+            <td>
+                {% for item in datos %}
+                    {{ item.concepto_nombre }}<br>
+                {% endfor %}
+                <br><br><br><br><br>
+            </td>
+            <td style="text-align: right;">
+                {% for item in datos %}
+                    {{ item.monto }}<br>
+                {% endfor %}
+                <br><br><br><br><br>
+            </td>
+        </tr>
+        <tr class="total-row">
+            <td colspan="3" style="text-align: center; font-weight: bold;">TOTAL S/</td>
+            <td style="text-align: right; font-weight: bold;">
+                {{ datos | sum(attribute='monto') }}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+     
+
+<div>
+    <table style="width: 100%; text-align: center; border-collapse: collapse;">
         <thead>
             <tr>
-                <th>Código</th>
-                <th>Unid. Med.</th>
-                <th>Descripción</th>
-                <th>Valor Total S/</th>
+                <th colspan="5" style="font-weight: bold; text-align: center; background-color: #f2f2f2;">
+                    AFECTACIÓN PRESUPUESTAL
+                </th>
+            </tr>
+            <tr>
+                <th>Meta/ Mnemónico</th>
+                <th>Cadena Funcional</th>
+                <th>FF/Rb</th>
+                <th>Clasif. Gasto</th>
+                <th>Monto S/</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>{{ datos[0].id_concepto }}</td>
-                <td>SERVICIO</td>
-                <td>{{ datos[0].concepto_nombre }}</td>
-                <td style="text-align: right;">{{ datos[0].monto }}</td>
-            </tr>
-            <tr class="total-row">
-                <td colspan="3">TOTAL S/</td>
-                <td style="text-align: right;">{{ datos[0].monto }}</td>
+                <td>{{ datos[0].id_meta }}<br><br><br><br><br><br><br><br><br><br><br><br><br></td>
+                <td>
+                    03.007.0013.9002.3999999.5000409
+                    <br><br>
+                    {{ datos[0].nombres }} {{ datos[0].apellido_paterno }} {{ datos[0].apellido_materno }}
+                    <br><br>
+                    DNI: {{ datos[0].dni }}
+                    <br><br>
+                    {{ datos[0].dia_actual }}/{{ datos[0].mes_actual }}/{{ datos[0].anio_actual }}
+                    <br><br><br><br><br><br><br>
+                </td>
+                <td>5 - 08<br><br><br><br><br><br><br><br><br><br><br><br><br></td>
+                <td>2 3 2 9 1 1<br><br><br><br><br><br><br><br><br><br><br><br><br></td>
+                <td style="text-align: right;">{{ datos[0].monto }}<br><br><br><br><br><br><br><br><br><br><br><br><br></td>
             </tr>
         </tbody>
     </table>
+</div>
 
-    <div>
-        <div style="font-weight: bold;">AFECTACIÓN PRESUPUESTAL</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Meta/ Mnemónico</th>
-                    <th>Cadena Funcional</th>
-                    <th>FF/Rb</th>
-                    <th>Clasif. Gasto</th>
-                    <th>Monto S/</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{ datos[0].id_meta }}</td>
-                    <td>03.007.0013.9002.3999999.5000409</td>
-                    <td>5 - 08</td>
-                    <td>2 3 2 9 1 1</td>
-                    <td style="text-align: right;">{{ datos[0].monto }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 
-    <div class="firma-section">
-        <div class="firma">
-            <div class="firma-linea">Firma del Proveedor</div>
-            <div>{{ datos[0].nombres }} {{ datos[0].apellido_paterno }}</div>
-            <div>{{ datos[0].ruc }}</div>
-            <div>{{ datos[0].fecha_orden_f }}</div>
-        </div>
+  <!--  <div class="firma-section">
         <div class="firma">
             <div class="firma-linea">Jefe de Abastecimiento</div>
         </div>
-        <div class="sello">
-            <div style="border: 2px solid #000; width: 70px; height: 70px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 10px;">SELLO</div>
-        </div>
-    </div>
+
+    </div> -->
 
     <!-- Sección final optimizada para ahorrar espacio -->
     <div class="footer-section">
@@ -288,34 +318,47 @@
             </div>
             <div style="width: 30%; padding-left: 10px; border-left: 1px solid #000;">
                 <div><strong>RUC:</strong> 20131378175</div>
-                <div><strong>Fecha:</strong> Día: ___ Mes: ___ Año: ___</div>
+                
             </div>
         </div>
         
         
-        <table class="footer-table" style="width: 100%; border-collapse: collapse; margin-top: 5px;">
-            <tr>
-                <td style="width: 33%; border: 1px solid #000; padding: 3px; text-align: center; font-size: 10px;">
-                    <div>ELABORADO POR</div>
-                    <div style="margin-top: 15px; font-size: 10px;">
+
+        <table style="width: 100%; text-align: center; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>ELABORADO POR</th>
+                    <th>ORDENACIÓN DEL SERVICIO</th>
+                    <th>ORDENACIÓN DEL SERVICIO</th>
+                    <th>CONFORMIDAD DEL SERVICIO</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><br><br><br><br>
                         {{ usuario_current[0].nombres | upper }}
+                        <br><br><br><br></td>
+                    <td>
+                        <br><br>
+                        <br><br>
+                        <br><br>
+                        <br><br>
+                        RESPONSABLE DE ADQUISICIONES
+                    </td>
+                    <td style=""><br><br><br><br><br><br><br><br>RESPONSABLE DE ABASTECIMIENTO Y SERV. AUXILIARES</td>
+                    <td style="">
+                                
+                    <br><br><br><br><br><br><br>
+                
+                    <strong>Fecha:</strong>
+                    <br>
+                     Día: __ Mes: __ Año: __
                     </div>
-                    
                 </td>
-                <td style="width: 33%; border: 1px solid #000; padding: 3px; text-align: center; font-size: 10px;">
-                    <div>ORDENACIÓN DEL SERVICIO</div>
-                    <div style="margin-top: 15px; font-size: 10px;">
-                        <div>RESPONSABLE DE ADQUISICIONES</div>
-                    </div>
-                </td>
-                <td style="width: 33%; border: 1px solid #000; padding: 3px; text-align: center; font-size: 10px;">
-                    <div>CONFORMIDAD DEL SERVICIO</div>
-                    <div style="margin-top: 15px; font-size: 10px;">
-                        <div>RESPONSABLE DE ABASTECIMIENTO Y SERV. AUXILIARES</div>
-                    </div>
-                </td>
-            </tr>
+                </tr>
+            </tbody>
         </table>
+        
         
         <div class="nota-importante" style="margin-top: 5px; border: 1px solid #000; padding: 3px; font-size: 10px;">
             <div style="font-weight: bold;">NOTA IMPORTANTE:</div>

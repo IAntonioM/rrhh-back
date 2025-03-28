@@ -1,5 +1,5 @@
 {
-    "procedure_name": "Terceros.sp_orden_servicio",
+    "procedure_name": "Terceros.sp_orden_servicio_reporte",
     "filename_template": "Reporte_Orden_Servicio_{fecha}.xlsx",
     "columns": {
         "num_servicio": "Nro O/S",
