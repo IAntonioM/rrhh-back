@@ -17,7 +17,7 @@ class OrdenServicioModel:
     # Mapeo de columnas para cada tipo de consulta
     COLUMN_MAPPINGS = {
         "list": [
-            'id', 'id_datos_personales', 'id_cargo', 'id_area', 'id_sede', 'id_banco', 'id_meta', 'num_cuenta',
+            'id', 'id_datos_personales', 'id_cargo', 'idCentroCosto', 'id_sede', 'id_banco', 'id_meta', 'num_cuenta',
             'descripcion', 'fecha_inicio', 'fecha_termino', 'estado', 
             # Add missing fields to the mapping
             'id_tipo_presupuesto', 'id_proceso_seleccion', 'id_tipo_operacion', 'id_tipo_adquisicion', 
@@ -36,7 +36,7 @@ class OrdenServicioModel:
             'current_page', 'last_page', 'per_page', 'total'
         ],
         "list_active": [
-            'id', 'id_datos_personales', 'id_cargo', 'id_area', 'id_sede', 'id_banco', 'id_meta', 'num_cuenta',
+            'id', 'id_datos_personales', 'id_cargo', 'idCentroCosto', 'id_sede', 'id_banco', 'id_meta', 'num_cuenta',
             'descripcion', 'fecha_inicio', 'fecha_termino', 'estado', 
             # Add missing fields to the mapping
             'id_tipo_presupuesto', 'id_proceso_seleccion', 'id_tipo_operacion', 'id_tipo_adquisicion', 
@@ -117,7 +117,7 @@ class OrdenServicioModel:
         params = {
             'id_datos_personales': data['id_datos_personales'], 
             'id_cargo': data.get('id_cargo'),
-            'id_area': data.get('id_area'),
+            'idCentroCosto': data.get('idCentroCosto'),
             'id_sede': data.get('id_sede'),
             'id_banco': data.get('id_banco'),
             'id_meta': data.get('id_meta'),
@@ -179,7 +179,7 @@ class OrdenServicioModel:
             'id': data['id'],  # Este es obligatorio, es el ID de la orden de servicio
             'id_datos_personales': data['id_datos_personales'], 
             'id_cargo': data.get('id_cargo'),
-            'id_area': data.get('id_area'),
+            'idCentroCosto': data.get('idCentroCosto'),
             'id_sede': data.get('id_sede'),
             'id_banco': data.get('id_banco'),
             'id_meta': data.get('id_meta'),
