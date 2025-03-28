@@ -53,6 +53,7 @@ def generar_reporte():
             output_file, download_name = reporte_service.generar_pdf(
                 plantilla_nombre, parametros, datos, usuario_current
             )
+            content_type = 'application/pdf'
         
         elif tipo_reporte == 'excel':
             if not reporte_service.verificar_plantilla_excel(plantilla_nombre):
@@ -65,7 +66,7 @@ def generar_reporte():
                 usuario_current,
                 custom_title
             )
-        
+            content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         else:
             return jsonify({'error': 'Tipo de reporte no soportado'}), 400
 
@@ -73,7 +74,8 @@ def generar_reporte():
         return send_file(
             output_file,
             as_attachment=True,
-            download_name=download_name
+            download_name=download_name,
+            mimetype=content_type
         )
 
     except Exception as e:

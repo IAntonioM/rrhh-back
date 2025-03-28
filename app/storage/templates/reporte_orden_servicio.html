@@ -208,15 +208,18 @@
         <thead>
             <tr>
                 <th>Distrito</th>
+                <th>Cantidad</th>
                 <th>Monto Total</th>
             </tr>
         </thead>
         <tbody>
             {% for distrito, distrito_datos in distritos.items() %}
-                {% set distrito_total = distrito_datos | sum(attribute='monto') %}
+                {% set cantidad = distrito_datos | length %}
+                {% set monto_total = distrito_datos | sum(attribute='monto') %}
                 <tr>
                     <td>{{ distrito }}</td>
-                    <td>{{ distrito_total }}</td>
+                    <td>{{ cantidad }}</td>
+                    <td>{{ monto_total }}</td>
                 </tr>
             {% endfor %}
         </tbody>

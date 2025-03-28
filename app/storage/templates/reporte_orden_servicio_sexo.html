@@ -104,47 +104,48 @@
             {% set _ = sexos['No Registrado'].append(row) %}
         {% endif %}
     {% endfor %}
-
+    
     {% for sexo, sexo_datos in sexos.items() %}
-        {% if sexo_datos | length > 0 %}
-            <table>
-                <thead>
-                    <tr class="sexo-header">
-                        <th colspan="8">Sexo: {{ sexo }}</th>
-                    </tr>
+    {% if sexo_datos | length > 0 %}
+        <table>
+            <thead>
+                <tr class="sexo-header">
+                    <th colspan="8">Sexo: {{ sexo }}</th>
+                </tr>
+                <tr>
+                    <th>Nro</th> <!-- Cambié "Nro O/S" a "Nro" -->
+                    <th>DNI</th>
+                    <th>Proveedor</th>
+                    <th>Concepto</th>
+                    <th>Area</th>
+                    <th>Estado O/S</th>
+                    <th>Fecha O/S</th>
+                    <th>Monto</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set sexo_total = sexo_datos | sum(attribute='monto') %}
+                {% set cantidad_sexo = sexo_datos | length %} <!-- Calcular la cantidad de registros -->
+                {% for row in sexo_datos %}
                     <tr>
-                        <th>Nro O/S</th>
-                        <th>DNI</th>
-                        <th>Proveedor</th>
-                        <th>Concepto</th>
-                        <th>Area</th>
-                        <th>Estado O/S</th>
-                        <th>Fecha O/S</th>
-                        <th>Monto</th>
+                        <td>{{ loop.index }}</td> <!-- Agregado para mostrar el número de fila -->
+                        <td>{{ row.DNI }}</td>
+                        <td>{{ row.proveedor_nombres }}</td>
+                        <td>{{ row.concepto_servicio }}</td>
+                        <td>{{ row.centroCosto_nombre }}</td>
+                        <td>{{ row.estado_os }}</td>
+                        <td>{{ row.fecha_orden }}</td>
+                        <td>{{ row.monto | default(0) | float | round(2) }}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    {% set sexo_total = sexo_datos | sum(attribute='monto') %}
-                    {% for row in sexo_datos %}
-                        <tr>
-                            <td>{{ row.num_servicio }}</td>
-                            <td>{{ row.DNI }}</td>
-                            <td>{{ row.proveedor_nombres }}</td>
-                            <td>{{ row.concepto_servicio }}</td>
-                            <td>{{ row.centroCosto_nombre }}</td>
-                            <td>{{ row.estado_os }}</td>
-                            <td>{{ row.fecha_orden }}</td>
-                            <td>{{ row.monto | default(0) | float | round(2) }}</td>
-                        </tr>
-                    {% endfor %}
-                    <tr class="subtotal-row">
-                        <td colspan="7"><strong>Subtotal {{ sexo }}</strong></td>
-                        <td><strong>{{ sexo_total }}</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-        {% endif %}
-    {% endfor %}
+                {% endfor %}
+                <tr class="subtotal-row">
+                    <td colspan="7"><strong>Subtotal {{ sexo }} (Cantidad: {{ cantidad_sexo }})</strong></td>
+                    <td><strong>{{ sexo_total }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    {% endif %}
+{% endfor %}
     <table>
         <tbody>
             <tr class="grand-total-row">

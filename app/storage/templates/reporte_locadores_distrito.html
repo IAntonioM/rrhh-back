@@ -108,9 +108,10 @@
             <table>
                 <thead>
                     <tr class="distrito-header">
-                        <th colspan="5">Distrito: {{ distrito }}</th>
+                        <th colspan="6">Distrito: {{ distrito }}</th>
                     </tr>
                     <tr>
+                        <th>Nro</th>
                         <th>DNI</th>
                         <th>Locador Nombres</th>
                         <th>Area</th>
@@ -121,8 +122,10 @@
                 </thead>
                 <tbody>
                     {% set distrito_total = distrito_datos | sum(attribute='monto') %}
+                    {% set cantidad_distrito = distrito_datos | length %} <!-- Calcular la cantidad de registros -->
                     {% for row in distrito_datos %}
                         <tr>
+                            <td>{{ loop.index }}</td> <!-- Agregado para mostrar el número de fila -->
                             <td>{{ row.DNI }}</td>
                             <td>{{ row.locador_nombres }}</td>
                             <td>{{ row.centroCosto_nombre }}</td>
@@ -131,7 +134,7 @@
                         </tr>
                     {% endfor %}
                     <tr class="subtotal-row">
-                        <td colspan="4"><strong>Subtotal {{ distrito }}</strong></td>
+                        <td colspan="5"><strong>Subtotal {{ distrito }} (Cantidad: {{ cantidad_distrito }})</strong></td>
                         <td><strong>{{ distrito_total }}</strong></td>
                     </tr>
                 </tbody>
