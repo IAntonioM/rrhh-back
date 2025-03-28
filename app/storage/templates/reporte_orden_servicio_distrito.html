@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orden Servicio - Reporte por Áreas</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 15px;
+            line-height: 1.4;
+            color: #333;
+            background-color: #fff;
+            font-size: 12px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f5f5f5;
+            padding: 8px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            font-size: 11px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 11px;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 6px;
+            text-align: center;
+        }
+        th {
+            background-color: #f5f5f5;
+            color: #333;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .area-header {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+        .subtotal-row {
+            background-color: #f1f3f5;
+            font-weight: bold;
+        }
+        .grand-total-row {
+            background-color: #e9ecef;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        @media print {
+            body {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                font-size: 10px;
+            }
+            .report-header {
+                background-color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Orden Servicio - Reporte por Distrito 0{{ datos[0].MES}} - {{ datos[0].AÑO }}</h1>
+
+    <div class="report-header">
+        <div><strong>Fecha y Hora:</strong> {{ fecha_generacion }}</div>
+        <div><strong>Generado por:</strong> {{ usuario_current[0].nombres | upper }}</div>
+    </div>
+
+    {% set distritos = {} %}
+
+    {% for row in datos %}
+        {% set distrito = row.distrito_nombre | default('No Registrado') %}
+        {% if distrito not in distritos %}
+            {% set _ = distritos.update({distrito: []}) %}
+        {% endif %}
+        {% set _ = distritos[distrito].append(row) %}
+    {% endfor %}
+
+    {% for distrito, distrito_datos in distritos.items() %}
+        {% if distrito_datos | length > 0 %}
+            <table>
+                <thead>
+                    <tr class="distrito-header">
+                        <th colspan="8">Distrito: {{ distrito }}</th>
+                    </tr>
+                    <tr>
+                        <th>Nro O/S</th>
+                        <th>DNI</th>
+                        <th>Proveedor</th>
+                        <th>Concepto</th>
+                        <th>Área</th>
+                        <th>Estado O/S</th>
+                        <th>Fecha O/S</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set distrito_total = distrito_datos | sum(attribute='monto') %}
+                    {% for row in distrito_datos %}
+                        <tr>
+                            <td>{{ row.num_servicio }}</td>
+                            <td>{{ row.DNI }}</td>
+                            <td>{{ row.proveedor_nombres }}</td>
+                            <td>{{ row.concepto_servicio }}</td>
+                            <td>{{ row.centroCosto_nombre }}</td>
+                            <td>{{ row.estado_os }}</td>
+                            <td>{{ row.fecha_orden }}</td>
+                            <td>{{ row.monto | default(0) | float | round(2) }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="subtotal-row">
+                        <td colspan="7"><strong>Subtotal {{ distrito }}</strong></td>
+                        <td><strong>{{ distrito_total }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
+    {% endfor %}
+    <table>
+        <tbody>
+            <tr class="grand-total-row">
+                
+                {% set grand_total_t = datos | sum(attribute='monto') %}
+                {% for row in datos %}
+                <div>
+                </div>
+                {% endfor %}
+                <td colspan="6"><strong>Total General</strong></td>
+                <td><strong>{{ grand_total_t }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+
+
+
+</html>

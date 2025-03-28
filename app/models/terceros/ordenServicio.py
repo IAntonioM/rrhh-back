@@ -31,7 +31,7 @@ class OrdenServicioModel:
             'fecha_orden', 'fecha_mejor_pago', 'num_cert_siga', 'monto', 
             'MES', 'DIA', 'anio', 'DNI', 'proveedor_nombres',
             # New fields
-            'centroCosto_nombre', 'cargo_nombre', 'concepto_servicio', 'estado_os',
+            'centroCosto_nombre', 'cargo_nombre', 'concepto_servicio', 'estado_os','estado_nombre',
             # Pagination info
             'current_page', 'last_page', 'per_page', 'total'
         ],
@@ -268,8 +268,8 @@ class OrdenServicioModel:
         params = {
             'estacion_modificacion': remote_addr,
             'operador_modificacion': current_user,
-            'num_servicio': num_service,  # Make sure this is the primary identifier
-            'estado': estado,
+            'num_servicio': estado,  # Make sure this is the primary identifier
+            'estado': num_service,
         }
         
         result = OrdenServicioModel._execute_sp(
@@ -285,8 +285,8 @@ class OrdenServicioModel:
         print(f"Delete Params: num_service={num_service}, current_user={current_user}, remote_addr={remote_addr}, estado={estado}")
 
         params = {
-            'num_servicio': num_service,  # Make sure this is the primary identifier
-            'estado': estado,
+            'num_servicio': estado,
+            'estado': num_service,  # Make sure this is the primary identifier
             'estacion_modificacion': remote_addr,
             'operador_modificacion': current_user,
         }

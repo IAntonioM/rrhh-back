@@ -7,6 +7,9 @@ class ReporteModel:
         'default.html': 'sp_GenerarReporte',
         'orden_servicio.html': 'sp_GenerarReporte',
         'plantilla3.html': 'sp_GenerarReporte3',
+        'reporte_orden_servicio.html':'Terceros.sp_orden_servicio_reporte',
+        'reporte_orden_servicio_sexo.html':'Terceros.sp_orden_servicio_reporte',
+        'reporte_orden_servicio_distrito.html':'Terceros.sp_orden_servicio_reporte'
         # Puedes seguir agregando más plantillas y procedimientos aquí
     }
 
