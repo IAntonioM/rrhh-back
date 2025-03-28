@@ -9,7 +9,10 @@ class ReporteModel:
         'plantilla3.html': 'sp_GenerarReporte3',
         'reporte_orden_servicio.html':'Terceros.sp_orden_servicio_reporte',
         'reporte_orden_servicio_sexo.html':'Terceros.sp_orden_servicio_reporte',
-        'reporte_orden_servicio_distrito.html':'Terceros.sp_orden_servicio_reporte'
+        'reporte_orden_servicio_distrito.html':'Terceros.sp_orden_servicio_reporte',
+        'reporte_locadores.html':'Locadores.sp_registro_locadores_reporte',
+        'reporte_locadores_sexo.html':'Locadores.sp_registro_locadores_reporte',
+        'reporte_locadores_distrito.html':'Locadores.sp_registro_locadores_reporte',
         # Puedes seguir agregando más plantillas y procedimientos aquí
     }
 

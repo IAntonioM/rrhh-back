@@ -84,6 +84,7 @@
         }
     </style>
 </head>
+{% if datos | length > 0 %}
 <body>
     <h1>Orden Servicio - Reporte por Distrito 0{{ datos[0].MES}} - {{ datos[0].AÑO }}</h1>
 
@@ -157,6 +158,7 @@
         </tbody>
     </table>
 </body>
+{% endif %}
 
 
 

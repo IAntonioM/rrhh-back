@@ -86,60 +86,53 @@
 </head>
 {% if datos | length > 0 %}
 <body>
-    <h1>Orden Servicio - Reporte por Sexo 0{{ datos[0].MES}} - {{ datos[0].AÑO }}</h1>
+    <h1>Locador - Reporte por Distrito 0{{ datos[0].MES}} - {{ datos[0].AÑO }}</h1>
 
     <div class="report-header">
         <div><strong>Fecha y Hora:</strong> {{ fecha_generacion }}</div>
         <div><strong>Generado por:</strong> {{ usuario_current[0].nombres | upper }}</div>
     </div>
 
-    {% set sexos = {'Hombres': [], 'Mujeres': [], 'No Registrado': []} %}
+    {% set distritos = {} %}
 
     {% for row in datos %}
-        {% if row.idSexo == '1' %}
-            {% set _ = sexos['Hombres'].append(row) %}
-        {% elif row.idSexo == '2' %}
-            {% set _ = sexos['Mujeres'].append(row) %}
-        {% else %}
-            {% set _ = sexos['No Registrado'].append(row) %}
+        {% set distrito = row.distrito_nombre | default('No Registrado') %}
+        {% if distrito not in distritos %}
+            {% set _ = distritos.update({distrito: []}) %}
         {% endif %}
+        {% set _ = distritos[distrito].append(row) %}
     {% endfor %}
 
-    {% for sexo, sexo_datos in sexos.items() %}
-        {% if sexo_datos | length > 0 %}
+    {% for distrito, distrito_datos in distritos.items() %}
+        {% if distrito_datos | length > 0 %}
             <table>
                 <thead>
-                    <tr class="sexo-header">
-                        <th colspan="8">Sexo: {{ sexo }}</th>
+                    <tr class="distrito-header">
+                        <th colspan="5">Distrito: {{ distrito }}</th>
                     </tr>
                     <tr>
-                        <th>Nro O/S</th>
                         <th>DNI</th>
-                        <th>Proveedor</th>
-                        <th>Concepto</th>
+                        <th>Locador Nombres</th>
                         <th>Area</th>
-                        <th>Estado O/S</th>
-                        <th>Fecha O/S</th>
+                        <th>Cargo</th>
                         <th>Monto</th>
+    
                     </tr>
                 </thead>
                 <tbody>
-                    {% set sexo_total = sexo_datos | sum(attribute='monto') %}
-                    {% for row in sexo_datos %}
+                    {% set distrito_total = distrito_datos | sum(attribute='monto') %}
+                    {% for row in distrito_datos %}
                         <tr>
-                            <td>{{ row.num_servicio }}</td>
                             <td>{{ row.DNI }}</td>
-                            <td>{{ row.proveedor_nombres }}</td>
-                            <td>{{ row.concepto_servicio }}</td>
+                            <td>{{ row.locador_nombres }}</td>
                             <td>{{ row.centroCosto_nombre }}</td>
-                            <td>{{ row.estado_os }}</td>
-                            <td>{{ row.fecha_orden }}</td>
-                            <td>{{ row.monto | default(0) | float | round(2) }}</td>
+                            <td>{{ row.cargo_nombre }}</td>
+                            <td>{{ row.monto | default(0) | float | round(2) }}</td>          
                         </tr>
                     {% endfor %}
                     <tr class="subtotal-row">
-                        <td colspan="7"><strong>Subtotal {{ sexo }}</strong></td>
-                        <td><strong>{{ sexo_total }}</strong></td>
+                        <td colspan="4"><strong>Subtotal {{ distrito }}</strong></td>
+                        <td><strong>{{ distrito_total }}</strong></td>
                     </tr>
                 </tbody>
             </table>
@@ -161,6 +154,7 @@
     </table>
 </body>
 {% endif %}
+
 
 
 

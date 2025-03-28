@@ -86,7 +86,7 @@
 </head>
 {% if datos | length > 0 %}
 <body>
-    <h1>Orden Servicio - Reporte por Sexo 0{{ datos[0].MES}} - {{ datos[0].AÑO }}</h1>
+    <h1>Locador - Reporte por Sexo 0{{ datos[0].MES}} - {{ datos[0].AÑO }}</h1>
 
     <div class="report-header">
         <div><strong>Fecha y Hora:</strong> {{ fecha_generacion }}</div>
@@ -110,16 +110,13 @@
             <table>
                 <thead>
                     <tr class="sexo-header">
-                        <th colspan="8">Sexo: {{ sexo }}</th>
+                        <th colspan="5">Sexo: {{ sexo }}</th>
                     </tr>
                     <tr>
-                        <th>Nro O/S</th>
                         <th>DNI</th>
-                        <th>Proveedor</th>
-                        <th>Concepto</th>
+                        <th>Locador Nombres</th>
                         <th>Area</th>
-                        <th>Estado O/S</th>
-                        <th>Fecha O/S</th>
+                        <th>Cargo</th>
                         <th>Monto</th>
                     </tr>
                 </thead>
@@ -127,18 +124,15 @@
                     {% set sexo_total = sexo_datos | sum(attribute='monto') %}
                     {% for row in sexo_datos %}
                         <tr>
-                            <td>{{ row.num_servicio }}</td>
                             <td>{{ row.DNI }}</td>
-                            <td>{{ row.proveedor_nombres }}</td>
-                            <td>{{ row.concepto_servicio }}</td>
+                            <td>{{ row.locador_nombres }}</td>
                             <td>{{ row.centroCosto_nombre }}</td>
-                            <td>{{ row.estado_os }}</td>
-                            <td>{{ row.fecha_orden }}</td>
+                            <td>{{ row.cargo_nombre }}</td>
                             <td>{{ row.monto | default(0) | float | round(2) }}</td>
                         </tr>
                     {% endfor %}
                     <tr class="subtotal-row">
-                        <td colspan="7"><strong>Subtotal {{ sexo }}</strong></td>
+                        <td colspan="4"><strong>Subtotal {{ sexo }}</strong></td>
                         <td><strong>{{ sexo_total }}</strong></td>
                     </tr>
                 </tbody>

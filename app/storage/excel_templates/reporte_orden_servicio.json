@@ -6,6 +6,7 @@
         "DNI": "DNI",
         "proveedor_nombres": "Proveedor",
         "concepto_servicio": "Concepto",
+        "centroCosto_nombre":"Area",
         "estado_os": "Estado O/S",
         "fecha_orden": "Fecha O/S"
     },

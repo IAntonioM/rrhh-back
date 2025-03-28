@@ -83,11 +83,10 @@
             }
         }
     </style>
-    
 </head>
 {% if datos | length > 0 %}
 <body>
-    <h1>Orden Servicio - Reporte general 0{{ datos[0].MES}} - {{ datos[0].AÑO }}</h1>
+    <h1>Locador - Reporte general 0{{ datos[0].MES}} - {{ datos[0].AÑO }}</h1>
     
     <div class="report-header">
         <div><strong>Fecha y Hora:</strong> {{ fecha_generacion }}</div>
@@ -108,15 +107,12 @@
         <table>
             <thead>
                 <tr class="area-header">
-                    <th colspan="7">Área: {{ area }}</th>
+                    <th colspan="4">Área: {{ area }}</th>
                 </tr>
                 <tr>
-                    <th>Nro O/S</th>
                     <th>DNI</th>
-                    <th>Proveedor</th>
-                    <th>Concepto</th>
-                    <th>Estado O/S</th>
-                    <th>Fecha O/S</th>
+                    <th>Locador Nombres</th>
+                    <th>Cargo</th>
                     <th>Monto</th>
                 </tr>
             </thead>
@@ -124,17 +120,14 @@
                 {% set area_total = area_datos | sum(attribute='monto') %}
                 {% for row in area_datos %}
                     <tr>
-                        <td>{{ row.num_servicio }}</td>
                         <td>{{ row.DNI }}</td>
-                        <td>{{ row.proveedor_nombres }}</td>
-                        <td>{{ row.concepto_servicio }}</td>
-                        <td>{{ row.estado_os }}</td>
-                        <td>{{ row.fecha_orden }}</td>
+                        <td>{{ row.locador_nombres }}</td>
+                        <td>{{ row.cargo_nombre }}</td>
                         <td>{{ row.monto | default(0) | float | round(2) }}</td>
                     </tr>
                 {% endfor %}
                 <tr class="subtotal-row">
-                    <td colspan="6"><strong>Subtotal {{ area }}</strong></td>
+                    <td colspan="3"><strong>Subtotal {{ area }}</strong></td>
                     <td><strong>{{ area_total }}</strong></td>
                 </tr>
             </tbody>
@@ -221,9 +214,7 @@
             {% endfor %}
         </tbody>
     </table>
-    
 </body>
-
 {% endif %}
 
 </html>
