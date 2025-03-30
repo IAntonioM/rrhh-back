@@ -55,6 +55,7 @@ class TercerosModel:
                     @direccion = ?, 
                     @email = ?, 
                     @foto = ?, 
+                    @cv = ?, 
                     @fecha_reg = ?, 
                     @estacion_reg = ?, 
                     @operador_reg = ?,
@@ -70,7 +71,7 @@ class TercerosModel:
                 data['apellido_materno'], data['nombres'], data['idSexo'], 
                 fecha_nacimiento, data['idEstadoCivil'], data['telefono_fijo'], 
                 data['celular'], data['dni'], data['ruc'], data['idDistrito'], 
-                data['direccion'], data['email'], data['foto'], data['fecha_reg'], 
+                data['direccion'], data['email'], data['foto'], data['cv'], data['fecha_reg'], 
                 data['estacion_reg'], data['operador_reg'], data['fecha_act'], 
                 data['estacion_act'], data['operador_act'], data['flag_terceros']
             ))
@@ -123,6 +124,7 @@ class TercerosModel:
                     @direccion = ?, 
                     @email = ?, 
                     @foto = ?, 
+                    @cv = ?, 
                     @fecha_act = ?, 
                     @estacion_act = ?, 
                     @operador_act = ?
@@ -135,7 +137,7 @@ class TercerosModel:
                 data['idSexo'], data['fecha_nacimiento'], data['idEstadoCivil'], 
                 data['telefono_fijo'], data['celular'], data['dni'], data['ruc'], 
                 data['idDistrito'], data['direccion'], data['email'], 
-                data['foto'], data['fecha_act'], data['estacion_act'], 
+                data['foto'], data['cv'], data['fecha_act'], data['estacion_act'], 
                 data['operador_act']
             ))
 
@@ -180,6 +182,7 @@ class TercerosModel:
                     @direccion = ?, 
                     @email = ?, 
                     @foto = ?, 
+                    @cv = ?, 
                     @fecha_act = ?, 
                     @estacion_act = ?, 
                     @operador_act = ? , 
@@ -200,6 +203,7 @@ class TercerosModel:
                 data['direccion'], 
                 data['email'], 
                 data['foto'], 
+                data['cv'], 
                 data['fecha_act'], 
                 data['estacion_act'], 
                 data['operador_act'], 
@@ -225,7 +229,7 @@ class TercerosModel:
         try:
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [Planilla].[sp_Terceros] 
+                EXEC [Planilla].[sp_Terceros]
                     @accion = 3,
                     @dni = ?,
                     @nombreApellido = ?,
@@ -244,51 +248,30 @@ class TercerosModel:
             
             empleados = cursor.fetchall()
             
-            # Convertir los resultados a una lista de diccionarios según la estructura real
+            # Convertir los resultados a una lista de diccionarios según el orden correcto de las columnas
             return [{
-            # Datos de DatosPersonales
-            'idDatosPersonales': e[0],
-            'apellido_paterno': e[1],
-            'apellido_materno': e[2],
-            'nombres': e[3],
-            'dni': e[4],
-            'telefono_fijo': e[5],
-            'celular': e[6],
-            'email': e[7],
-            'ruc': e[8],
-            'idSexo': e[9],
-            'idDistrito': e[10],
-            'fecha_nacimiento': e[11],
-            'direccion': e[12],
-            'foto': e[13],
-            
-            # Datos de tblCentroCosto (nombre del centro de costo)
-            'centroCosto_nombre': e[14],
-            
-            # Datos de tblCargo (nombre del cargo)
-            'cargo_nombre': e[15],
-            
-            # Estado  
-            'estado': e[16],
-            
-            # IDs relacionados
-            'id_cargo': e[17],
-            'centroCosto_id': e[18],
-            'idEstadoCivil': e[19],
-            
-            # Campos adicionales según el procedimiento SQL
-            'num_servicio': e[20],
-            'id_estado_servicio': e[21],
-            'concepto_servicio': e[22],
-            'estado_os': e[23],
-            
-            # Información de paginación
-            'current_page': e[24] if len(e) > 24 else current_page,
-            'last_page': e[25] if len(e) > 25 else 1,
-            'per_page': e[26] if len(e) > 26 else per_page,
-            'total': e[27] if len(e) > 27 else len(empleados),
-            'estado_descripcion': e[28],
-        } for e in empleados]
+                # Datos de DatosPersonales
+                'idDatosPersonales': e[0],     # dp.idDatosPersonales
+                'apellido_paterno': e[1],      # dp.apellido_paterno
+                'apellido_materno': e[2],      # dp.apellido_materno
+                'nombres': e[3],               # dp.nombres
+                'dni': e[4],                   # dp.dni
+                'telefono_fijo': e[5],         # dp.telefono_fijo
+                'celular': e[6],               # dp.celular
+                'email': e[7],                 # dp.email
+                'ruc': e[8],                   # dp.ruc
+                'idSexo': e[9],                # dp.idSexo (corregido)
+                'idDistrito': e[10],           # dp.idDistrito (corregido)
+                'fecha_nacimiento': e[11],     # dp.fecha_nacimiento (corregido)
+                'direccion': e[12],            # dp.direccion (corregido)
+                'foto': e[13],                 # dp.foto (corregido)
+                'cv': e[14],                   # dp.cv (corregido)
+                # Información de paginación
+                'current_page': e[15],         # @current_page
+                'last_page': e[16],            # @last_page_pag
+                'per_page': e[17],             # @per_page
+                'total': e[18],                # @total_pag
+            } for e in empleados]
             
         except pyodbc.ProgrammingError as e:
             error_msg = str(e)
