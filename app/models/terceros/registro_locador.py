@@ -20,6 +20,7 @@ class RegistroLocadorModel:
                     @idCentroCosto = ?,
                     @id_cargo = ?,
                     @nro_orden_servicio = ?,
+                    @nro_siaf =?,
                     @fecha_inicio = ?,
                     @fecha_fin = ?,
                     @monto = ?,
@@ -34,7 +35,7 @@ class RegistroLocadorModel:
                     @operador_registro = ?
             ''', (
                 data['id_datos_personales'], data['idCentroCosto'], data['id_cargo'], 
-                data['nro_orden_servicio'], data['fecha_inicio'], data['fecha_fin'], 
+                data['nro_orden_servicio'],data['nro_siaf'], data['fecha_inicio'], data['fecha_fin'], 
                 data['monto'], data['id_concepto'], data['fecha_orden'], 
                 data['estado'], data['estado_recepcion'], data['tipo'], 
                 data['otros_dir'], data['motivo_reemplazo'], 
@@ -66,6 +67,7 @@ class RegistroLocadorModel:
                     @idCentroCosto = ?,
                     @id_cargo = ?,
                     @nro_orden_servicio = ?,
+                    @nro_siaf = ?,
                     @fecha_inicio = ?,
                     @fecha_fin = ?,
                     @monto = ?,
@@ -77,15 +79,16 @@ class RegistroLocadorModel:
                     @otros_dir = ?,
                     @motivo_reemplazo = ?,
                     @estacion_modificacion = ?,
-                    @operador_modificacion = ?
+                    @operador_modificacion = ?,
+                    @criterio = ?
             ''', (
                 data['id'], data['id_datos_personales'], data['idCentroCosto'], 
-                data['id_cargo'], data['nro_orden_servicio'], data['fecha_inicio'], 
+                data['id_cargo'], data['nro_orden_servicio'], data['nro_siaf'], data['fecha_inicio'], 
                 data['fecha_fin'], data['monto'], data.get('id_concepto', None),  # ✅ Evita KeyError
                 data.get('fecha_orden', None),  # ✅ Evita KeyError
                 data['estado'], data['estado_recepcion'], 
                 data['tipo'], data['otros_dir'], data['motivo_reemplazo'], 
-                data['estacion_modificacion'], data['operador_modificacion']
+                data['estacion_modificacion'], data['operador_modificacion'], data['criterio']
             ))
 
             conn.commit()
