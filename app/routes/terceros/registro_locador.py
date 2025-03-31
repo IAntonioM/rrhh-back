@@ -82,6 +82,8 @@ def list_contratos():
         'idCentroCosto': request.args.get('idCentroCosto') or None,
         'id_cargo': request.args.get('id_cargo') or None,
         'nro_orden_servicio': request.args.get('nro_orden_servicio') or None,
+        'estado': request.args.get('estado') or None,
+        'estado_recepcion': request.args.get('estado_recepcion') or None,
         'mes': request.args.get('mes') or None ,
         'anio': request.args.get('anio') or None 
     }
@@ -99,3 +101,21 @@ def list_contratos():
         'success': True,
         'data': result
     }), 200 
+    
+@locador_contrato_bp.route('/<string:id_list>/<int:idNuevoEstado>/estado', methods=['PATCH'])
+@jwt_required()
+@handle_response
+def change_recepcion_estado(id_list, idNuevoEstado):
+    """Actualiza el estado de múltiples empleados"""
+    current_user = get_jwt_identity()
+    
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+    
+    if not id_list or not idNuevoEstado:
+        return jsonify({'success': False, 'message': 'Lista de IDs y estado nuevo son requeridos'}), 400
+    
+    # Llamar al modelo para actualizar los estados
+    success, message = RegistroLocadorModel.change_status_recepcion_list(id_list, idNuevoEstado, current_user, request.remote_addr)
+    
+    return jsonify({'success': success, 'message': message}), 200 if success else 400

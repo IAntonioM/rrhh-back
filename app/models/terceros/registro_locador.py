@@ -112,6 +112,8 @@ class RegistroLocadorModel:
                     @idCentroCosto = ?,
                     @id_cargo = ?,
                     @nro_orden_servicio = ?,
+                    @estado = ?,
+                    @estado_recepcion = ?,
                     @mes= ?,
                     @anio= ?,
                     @current_page = ?,
@@ -122,6 +124,8 @@ class RegistroLocadorModel:
                 filtros.get('idCentroCosto', None),
                 filtros.get('id_cargo', None),
                 filtros.get('nro_orden_servicio', None),
+                filtros.get('estado', None),
+                filtros.get('estado_recepcion', None),
                 filtros.get('mes', None),
                 filtros.get('anio', None),
                 current_page,
@@ -164,6 +168,38 @@ class RegistroLocadorModel:
 
             conn.commit()
             return True, 'Estado del contrato actualizado con éxito'
+
+        except pyodbc.Error as e:
+            return False, RegistroLocadorModel._extract_sql_error(e)
+
+        finally:
+            conn.close()
+    
+    @staticmethod
+    def change_status_recepcion_list(id_list, estado, current_user, remote_addr):
+        """Cambia el estado de múltiples contratos"""
+        if not id_list:
+            return False, "La lista de IDs no puede estar vacía"
+
+        conn = get_db_connection()
+        try:
+  
+
+            # Agregar datos de auditoría
+            data = {'id_list':id_list,'estado': estado, 'operador_modificacion': current_user}
+            data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
+
+            cursor = conn.cursor()
+            cursor.execute('''
+                EXEC [Locadores].[sp_contrato]
+                    @accion = 6,
+                    @id_list = ?,
+                    @estado = ?,
+                    @operador_modificacion = ?
+            ''', (id_list, estado, current_user))
+
+            conn.commit()
+            return True, f"Estado actualizado para {len(id_list)} contratos"
 
         except pyodbc.Error as e:
             return False, RegistroLocadorModel._extract_sql_error(e)
