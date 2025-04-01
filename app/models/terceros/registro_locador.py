@@ -82,13 +82,26 @@ class RegistroLocadorModel:
                     @operador_modificacion = ?,
                     @criterio = ?
             ''', (
-                data['id'], data['id_datos_personales'], data['idCentroCosto'], 
-                data['id_cargo'], data['nro_orden_servicio'], data['nro_siaf'], data['fecha_inicio'], 
-                data['fecha_fin'], data['monto'], data.get('id_concepto', None),  # ✅ Evita KeyError
-                data.get('fecha_orden', None),  # ✅ Evita KeyError
-                data['estado'], data['estado_recepcion'], 
-                data['tipo'], data['otros_dir'], data['motivo_reemplazo'], 
-                data['estacion_modificacion'], data['operador_modificacion'], data['criterio']
+                data['id'], 
+                data.get('id_datos_personales', None),
+                data.get('idCentroCosto', None),
+                data.get('id_cargo', None),
+                data.get('nro_orden_servicio', None),
+                data.get('nro_siaf', None),
+                data.get('fecha_inicio', None),
+                data.get('fecha_fin', None),
+                data.get('monto', None),
+                data.get('id_concepto', None),
+                data.get('fecha_orden', None),
+                data.get('estado', None),
+                data.get('estado_recepcion', None),
+                data.get('tipo', None),
+                data.get('otros_dir', None),
+                data.get('motivo_reemplazo', None),
+                data.get('estacion_modificacion', None),
+                data.get('operador_modificacion', None),
+                data.get('criterio', None)
+
             ))
 
             conn.commit()
