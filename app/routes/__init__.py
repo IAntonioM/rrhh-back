@@ -29,6 +29,7 @@ from app.routes.planilla.vinculo_familiar import vinculo_familiar_bp
 from app.routes.planilla.estado_civil import estado_civil_bp
 from app.routes.terceros.terceros import terceros_bp
 from app.routes.general.configuracion import configuraciones_bp
+from app.routes.general.configuracionv2 import configuracionesv2_bp
 from app.routes.terceros.ordenServicio import orden_servicio_bpv2
 from app.routes.general.reporte import reporte_blueprint
 from app.routes.terceros.registro_locador import locador_contrato_bp
@@ -66,6 +67,7 @@ def register_blueprints(app):
     app.register_blueprint(estado_civil_bp, url_prefix='/api/estado_civil')
     app.register_blueprint(terceros_bp, url_prefix='/api/terceros')    
     app.register_blueprint(configuraciones_bp, url_prefix='/api/configuracion')
+    app.register_blueprint(configuracionesv2_bp, url_prefix='/api/configuracionv2')
     app.register_blueprint(orden_servicio_bpv2, url_prefix='/apiv2/orden-servicio')
     app.register_blueprint(reporte_blueprint, url_prefix='/api/reporte')
     app.register_blueprint(locador_contrato_bp, url_prefix='/api/locador_contrato')

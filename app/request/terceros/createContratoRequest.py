@@ -1,6 +1,6 @@
 import re
 
-class UpdateContratoRequest1:
+class CreateContratoRequest:
     @staticmethod
     def validate(data):
         field_messages = {

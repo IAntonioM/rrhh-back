@@ -4,6 +4,7 @@ from ...models.terceros.registro_locador import RegistroLocadorModel
 from ...utils.error_handlers import handle_response
 from ...request.terceros.UpdateContratoRequest1 import UpdateContratoRequest1
 from ...request.terceros.UpdateContratoRequest2 import UpdateContratoRequest2
+from ...request.terceros.createContratoRequest import CreateContratoRequest
 
 locador_contrato_bp = Blueprint('locador_contrato', __name__)
 
@@ -19,11 +20,10 @@ def create_contrato():
     data = request.get_json()
     
     # Campos requeridos según el SP
-    required_fields = [
-    ]
-    for field in required_fields:
-        if field not in data:
-            return jsonify({'success': False, 'message': f'Campo requerido: {field}'}), 400
+    valid_data, error_message = CreateContratoRequest.validate(data)
+    if not valid_data:
+        return jsonify({'success': False, 'message': error_message}), 409
+
 
     success, message = RegistroLocadorModel.create(data, current_user, request.remote_addr)
     return jsonify({'success': success, 'message': message}), 201 if success else 409
@@ -41,9 +41,9 @@ def update_contrato(id):
     data = request.get_json()
     
     criterio = data.get('criterio', None)
-    
-    if criterio == 1 or criterio is None or criterio == '':
-        data.pop('criterio', None)  
+    print("criterio")
+    print(criterio)
+    if criterio == 1 :
         print('criterio 1')
         valid_data, error_message = UpdateContratoRequest1.validate(data)
         if not valid_data:
