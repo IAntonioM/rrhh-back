@@ -4,6 +4,7 @@ from ...models.terceros.registro_locador import RegistroLocadorModel
 from ...utils.error_handlers import handle_response
 from ...request.terceros.UpdateContratoRequest1 import UpdateContratoRequest1
 from ...request.terceros.UpdateContratoRequest2 import UpdateContratoRequest2
+from ...request.terceros.UpdateContratoRequest3 import UpdateContratoRequest3
 from ...request.terceros.createContratoRequest import CreateContratoRequest
 
 locador_contrato_bp = Blueprint('locador_contrato', __name__)
@@ -51,6 +52,11 @@ def update_contrato(id):
     elif criterio == 2:
         print('criterio 2')
         valid_data, error_message = UpdateContratoRequest2.validate(data)
+        if not valid_data:
+            return jsonify({'success': False, 'message': error_message}), 409
+    elif criterio == 3:
+        print('criterio 3')
+        valid_data, error_message = UpdateContratoRequest3.validate(data)
         if not valid_data:
             return jsonify({'success': False, 'message': error_message}), 409
     else:
