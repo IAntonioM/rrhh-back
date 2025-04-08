@@ -147,6 +147,8 @@ class RegistroLocadorModel:
                     @estado_recepcion = ?,
                     @mes= ?,
                     @anio= ?,
+                    @dni= ?,
+                    @nombreApellido= ?,
                     @current_page = ?,
                     @per_page = ?
             ''', (
@@ -159,6 +161,8 @@ class RegistroLocadorModel:
                 filtros.get('estado_recepcion', None),
                 filtros.get('mes', None),
                 filtros.get('anio', None),
+                filtros.get('dni', None),
+                filtros.get('nombreApellido', None),
                 current_page,
                 per_page
             ))

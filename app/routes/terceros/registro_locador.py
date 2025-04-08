@@ -111,7 +111,9 @@ def list_contratos():
         'estado': request.args.get('estado') or None,
         'estado_recepcion': request.args.get('estado_recepcion') or None,
         'mes': request.args.get('mes') or None ,
-        'anio': request.args.get('anio') or None 
+        'anio': request.args.get('anio') or None ,
+        'dni': request.args.get('dni') or None,
+        'nombreApellido': request.args.get('nombreApellido') or None
     }
     
     current_page = int(request.args.get('current_page', 1))
