@@ -214,3 +214,38 @@ class ControlContratoModel:
 
         finally:
             conn.close()
+    
+    @staticmethod
+    def filter_control_contrato_mensual(filtros):
+        """Consulta control de contratos con filtros y paginación"""
+        conn = get_db_connection()
+        try:
+            cursor = conn.cursor()
+            print('PRUENAAA')
+            print(filtros.get('FechaFin', None))
+            print(filtros.get('FechaInicio', None))
+            cursor.execute('''
+                EXEC [Locadores].[sp_control_contrato]
+                    @accion = 7,
+                    @FechaInicio = ?,
+                    @FechaFin = ?
+            ''', (
+                filtros.get('FechaInicio', None), filtros.get('FechaFin', None)
+            ))
+
+            # Obtener nombres de columnas del resultado
+            columns = [column[0] for column in cursor.description]
+
+            # Convertir cada fila a un diccionario usando los nombres de columnas
+            contratos = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+            return contratos
+
+        except pyodbc.Error as e:
+            return {
+                'success': False,
+                'message': ControlContratoModel._extract_sql_error(e)
+            }
+
+        finally:
+            conn.close()

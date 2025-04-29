@@ -128,3 +128,27 @@ def listar_pagos():
             'success': True,
             'data': pagos_list
         }), 200
+
+# Ruta para listar los pagos con columnas dinámicas según el rango de fechas
+@control_contrato_bp.route('/pagos_mensual', methods=['GET'])
+@jwt_required()
+@handle_response(include_data=True)
+def listar_pagos_mensual():
+    current_user = get_jwt_identity()
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+    # Obtener los parámetros de la consulta
+    filtros = {
+        'FechaInicio': request.args.get('FechaInicio') or None,
+        'FechaFin': request.args.get('FechaFin') or None,
+        'anio': request.args.get('anio') or None,
+    }
+
+    pagos_list = ControlContratoModel.filter_control_contrato_mensual(filtros)
+
+    # Crear un formato dinámico de respuesta con los meses como columnas
+    return jsonify({
+            'success': True,
+            'data': pagos_list
+        }), 200
