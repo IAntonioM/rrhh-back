@@ -147,3 +147,27 @@ def change_recepcion_estado(id_list, idNuevoEstado):
     success, message = RegistroLocadorModel.change_status_recepcion_list(id_list, idNuevoEstado, current_user, request.remote_addr)
     
     return jsonify({'success': success, 'message': message}), 200 if success else 409
+
+@locador_contrato_bp.route('/duplicar-contrato-m', methods=['POST'])
+@jwt_required()
+@handle_response
+def duplicar_control_contrato():
+    """Duplica registros de contrato para un nuevo mes y año"""
+    current_user = get_jwt_identity()
+
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+    data = request.get_json()
+
+    id_list = data.get('id_list')
+    mes = data.get('mes')
+    anio = data.get('anio')
+
+    if not id_list or not mes or not anio:
+        return jsonify({'success': False, 'message': 'Se requieren id_list, mes y anio'}), 400
+
+    # Llamar al modelo para duplicar los contratos
+    success, message = RegistroLocadorModel.duplicar_control_contratos(id_list, mes, anio, current_user, request.remote_addr)
+
+    return jsonify({'success': success, 'message': message}), 200 if success else 409
