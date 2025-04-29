@@ -13,6 +13,7 @@ class ReporteModel:
         'reporte_locadores.html':'Locadores.sp_registro_locadores_reporte',
         'reporte_locadores_sexo.html':'Locadores.sp_registro_locadores_reporte',
         'reporte_locadores_distrito.html':'Locadores.sp_registro_locadores_reporte',
+        'reporte_terceros.html':'Locadores.sp_control_contrato',
         # Puedes seguir agregando más plantillas y procedimientos aquí
     }
 
