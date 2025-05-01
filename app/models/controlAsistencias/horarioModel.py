@@ -153,7 +153,7 @@ class HorarioModel:
             }
             
             return result
-
+            
         except pyodbc.ProgrammingError as e:
             error_msg = str(e)
             matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
@@ -196,6 +196,63 @@ class HorarioModel:
             conn.close()
     
     @staticmethod
+    def count_horarios():
+        conn = get_db_connection()
+        try:
+            cursor = conn.cursor()
+            cursor.execute('''
+                EXEC [dbo].[sp_horario] 
+                    @mquery = 6
+            ''')
+
+            result = cursor.fetchone()
+            
+            if result:
+                return result[0]  # Devuelve el conteo total de horarios
+            else:
+                return 0
+
+        except pyodbc.ProgrammingError as e:
+            error_msg = str(e)
+            matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
+            return False, matches.group(1).strip() if matches else 'Error al contar horarios'
+        
+        finally:
+            conn.close()
+    
+    @staticmethod
+    def get_horario_detalle(idHorario):
+        conn = get_db_connection()
+        try:
+            cursor = conn.cursor()
+            cursor.execute('''
+                EXEC [dbo].[sp_horario] 
+                    @mquery = 7,
+                    @idHorario = ?
+            ''', (idHorario))
+            
+            detalles = cursor.fetchall()
+            
+            # Devolver solo los detalles del horario
+            return [{
+                'idHorario': d[0],
+                'dia': d[1],
+                'hora_entrada': d[2],
+                'hora_tardanza': d[3],
+                'hora_salida': d[4],
+                'hora_refrigerio_salida': d[5],
+                'hora_refrigerio_retorno': d[6]
+            } for d in detalles]
+
+        except pyodbc.ProgrammingError as e:
+            error_msg = str(e)
+            matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
+            return False, matches.group(1).strip() if matches else 'Error al obtener detalle del horario'
+        
+        finally:
+            conn.close()
+    
+    @staticmethod
     def get_horarios_combo():
         conn = get_db_connection()
         try:
@@ -220,3 +277,28 @@ class HorarioModel:
         
         finally:
             conn.close()
+            
+    @staticmethod
+    def build_xml_horario(data_horario):
+        """
+        Construye el XML para los horarios en el formato requerido por el procedimiento almacenado.
+        
+        Ejemplo del formato esperado:
+        <root>
+            <row dia="1" HE="08:00" HT="08:15" HS="17:00" HRS="12:30" HRR="13:30" />
+            ...
+        </root>
+        """
+        xml = '<root>\n'
+        
+        for detalle in data_horario:
+            xml += f'    <row dia="{detalle["dia"]}" '
+            xml += f'HE="{detalle.get("hora_entrada", "")}" '
+            xml += f'HT="{detalle.get("hora_tardanza", "")}" '
+            xml += f'HS="{detalle.get("hora_salida", "")}" '
+            xml += f'HRS="{detalle.get("hora_refrigerio_salida", "")}" '
+            xml += f'HRR="{detalle.get("hora_refrigerio_retorno", "")}" />\n'
+        
+        xml += '</root>'
+        
+        return xml

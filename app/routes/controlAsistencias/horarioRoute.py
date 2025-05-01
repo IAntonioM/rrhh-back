@@ -20,6 +20,11 @@ def create_horario():
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
     data = request.get_json()
+    
+    # Construir el XML para los detalles del horario si existen en los datos
+    if 'detalles' in data:
+        data['dataxmlHorario'] = HorarioModel.build_xml_horario(data['detalles'])
+    
     success, message = HorarioModel.create_horario(data, current_user, request.remote_addr)
     return jsonify({
         'success': success,
@@ -35,6 +40,11 @@ def update_horario():
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
     
     data = request.get_json()
+    
+    # Construir el XML para los detalles del horario si existen en los datos
+    if 'detalles' in data:
+        data['dataxmlHorario'] = HorarioModel.build_xml_horario(data['detalles'])
+    
     success, message = HorarioModel.update_horario(data, current_user, request.remote_addr)
     return jsonify({
         'success': success,
@@ -80,6 +90,33 @@ def get_horarios():
     return jsonify({
         'success': True,
         'data': horarios_list
+    }), 200
+
+@horario_bp.route('/count', methods=['GET'])
+@jwt_required()
+@handle_response(include_data=True)
+def count_horarios():
+    count = HorarioModel.count_horarios()
+    return jsonify({
+        'success': True,
+        'data': {'count': count}
+    }), 200
+
+@horario_bp.route('/detalle/<int:id>', methods=['GET'])
+@jwt_required()
+@handle_response(include_data=True)
+def get_horario_detalle(id):
+    detalles = HorarioModel.get_horario_detalle(id)
+    if isinstance(detalles, tuple) and len(detalles) == 2 and detalles[0] is False:
+        # Si se devuelve un error
+        return jsonify({
+            'success': False,
+            'message': detalles[1]
+        }), 400
+    
+    return jsonify({
+        'success': True,
+        'data': detalles
     }), 200
 
 @horario_bp.route('/combo', methods=['GET'])
