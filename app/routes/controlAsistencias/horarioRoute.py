@@ -102,10 +102,19 @@ def count_horarios():
         'data': {'count': count}
     }), 200
 
-@horario_bp.route('/detalle/<int:id>', methods=['GET'])
+@horario_bp.route('/detalle', methods=['GET'])
 @jwt_required()
 @handle_response(include_data=True)
-def get_horario_detalle(id):
+def get_horario_detalle():
+    # Obtener el ID desde el parámetro de consulta
+    id = request.args.get('id', type=int)
+
+    if not id:
+        return jsonify({
+            'success': False,
+            'message': 'Se requiere el parámetro ID'
+        }), 400
+
     detalles = HorarioModel.get_horario_detalle(id)
     if isinstance(detalles, tuple) and len(detalles) == 2 and detalles[0] is False:
         # Si se devuelve un error
@@ -113,7 +122,7 @@ def get_horario_detalle(id):
             'success': False,
             'message': detalles[1]
         }), 400
-    
+
     return jsonify({
         'success': True,
         'data': detalles
