@@ -37,6 +37,7 @@ from app.routes.general.file import file_bp
 from app.routes.general.datosPersonales import datos_personales_bp
 from app.routes.terceros.control_contrato import control_contrato_bp
 from app.routes.controlAsistencias.horarioRoute import horario_bp
+from app.routes.controlAsistencias.marcacionRoute import marcaciones_bp
 
 
 # Función para registrar todas las rutas
@@ -78,6 +79,7 @@ def register_blueprints(app):
     app.register_blueprint(datos_personales_bp, url_prefix='/api/datos-personales')
     app.register_blueprint(control_contrato_bp, url_prefix='/api/control_contrato')
     app.register_blueprint(horario_bp, url_prefix='/api/horario')
+    app.register_blueprint(marcaciones_bp, url_prefix='/api/marcaciones')
 
 
 
