@@ -32,7 +32,7 @@ from app.routes.general.configuracion import configuraciones_bp
 from app.routes.general.configuracionv2 import configuracionesv2_bp
 from app.routes.terceros.ordenServicio import orden_servicio_bpv2
 from app.routes.general.reporte import reporte_blueprint
-from app.routes.terceros.registro_locador import locador_contrato_bp
+from app.routes.tercerosv2.registro_locador import locador_contrato_bp
 from app.routes.general.file import file_bp
 from app.routes.general.datosPersonales import datos_personales_bp
 from app.routes.terceros.control_contrato import control_contrato_bp
