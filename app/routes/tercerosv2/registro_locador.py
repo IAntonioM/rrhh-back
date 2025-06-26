@@ -186,3 +186,32 @@ def duplicar_control_contrato():
     success, message = RegistroLocadorModel.duplicar_control_contratos(id_list, mes, anio, current_user, request.remote_addr)
 
     return jsonify({'success': success, 'message': message}), 200 if success else 409
+
+
+@locador_contrato_bp.route('/actualizar_estado_control_contrato', methods=['POST'])
+@jwt_required()
+@handle_response
+def actualizar_estado_control_contrato():
+    """Marca contratos como cumplidos o no cumplidos"""
+    current_user = get_jwt_identity()
+
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+    data = request.get_json()
+
+    id_list = data.get('id_list')
+    estado = data.get('estado')  # 👈 nuevo parámetro obligatorio
+
+    if not id_list or estado not in [2, 3]:
+        return jsonify({
+            'success': False,
+            'message': 'Se requieren id_list y estado válido (2 = cumplió, 3 = no cumplió)'
+        }), 400
+
+    # Llamar al modelo para actualizar estado de los contratos
+    success, message = RegistroLocadorModel.actualizar_control_contrato(
+        id_list, estado, current_user, request.remote_addr
+    )
+
+    return jsonify({'success': success, 'message': message}), 200 if success else 409

@@ -119,6 +119,8 @@ def listar_pagos():
         'FechaInicio': request.args.get('FechaInicio') or None,
         'FechaFin': request.args.get('FechaFin') or None,
         'anio': request.args.get('anio') or None,
+        'nombres': request.args.get('nombres') or None,
+        'dni': request.args.get('dni') or None,
     }
 
     pagos_list = ControlContratoModel.filter_control_contrato(filtros)
@@ -143,6 +145,8 @@ def listar_pagos_mensual():
         'FechaInicio': request.args.get('FechaInicio') or None,
         'FechaFin': request.args.get('FechaFin') or None,
         'anio': request.args.get('anio') or None,
+        'nombres': request.args.get('nombres') or None,
+        'dni': request.args.get('dni') or None,
     }
 
     pagos_list = ControlContratoModel.filter_control_contrato_mensual(filtros)

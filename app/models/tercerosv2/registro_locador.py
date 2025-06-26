@@ -385,3 +385,43 @@ class RegistroLocadorModel:
         finally:
             conn.close()
 
+    @staticmethod
+    def actualizar_control_contrato(id_list, estado, current_user, remote_addr):
+        """Duplica registros de control_contrato para una nueva programación de mes/año"""
+        if not id_list:
+            return False, "La lista de IDs no puede estar vacía"
+        conn = get_db_connection()
+        try:
+            # Datos de auditoría
+            data = {
+                'id_list': id_list,
+                'operador_registro': current_user
+            }
+            data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
+
+            cursor = conn.cursor()
+            cursor.execute('''
+                EXEC [Locadores].[sp_contrato]
+                    @accion = 77,
+                    @id_list = ?,
+                    @estado = ?,
+                    @fecha_registro = ?,
+                    @estacion_registro = ?,
+                    @operador_registro = ?
+            ''', (
+                id_list,
+                estado,
+                data['fecha_registro'],
+                data['estacion_registro'],
+                data['operador_registro']
+            ))
+
+            conn.commit()
+            return True, f"Se actualizaron correctamente {len(id_list.split(','))} contratos"
+
+        except pyodbc.Error as e:
+            return False, RegistroLocadorModel._extract_sql_error(e)
+
+        finally:
+            conn.close()
+

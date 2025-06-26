@@ -193,9 +193,13 @@ class ControlContratoModel:
                 EXEC [Locadores].[sp_control_contrato]
                     @accion = 6,
                     @FechaInicio = ?,
-                    @FechaFin = ?
+                    @FechaFin = ?,
+                    @dni = ?,
+                    @nombres = ?
             ''', (
-                filtros.get('FechaInicio', None), filtros.get('FechaFin', None)
+                filtros.get('FechaInicio', None), filtros.get('FechaFin', None),
+                filtros.get('dni', None),
+                filtros.get('nombres', None)
             ))
 
             # Obtener nombres de columnas del resultado
@@ -228,10 +232,16 @@ class ControlContratoModel:
                 EXEC [Locadores].[sp_control_contrato]
                     @accion = 7,
                     @FechaInicio = ?,
-                    @FechaFin = ?
+                    @FechaFin = ?,
+                    @dni = ?,
+                    @nombres = ?
             ''', (
-                filtros.get('FechaInicio', None), filtros.get('FechaFin', None)
+                filtros.get('FechaInicio', None),
+                filtros.get('FechaFin', None),
+                filtros.get('dni', None),
+                filtros.get('nombres', None)
             ))
+
 
             # Obtener nombres de columnas del resultado
             columns = [column[0] for column in cursor.description]
