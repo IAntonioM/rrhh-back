@@ -1,464 +1,208 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ...models.controlAsistencias.papeletasModel import PapeletaModel
+from ...models.controlAsistencias.papeletasModel import Papeleta
 from ...utils.error_handlers import handle_response
 
 papeletas_bp = Blueprint('papeletas', __name__)
-
-# ==================== MÉTODOS DE CREACIÓN ====================
 
 @papeletas_bp.route('/create', methods=['POST'])
 @jwt_required()
 @handle_response
 def create_papeleta():
-    """Crear nueva papeleta"""
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
     data = request.get_json()
     required_fields = [
-        'idSede', 'idArea', 'idsuperior', 'idSolicitante', 
+        'idSede', 'idArea', 'idSolicitante', 
         'idTipoSalida', 'motivoSalida', 'fecha_salida', 
-        'idTipoPapeleta', 'horaSalida', 'horaRetorno'
+        'idTipoPapeleta'
     ]
     
     for field in required_fields:
         if field not in data:
             return jsonify({'success': False, 'message': f'Campo requerido: {field}'}), 400
 
-    result = PapeletaModel.create_papeleta(data, current_user, request.remote_addr)
-    return jsonify(result), 201 if result.get('success') else 409
+    result = Papeleta.crear_papeleta(data, current_user, request.remote_addr)
+    return jsonify({
+        'success': result['success'], 
+        'message': result['message']
+    }), 201 if result['success'] else 409
 
-@papeletas_bp.route('/create-rrhh', methods=['POST'])
+@papeletas_bp.route('/update', methods=['PUT'])
 @jwt_required()
 @handle_response
-def create_papeleta_rrhh():
-    """Crear papeleta por RRHH (aprobada automáticamente)"""
+def update_papeleta():
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
     data = request.get_json()
-    required_fields = [
-        'idSede', 'idArea', 'idsuperior', 'idSolicitante', 
-        'idTipoSalida', 'motivoSalida', 'fecha_salida', 
-        'idTipoPapeleta', 'horaSalida', 'horaRetorno'
-    ]
     
-    for field in required_fields:
-        if field not in data:
-            return jsonify({'success': False, 'message': f'Campo requerido: {field}'}), 400
+    # Validar que se envíe el ID de la papeleta
+    if 'idPapeleta' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: idPapeleta'}), 400
 
-    result = PapeletaModel.create_papeleta_rrhh(data, current_user, request.remote_addr)
-    return jsonify(result), 201 if result.get('success') else 409
+    result = Papeleta.editar_papeleta(data, current_user, request.remote_addr)
+    return jsonify({
+        'success': result['success'], 
+        'message': result['message']
+    }), 200 if result['success'] else 409
 
-# ==================== MÉTODOS DE ACTUALIZACIÓN ====================
-
-@papeletas_bp.route('/update/<int:idPapeleta>', methods=['PUT'])
-@jwt_required()
-@handle_response
-def update_papeleta(idPapeleta):
-    """Actualizar papeleta existente"""
-    current_user = get_jwt_identity()
-    if not current_user:
-        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
-    data = request.get_json()
-    data['idPapeleta'] = idPapeleta
-    
-    result = PapeletaModel.update_papeleta(data, current_user, request.remote_addr)
-    return jsonify(result), 200 if result.get('success') else 409
-
-@papeletas_bp.route('/update-jefe/<int:idPapeleta>', methods=['PUT'])
-@jwt_required()
-@handle_response
-def update_papeleta_jefe(idPapeleta):
-    """Modificar papeleta por jefe"""
-    current_user = get_jwt_identity()
-    if not current_user:
-        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
-    data = request.get_json()
-    data['idPapeleta'] = idPapeleta
-    
-    result = PapeletaModel.update_papeleta_jefe(data, current_user, request.remote_addr)
-    return jsonify(result), 200 if result.get('success') else 409
-
-@papeletas_bp.route('/update-rrhh/<int:idPapeleta>', methods=['PUT'])
-@jwt_required()
-@handle_response
-def update_papeleta_rrhh(idPapeleta):
-    """Modificar papeleta por RRHH"""
-    current_user = get_jwt_identity()
-    if not current_user:
-        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
-    data = request.get_json()
-    data['idPapeleta'] = idPapeleta
-    
-    result = PapeletaModel.update_papeleta_rrhh(data, current_user, request.remote_addr)
-    return jsonify(result), 200 if result.get('success') else 409
-
-# ==================== MÉTODOS DE CONSULTA ====================
-
-@papeletas_bp.route('/<int:idPapeleta>', methods=['GET'])
+@papeletas_bp.route('/get', methods=['POST'])
 @jwt_required()
 @handle_response(include_data=True)
-def get_papeleta(idPapeleta):
-    """Obtener papeleta específica"""
-    result = PapeletaModel.get_papeleta(idPapeleta)
+def get_papeleta():
+    data = request.get_json()
     
-    if 'data' in result:
+    # Validar que se envíe el ID de la papeleta
+    if 'idPapeleta' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: idPapeleta'}), 400
+
+    result = Papeleta.obtener_papeleta(data)
+    
+    if result.get('data'):
         return jsonify({
             'success': True,
             'data': result['data']
         }), 200
     else:
-        return jsonify({'success': False, 'message': 'Papeleta no encontrada'}), 404
-
-@papeletas_bp.route('/seguridad/<int:idPapeleta>', methods=['GET'])
-@jwt_required()
-@handle_response(include_data=True)
-def get_papeleta_seguridad(idPapeleta):
-    """Obtener papeleta para seguridad"""
-    result = PapeletaModel.get_papeleta_seguridad(idPapeleta)
-    
-    if 'data' in result:
         return jsonify({
-            'success': True,
-            'data': result['data']
-        }), 200
-    else:
-        return jsonify({'success': False, 'message': 'Papeleta no encontrada'}), 404
+            'success': False, 
+            'message': 'Papeleta no encontrada'
+        }), 404
 
-@papeletas_bp.route('/rrhh/<int:idPapeleta>', methods=['GET'])
-@jwt_required()
-@handle_response(include_data=True)
-def get_papeleta_rrhh(idPapeleta):
-    """Obtener papeleta para RRHH"""
-    result = PapeletaModel.get_papeleta_rrhh(idPapeleta)
-    
-    if 'data' in result:
-        return jsonify({
-            'success': True,
-            'data': result['data']
-        }), 200
-    else:
-        return jsonify({'success': False, 'message': 'Papeleta no encontrada'}), 404
-
-# ==================== MÉTODOS DE LISTADO ====================
-
-# Agregar este nuevo endpoint POST para filtros complejos
 @papeletas_bp.route('/list', methods=['POST'])
 @jwt_required()
 @handle_response(include_data=True)
-def list_papeletas_post():
-    """Listar papeletas con filtros JSON"""
+def list_papeletas():
     data = request.get_json() or {}
     
-    # Obtener parámetros de paginación del JSON o valores por defecto
-    page = data.get('inicio', 0)
-    per_page = data.get('final', 10)
-    
-    # Filtros válidos
-    valid_filters = [
-        'idSede', 'idArea', 'idSolicitante', 'idTipoSalida', 
-        'idTipoPapeleta', 'fechainicio', 'fechafin', 'nro', 
-        'anio', 'nombres', 'apellidos', 'solicitante', 'idsuperior', 'motivoSalida'
-    ]
-    
-    # Construir filtros desde el JSON
-    filtros = {k: v for k, v in data.items() if k in valid_filters}
-    
-    # Convertir fecha_salida a fechainicio/fechafin si viene en el JSON
-    if 'fecha_salida' in data and 'fechainicio' not in filtros and 'fechafin' not in filtros:
-        fecha_salida = data['fecha_salida']
-        # Si es una fecha completa, extraer solo la fecha
-        if 'T' in str(fecha_salida):
-            fecha_salida = str(fecha_salida).split('T')[0]
-        filtros['fechainicio'] = fecha_salida
-        filtros['fechafin'] = fecha_salida
-    
-    # Agregar parámetros de paginación
-    filtros['inicio'] = page
-    filtros['final'] = per_page
-    
-    # Imprimir para debug (remover en producción)
-    print(f"Filtros enviados al SP: {filtros}")
-    
-    result = PapeletaModel.list_papeletas(filtros)
-    count_result = PapeletaModel.count_papeletas(filtros)
-    
-    return jsonify({
-        'success': True,
-        'data': result.get('data', []),
-        'pagination': {
-            'total': count_result.get('count', 0),
-            'current_page': page,
-            'per_page': per_page
-        },
-        'debug_filters': filtros  # Remover en producción
-    }), 200
+    try:
+        # Primero obtener el conteo total (sin paginación)
+        count_data = data.copy()
+        count_data.pop('current_page', None)
+        count_data.pop('per_page', None)
+        
+        count_result = Papeleta.contar_papeletas(count_data)
+        total = count_result.get('total', 0)
+        
+        # Obtener los datos con paginación
+        list_result = Papeleta.consultar_papeletas(data)
+        
+        if 'data' in list_result:
+            # Calcular información de paginación
+            current_page = data.get('current_page', 1)
+            per_page = data.get('per_page', 10)
+            total_pages = (total + per_page - 1) // per_page if per_page > 0 else 1
+            
+            return jsonify({
+                'success': True,
+                'data': list_result['data'],
+                'pagination': {
+                    'current_page': current_page,
+                    'per_page': per_page,
+                    'total': total,
+                    'total_pages': total_pages
+                }
+            }), 200
+        else:
+            return jsonify({
+                'success': False, 
+                'message': 'No se pudieron obtener los datos'
+            }), 500
+            
+    except Exception as e:
+        return jsonify({
+            'success': False, 
+            'message': f'Error al consultar papeletas: {str(e)}'
+        }), 500
 
-# Modificar el endpoint GET existente para que sea más claro
-@papeletas_bp.route('/list', methods=['GET'])
+@papeletas_bp.route('/totallist', methods=['POST'])
 @jwt_required()
 @handle_response(include_data=True)
-def list_papeletas_get():
-    """Listar papeletas con query parameters"""
-    # Obtener parámetros de paginación
-    page = request.args.get('inicio', 0, type=int)
-    per_page = request.args.get('final', 10, type=int)
+def list_total_papeletas():
+    data = request.get_json() or {}
     
-    # Filtros válidos
-    valid_filters = [
-        'idSede', 'idArea', 'idSolicitante', 'idTipoSalida', 
-        'idTipoPapeleta', 'fechainicio', 'fechafin', 'nro', 
-        'anio', 'nombres', 'apellidos', 'solicitante', 'idsuperior', 'motivoSalida'
-    ]
-    filtros = {k: v for k, v in request.args.items() if k in valid_filters}
-    
-    # Convertir tipos de datos necesarios
-    for key in ['idSede', 'idSolicitante', 'idTipoSalida', 'idTipoPapeleta', 'idsuperior', 'motivoSalida']:
-        if key in filtros:
-            try:
-                filtros[key] = int(filtros[key])
-            except ValueError:
-                pass
-    
-    # Agregar parámetros de paginación
-    filtros['inicio'] = page
-    filtros['final'] = per_page
-    
-    # Imprimir para debug (remover en producción)
-    print(f"Filtros GET enviados al SP: {filtros}")
-    
-    result = PapeletaModel.list_papeletas(filtros)
-    count_result = PapeletaModel.count_papeletas(filtros)
-    
-    return jsonify({
-        'success': True,
-        'data': result.get('data', []),
-        'pagination': {
-            'total': count_result.get('count', 0),
-            'current_page': page,
-            'per_page': per_page
-        }
-    }), 200
+    try:
+        # Usar consultar_papeletas sin parámetros de paginación para obtener todos los registros
+        data_without_pagination = data.copy()
+        data_without_pagination.pop('current_page', None)
+        data_without_pagination.pop('per_page', None)
+        data_without_pagination.pop('inicio', None)
+        data_without_pagination.pop('final', None)
+        
+        result = Papeleta.consultar_papeletas(data_without_pagination)
+        
+        if 'data' in result:
+            return jsonify({
+                'success': True,
+                'data': result['data']
+            }), 200
+        else:
+            return jsonify({
+                'success': False, 
+                'message': 'No se pudieron obtener los datos'
+            }), 500
+            
+    except Exception as e:
+        return jsonify({
+            'success': False, 
+            'message': f'Error al consultar papeletas: {str(e)}'
+        }), 500
 
-@papeletas_bp.route('/list-rrhh', methods=['GET'])
+@papeletas_bp.route('/registrar-salida', methods=['POST'])
+@jwt_required()
+@handle_response
+def registrar_hora_salida():
+    current_user = get_jwt_identity()
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+    data = request.get_json()
+    
+    # Validar que se envíe el ID de la papeleta
+    if 'idPapeleta' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: idPapeleta'}), 400
+
+    result = Papeleta.registrar_hora_salida(data, current_user, request.remote_addr)
+    return jsonify({
+        'success': result['success'], 
+        'message': result['message']
+    }), 200 if result['success'] else 409
+
+@papeletas_bp.route('/registrar-retorno', methods=['POST'])
+@jwt_required()
+@handle_response
+def registrar_hora_retorno():
+    current_user = get_jwt_identity()
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+    data = request.get_json()
+    
+    # Validar que se envíe el ID de la papeleta
+    if 'idPapeleta' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: idPapeleta'}), 400
+
+    result = Papeleta.registrar_hora_retorno(data, current_user, request.remote_addr)
+    return jsonify({
+        'success': result['success'], 
+        'message': result['message']
+    }), 200 if result['success'] else 409
+
+@papeletas_bp.route('/historial-aprobaciones', methods=['POST'])
 @jwt_required()
 @handle_response(include_data=True)
-def list_papeletas_rrhh():
-    """Listar papeletas para RRHH"""
-    # Obtener parámetros de paginación
-    page = request.args.get('inicio', 0, type=int)
-    per_page = request.args.get('final', 10, type=int)
+def historial_aprobaciones():
+    data = request.get_json()
     
-    # Filtros válidos
-    valid_filters = [
-        'idSede', 'idArea', 'idSolicitante', 'idTipoSalida', 
-        'idTipoPapeleta', 'fechainicio', 'fechafin', 'nro', 
-        'anio', 'nombres', 'apellidos', 'solicitante'
-    ]
-    filtros = {k: v for k, v in request.args.items() if k in valid_filters}
-    
-    # Agregar parámetros de paginación
-    filtros['inicio'] = page
-    filtros['final'] = per_page
-    
-    result = PapeletaModel.list_papeletas_rrhh(filtros)
-    count_result = PapeletaModel.count_papeletas_rrhh(filtros)
-    
-    return jsonify({
-        'success': True,
-        'data': result.get('data', []),
-        'pagination': {
-            'total': count_result.get('count', 0),
-            'current_page': page,
-            'per_page': per_page
-        }
-    }), 200
+    # Validar que se envíe el ID de la papeleta
+    if 'idPapeleta' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: idPapeleta'}), 400
 
-@papeletas_bp.route('/list-seguridad', methods=['GET'])
-@jwt_required()
-@handle_response(include_data=True)
-def list_papeletas_seguridad():
-    """Listar papeletas para Seguridad"""
-    # Obtener parámetros de paginación
-    page = request.args.get('inicio', 0, type=int)
-    per_page = request.args.get('final', 10, type=int)
-    
-    # Filtros válidos
-    valid_filters = [
-        'idSede', 'idArea', 'idSolicitante', 'idTipoSalida', 
-        'idTipoPapeleta', 'fechainicio', 'fechafin', 'nro', 
-        'anio', 'nombres', 'apellidos', 'solicitante'
-    ]
-    filtros = {k: v for k, v in request.args.items() if k in valid_filters}
-    
-    # Agregar parámetros de paginación
-    filtros['inicio'] = page
-    filtros['final'] = per_page
-    
-    result = PapeletaModel.list_papeletas_seguridad(filtros)
-    count_result = PapeletaModel.count_papeletas_seguridad(filtros)
-    
-    return jsonify({
-        'success': True,
-        'data': result.get('data', []),
-        'pagination': {
-            'total': count_result.get('count', 0),
-            'current_page': page,
-            'per_page': per_page
-        }
-    }), 200
-
-@papeletas_bp.route('/list-jefe', methods=['GET'])
-@jwt_required()
-@handle_response(include_data=True)
-def list_papeletas_jefe():
-    """Listar papeletas por área - jefe"""
-    # Obtener parámetros de paginación
-    page = request.args.get('inicio', 0, type=int)
-    per_page = request.args.get('final', 10, type=int)
-    
-    # Filtros válidos
-    valid_filters = [
-        'idSede', 'idArea', 'idSolicitante', 'idTipoSalida', 
-        'idTipoPapeleta', 'fechainicio', 'fechafin', 'nro', 
-        'anio', 'nombres', 'apellidos', 'solicitante'
-    ]
-    filtros = {k: v for k, v in request.args.items() if k in valid_filters}
-    
-    # Agregar parámetros de paginación
-    filtros['inicio'] = page
-    filtros['final'] = per_page
-    
-    result = PapeletaModel.list_papeletas_jefe(filtros)
-    count_result = PapeletaModel.count_papeletas_jefe(filtros)
-    
-    return jsonify({
-        'success': True,
-        'data': result.get('data', []),
-        'pagination': {
-            'total': count_result.get('count', 0),
-            'current_page': page,
-            'per_page': per_page
-        }
-    }), 200
-
-# ==================== MÉTODOS DE APROBACIÓN Y RECHAZO ====================
-
-@papeletas_bp.route('/approve-rrhh/<int:idPapeleta>', methods=['PUT'])
-@jwt_required()
-@handle_response
-def approve_rrhh(idPapeleta):
-    """Aprobar papeleta por RRHH"""
-    current_user = get_jwt_identity()
-    if not current_user:
-        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
-    data = request.get_json() or {}
-    data['idPapeleta'] = idPapeleta
-    
-    result = PapeletaModel.approve_rrhh(data, current_user, request.remote_addr)
-    return jsonify(result), 200 if result.get('success') else 409
-
-@papeletas_bp.route('/reject-rrhh/<int:idPapeleta>', methods=['PUT'])
-@jwt_required()
-@handle_response
-def reject_rrhh(idPapeleta):
-    """Rechazar papeleta por RRHH"""
-    current_user = get_jwt_identity()
-    if not current_user:
-        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
-    data = request.get_json() or {}
-    data['idPapeleta'] = idPapeleta
-    
-    # Validar que se proporcione motivo de rechazo
-    if not data.get('motivoModificacion'):
-        return jsonify({'success': False, 'message': 'El motivo de rechazo es requerido'}), 400
-    
-    result = PapeletaModel.reject_rrhh(data, current_user, request.remote_addr)
-    return jsonify(result), 200 if result.get('success') else 409
-
-@papeletas_bp.route('/approve-jefe/<int:idPapeleta>', methods=['PUT'])
-@jwt_required()
-@handle_response
-def approve_jefe(idPapeleta):
-    """Aprobar papeleta por jefe"""
-    current_user = get_jwt_identity()
-    if not current_user:
-        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
-    data = request.get_json() or {}
-    data['idPapeleta'] = idPapeleta
-    
-    result = PapeletaModel.approve_jefe(data, current_user, request.remote_addr)
-    return jsonify(result), 200 if result.get('success') else 409
-
-@papeletas_bp.route('/reject-jefe/<int:idPapeleta>', methods=['PUT'])
-@jwt_required()
-@handle_response
-def reject_jefe(idPapeleta):
-    """Rechazar papeleta por jefe"""
-    current_user = get_jwt_identity()
-    if not current_user:
-        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
-    data = request.get_json() or {}
-    data['idPapeleta'] = idPapeleta
-    
-    # Validar que se proporcione motivo de rechazo
-    if not data.get('motivoModificacion'):
-        return jsonify({'success': False, 'message': 'El motivo de rechazo es requerido'}), 400
-    
-    result = PapeletaModel.reject_jefe(data, current_user, request.remote_addr)
-    return jsonify(result), 200 if result.get('success') else 409
-
-# ==================== MÉTODOS DE REGISTRO DE HORARIOS ====================
-
-@papeletas_bp.route('/register-departure/<int:idPapeleta>', methods=['PUT'])
-@jwt_required()
-@handle_response
-def register_departure_time(idPapeleta):
-    """Registrar hora de salida"""
-    current_user = get_jwt_identity()
-    if not current_user:
-        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
-    data = request.get_json() or {}
-    data['idPapeleta'] = idPapeleta
-    
-    result = PapeletaModel.register_departure_time(data, current_user, request.remote_addr)
-    return jsonify(result), 200 if result.get('success') else 409
-
-@papeletas_bp.route('/register-return/<int:idPapeleta>', methods=['PUT'])
-@jwt_required()
-@handle_response
-def register_return_time(idPapeleta):
-    """Registrar hora de retorno"""
-    current_user = get_jwt_identity()
-    if not current_user:
-        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
-    data = request.get_json() or {}
-    data['idPapeleta'] = idPapeleta
-    
-    result = PapeletaModel.register_return_time(data, current_user, request.remote_addr)
-    return jsonify(result), 200 if result.get('success') else 409
-
-# ==================== MÉTODO DE HISTORIAL ====================
-
-@papeletas_bp.route('/history/<int:idPapeleta>', methods=['GET'])
-@jwt_required()
-@handle_response(include_data=True)
-def get_approval_history(idPapeleta):
-    """Obtener historial de aprobaciones"""
-    result = PapeletaModel.get_approval_history(idPapeleta)
+    result = Papeleta.historial_aprobaciones(data)
     
     if 'data' in result:
         return jsonify({
@@ -466,4 +210,34 @@ def get_approval_history(idPapeleta):
             'data': result['data']
         }), 200
     else:
-        return jsonify({'success': False, 'message': 'No se encontró historial'}), 404
+        return jsonify({
+            'success': False, 
+            'message': 'Error al obtener historial'
+        }), 409
+@papeletas_bp.route('/delete', methods=['DELETE'])
+@jwt_required()
+@handle_response
+def delete_papeleta():
+    current_user = get_jwt_identity()
+    if not current_user:
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+    data = request.get_json()
+    
+    # Validar que se envíe el ID de la papeleta
+    if 'idPapeleta' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: idPapeleta'}), 400
+
+    result = Papeleta.eliminar_papeleta(data, current_user, request.remote_addr)
+    
+    # Verificar que result no sea None
+    if result is None:
+        return jsonify({
+            'success': False, 
+            'message': 'Error interno del servidor'
+        }), 500
+    
+    return jsonify({
+        'success': result.get('success', False), 
+        'message': result.get('message', 'Error desconocido')
+    }), 200 if result.get('success', False) else 409
