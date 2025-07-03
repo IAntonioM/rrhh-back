@@ -40,6 +40,8 @@ from app.routes.controlAsistencias.horarioRoute import horario_bp
 from app.routes.controlAsistencias.marcacionRoute import marcaciones_bp
 from app.routes.controlAsistencias.papeletasRoute import papeletas_bp
 from app.routes.controlAsistencias.papeletasRRHHRoute import papeletas_rrhh_bp
+from app.routes.controlAsistencias.papeletasSegRoute import papeletas_seg_bp
+from app.routes.controlAsistencias.papeletasJefeRoute import papeletas_jefe_bp
 
 
 # Función para registrar todas las rutas
@@ -84,6 +86,8 @@ def register_blueprints(app):
     app.register_blueprint(marcaciones_bp, url_prefix='/api/marcaciones')
     app.register_blueprint(papeletas_bp, url_prefix='/api/papeletas')
     app.register_blueprint(papeletas_rrhh_bp, url_prefix='/api/papeletas_rrhh')
+    app.register_blueprint(papeletas_seg_bp, url_prefix='/api/papeletas_seg')
+    app.register_blueprint(papeletas_jefe_bp, url_prefix='/api/papeletas_jefe')
 
 
 
