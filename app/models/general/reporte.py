@@ -1,6 +1,7 @@
 import pyodbc
 import re
 from config import get_db_connection
+
 class ReporteModel:
     # Mapeo de plantillas a procedimientos
     plantilla_to_procedure = {
@@ -11,16 +12,17 @@ class ReporteModel:
         'reporte_orden_servicio_sexo.html':'Terceros.sp_orden_servicio_reporte',
         'reporte_orden_servicio_distrito.html':'Terceros.sp_orden_servicio_reporte',
         'reporte_locadores.html':'Locadores.sp_registro_locadores_reporte',
-        'reporte_locadores_sexo.html':'Locadores.sp_registro_locadores_reporte',
-        'reporte_locadores_distrito.html':'Locadores.sp_registro_locadores_reporte',
         'reporte_terceros.html':'Locadores.sp_control_contrato',
-        # Puedes seguir agregando más plantillas y procedimientos aquí
+        'reporte_terceros_sexo.html':'Locadores.sp_control_contrato',
+        'reporte_terceros_distrito.html':'Locadores.sp_control_contrato',
+        'reporte_terceros_sexo.html':'Locadores.sp_control_contrato',
     }
 
     @staticmethod
     def ejecutar_procedimiento_reporte(parametros, plantilla_nombre):
         """
         Ejecuta un procedimiento almacenado basado en la plantilla
+        Maneja múltiples tablas de resultados
         """
         conn = get_db_connection()
         try:
@@ -46,19 +48,52 @@ class ReporteModel:
             
             # Construir la llamada al procedimiento
             proc_call = f"EXEC {procedimiento} {', '.join(param_placeholders)}"
-            print(proc_call)
+            print(f"Ejecutando: {proc_call}")
             
             # Ejecutar el procedimiento
             cursor.execute(proc_call, params)
             
-            # Obtener los resultados
-            columns = [column[0] for column in cursor.description]
-            results = []
+            # Capturar múltiples tablas de resultados
+            all_results = []
+            table_index = 0
             
-            for row in cursor.fetchall():
-                results.append(dict(zip(columns, row)))
+            while True:
+                # Obtener columnas de la tabla actual
+                if cursor.description:
+                    columns = [column[0] for column in cursor.description]
+                    results = []
+                    
+                    # Obtener todas las filas de la tabla actual
+                    for row in cursor.fetchall():
+                        results.append(dict(zip(columns, row)))
+                    
+                    all_results.append({
+                        'table_index': table_index,
+                        'table_name': f'table_{table_index}',
+                        'columns': columns,
+                        'data': results,
+                        'row_count': len(results)
+                    })
+                    
+                    table_index += 1
+                    print(f"Tabla {table_index - 1} procesada: {len(results)} filas")
+                
+                # Intentar avanzar al siguiente conjunto de resultados
+                if not cursor.nextset():
+                    break
             
-            return True, results
+            # Si no hay resultados, devolver estructura vacía
+            if not all_results:
+                all_results = [{
+                    'table_index': 0,
+                    'table_name': 'table_0',
+                    'columns': [],
+                    'data': [],
+                    'row_count': 0
+                }]
+            
+            print(f"Total de tablas procesadas: {len(all_results)}")
+            return True, all_results
             
         except pyodbc.Error as e:
             error_msg = str(e)
@@ -68,11 +103,12 @@ class ReporteModel:
             
         finally:
             conn.close()
-            
+    
     @staticmethod
     def ejecutar_procedimiento_reporte_excel(parametros, procedure_name):
         """
         Ejecuta un procedimiento almacenado con parámetros dinámicos
+        Maneja múltiples tablas de resultados para Excel
         """
         conn = get_db_connection()
         try:
@@ -92,19 +128,53 @@ class ReporteModel:
 
             # Construir la llamada al procedimiento
             proc_call = f"EXEC {procedure_name} {', '.join(param_placeholders)}"
-            print(proc_call)
+            print(f"Ejecutando Excel: {proc_call}")
+            
             # Ejecutar el procedimiento
             cursor.execute(proc_call, params)
 
-            # Obtener los resultados
-            columns = [column[0] for column in cursor.description]
-            results = []
-
-            print("FIN1111")
-            for row in cursor.fetchall():
-                results.append(dict(zip(columns, row)))
-        
-            return True, results
+            # Capturar múltiples tablas de resultados
+            all_results = []
+            table_index = 0
+            
+            while True:
+                # Obtener columnas de la tabla actual
+                if cursor.description:
+                    columns = [column[0] for column in cursor.description]
+                    results = []
+                    
+                    # Obtener todas las filas de la tabla actual
+                    for row in cursor.fetchall():
+                        results.append(dict(zip(columns, row)))
+                    
+                    all_results.append({
+                        'table_index': table_index,
+                        'table_name': f'table_{table_index}',
+                        'columns': columns,
+                        'data': results,
+                        'row_count': len(results)
+                    })
+                    
+                    table_index += 1
+                    print(f"Tabla Excel {table_index - 1} procesada: {len(results)} filas")
+                
+                # Intentar avanzar al siguiente conjunto de resultados
+                if not cursor.nextset():
+                    break
+            
+            # Si no hay resultados, devolver estructura vacía
+            if not all_results:
+                all_results = [{
+                    'table_index': 0,
+                    'table_name': 'table_0',
+                    'columns': [],
+                    'data': [],
+                    'row_count': 0
+                }]
+            
+            print(f"Total de tablas Excel procesadas: {len(all_results)}")
+            return True, all_results
+            
         except pyodbc.Error as e:
             error_msg = str(e)
             matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
@@ -113,3 +183,17 @@ class ReporteModel:
 
         finally:
             conn.close()
+    
+    @staticmethod
+    def ejecutar_procedimiento_reporte_legacy(parametros, plantilla_nombre):
+        """
+        Método legacy que mantiene la compatibilidad con código existente
+        Devuelve solo la primera tabla como antes
+        """
+        success, results = ReporteModel.ejecutar_procedimiento_reporte(parametros, plantilla_nombre)
+        
+        if success and results:
+            # Retornar solo los datos de la primera tabla para compatibilidad
+            return success, results[0]['data']
+        
+        return success, results

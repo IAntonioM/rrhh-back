@@ -1,4 +1,3 @@
-
 import os
 import tempfile
 from datetime import datetime
@@ -35,6 +34,7 @@ class ReporteService:
     def ejecutar_procedimiento(self, parametros, plantilla_nombre):
         """
         Ejecuta el procedimiento almacenado asociado a la plantilla
+        Devuelve múltiples tablas
         """
         success, result = ReporteModel.ejecutar_procedimiento_reporte(parametros, plantilla_nombre)
         
@@ -43,24 +43,59 @@ class ReporteService:
                 
         return result
     
+    def ejecutar_procedimiento_legacy(self, parametros, plantilla_nombre):
+        """
+        Método legacy para compatibilidad con código existente
+        Devuelve solo la primera tabla
+        """
+        success, result = ReporteModel.ejecutar_procedimiento_reporte_legacy(parametros, plantilla_nombre)
+        
+        if not success:
+            raise Exception(result)
+                
+        return result
+    
     def verificar_plantilla(self, plantilla_nombre):
         """Verifica si la plantilla existe"""
         return os.path.exists(os.path.join(self.template_dir, plantilla_nombre))
     
-    def generar_pdf(self, plantilla_nombre, parametros, datos,usuario_current):
+    def generar_pdf(self, plantilla_nombre, parametros, datos, usuario_current):
         """
         Genera un PDF usando WeasyPrint basado en una plantilla HTML y datos
+        Maneja múltiples tablas de datos
         """
         # Cargar la plantilla
         template = self.template_env.get_template(plantilla_nombre)
         
+        # Preparar datos para la plantilla
+        # Si datos es una lista de tablas, usar la nueva estructura
+        # Si datos es una lista simple, usar la estructura legacy
+        template_data = {
+            'datos': datos,
+            'usuario_current': usuario_current,
+            'parametros': parametros,
+            'fecha_generacion': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        
+        # Agregar acceso fácil a tablas individuales
+        if isinstance(datos, list) and len(datos) > 0 and isinstance(datos[0], dict) and 'table_index' in datos[0]:
+            # Nueva estructura con múltiples tablas
+            template_data['tablas'] = datos
+            template_data['tabla_principal'] = datos[0]['data'] if datos else []
+            template_data['num_tablas'] = len(datos)
+            
+            # Crear acceso directo por índice
+            for i, tabla in enumerate(datos):
+                template_data[f'tabla_{i}'] = tabla['data']
+                template_data[f'tabla_{i}_columnas'] = tabla['columns']
+                template_data[f'tabla_{i}_filas'] = tabla['row_count']
+        else:
+            # Estructura legacy
+            template_data['tabla_principal'] = datos
+            template_data['num_tablas'] = 1
+        
         # Renderizar la plantilla con los datos
-        html_content = template.render(
-            datos=datos,
-            usuario_current=usuario_current,
-            parametros=parametros,
-            fecha_generacion=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        )
+        html_content = template.render(**template_data)
         
         # Crear un archivo temporal para el HTML
         with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp:
@@ -103,6 +138,9 @@ class ReporteService:
     
     
     def generar_excel(self, plantilla_nombre, parametros, usuario_current, custom_title=None):
+        """
+        Genera Excel con soporte para múltiples tablas
+        """
         # Cargar configuración de la plantilla
         with open(os.path.join(self.excel_config_dir, plantilla_nombre), 'r') as f:
             config = json.load(f)
@@ -116,27 +154,6 @@ class ReporteService:
         if not success:
             raise Exception(f"Error en procedimiento: {datos}")
 
-        # Convertir a DataFrame
-        df = pd.DataFrame(datos)
-
-        # Seleccionar solo las columnas definidas en la configuración
-        column_mapping = config.get('columns', {})
-        
-        # Filtrar el DataFrame para incluir solo las columnas especificadas
-        df = df[[col for col in column_mapping.keys()]]
-        
-        # Renombrar columnas según configuración
-        df = df.rename(columns=column_mapping)
-
-        # Formatear columnas
-        column_formats = config.get('column_formats', {})
-        for col, fmt in column_formats.items():
-            display_col = column_mapping.get(col, col)
-            if fmt == 'date':
-                df[display_col] = pd.to_datetime(df[display_col]).dt.date
-            elif fmt == 'currency':
-                df[display_col] = df[display_col].apply(lambda x: f"${x:,.2f}")
-
         # Generar nombre de archivo
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         username = usuario_current[0]['username'] if usuario_current else 'usuario'
@@ -146,65 +163,119 @@ class ReporteService:
 
         # Crear Excel con formato
         with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
-            # Configuraciones de estilo
             workbook = writer.book
-            worksheet = writer.book.add_worksheet('Reporte')
             
-            # Estilo para título principal
-            titulo_format = workbook.add_format({
-                'bold': True,
-                'font_size': 16,
-                'align': 'center',
-                'valign': 'vcenter',
-                'bg_color': '#2ea2cc',
-                'font_color': 'white'
-            })
+            # Determinar si usar múltiples tablas o una sola
+            usar_multiples_tablas = config.get('multiple_tables', False)
+            tabla_especifica = config.get('table_index', 0)  # Tabla específica a usar si no es múltiple
             
-            # Estilo para subtítulo
-            subtitulo_format = workbook.add_format({
-                'italic': True,
-                'font_size': 10,
-                'align': 'center',
-                'valign': 'vcenter',
-                'bg_color': '#2ea2cc'
-            })
-            
-            # Estilo para encabezados de columna
-            header_style = config.get('styles', {}).get('header', {})
-            header_format = workbook.add_format({
-                'bold': header_style.get('bold', True),
-                'bg_color': header_style.get('bg_color', '#2ea2cc'),
-                'font_color': header_style.get('font_color', 'white'),
-                'align': 'center',
-                'valign': 'vcenter'
-            })
-
-            # Determinar título (personalizado o por defecto)
-            titulo = custom_title or 'REPORTE _SIN TITULO CUSTOM'
-
-            # Añadir título principal
-            worksheet.merge_range('A1:F1', titulo, titulo_format)
-            
-            # Añadir subtítulo con fecha
-            fecha_actual = datetime.now().strftime('%d de %B de %Y')
-            worksheet.merge_range('A2:F2', f'Generado el {fecha_actual}', subtitulo_format)
-
-            # Escribir encabezados de columna
-            columnas = list(df.columns)
-            for col_num, value in enumerate(columnas):
-                worksheet.write(3, col_num, value, header_format)
-
-            # Escribir datos
-            for row_num, row_data in enumerate(df.values, start=4):
-                for col_num, cell_value in enumerate(row_data):
-                    worksheet.write(row_num, col_num, cell_value)
-
-            # Ajustar ancho de columnas
-            for i, col in enumerate(df.columns):
-                max_len = max(df[col].astype(str).map(len).max(), len(col)) + 2
-                worksheet.set_column(i, i, max_len)
+            if usar_multiples_tablas and len(datos) > 1:
+                # Crear múltiples hojas para cada tabla
+                for i, tabla_data in enumerate(datos):
+                    sheet_name = config.get('sheet_names', {}).get(str(i), f'Tabla_{i}')
+                    self._crear_hoja_excel(
+                        writer, workbook, tabla_data, config, 
+                        sheet_name, custom_title, i
+                    )
+            else:
+                # Usar solo una tabla específica
+                tabla_data = datos[tabla_especifica] if tabla_especifica < len(datos) else datos[0]
+                self._crear_hoja_excel(
+                    writer, workbook, tabla_data, config, 
+                    'Reporte', custom_title, tabla_especifica
+                )
 
         return output_file, filename
+    
+    def _crear_hoja_excel(self, writer, workbook, tabla_data, config, sheet_name, custom_title, table_index):
+        """
+        Crea una hoja individual de Excel con los datos de una tabla
+        """
+        # Convertir datos a DataFrame
+        df = pd.DataFrame(tabla_data['data'])
+        
+        if df.empty:
+            # Crear hoja vacía si no hay datos
+            worksheet = workbook.add_worksheet(sheet_name)
+            worksheet.write(0, 0, f"No hay datos para {sheet_name}")
+            return
+
+        # Configuración de columnas específica por tabla
+        table_config = config.get('tables', {}).get(str(table_index), config)
+        column_mapping = table_config.get('columns', {})
+        
+        # Filtrar y renombrar columnas si se especifica mapeo
+        if column_mapping:
+            # Filtrar el DataFrame para incluir solo las columnas especificadas
+            available_cols = [col for col in column_mapping.keys() if col in df.columns]
+            df = df[available_cols]
+            # Renombrar columnas según configuración
+            df = df.rename(columns=column_mapping)
+
+        # Formatear columnas
+        column_formats = table_config.get('column_formats', {})
+        for col, fmt in column_formats.items():
+            display_col = column_mapping.get(col, col)
+            if display_col in df.columns:
+                if fmt == 'date':
+                    df[display_col] = pd.to_datetime(df[display_col], errors='coerce').dt.date
+                elif fmt == 'currency':
+                    df[display_col] = df[display_col].apply(lambda x: f"${x:,.2f}" if pd.notna(x) else "")
+
+        # Crear hoja de trabajo
+        worksheet = workbook.add_worksheet(sheet_name)
+        
+        # Configuraciones de estilo
+        titulo_format = workbook.add_format({
+            'bold': True,
+            'font_size': 16,
+            'align': 'center',
+            'valign': 'vcenter',
+            'bg_color': '#2ea2cc',
+            'font_color': 'white'
+        })
+        
+        subtitulo_format = workbook.add_format({
+            'italic': True,
+            'font_size': 10,
+            'align': 'center',
+            'valign': 'vcenter',
+            'bg_color': '#2ea2cc'
+        })
+        
+        header_style = table_config.get('styles', {}).get('header', {})
+        header_format = workbook.add_format({
+            'bold': header_style.get('bold', True),
+            'bg_color': header_style.get('bg_color', '#2ea2cc'),
+            'font_color': header_style.get('font_color', 'white'),
+            'align': 'center',
+            'valign': 'vcenter'
+        })
+
+        # Determinar título
+        titulo = custom_title or table_config.get('title', f'REPORTE - {sheet_name}')
+        col_span = max(len(df.columns), 1)
+
+        # Añadir título principal
+        worksheet.merge_range(0, 0, 0, col_span - 1, titulo, titulo_format)
+        
+        # Añadir subtítulo con fecha
+        fecha_actual = datetime.now().strftime('%d de %B de %Y')
+        worksheet.merge_range(1, 0, 1, col_span - 1, f'Generado el {fecha_actual}', subtitulo_format)
+
+        # Escribir encabezados de columna
+        for col_num, value in enumerate(df.columns):
+            worksheet.write(3, col_num, value, header_format)
+
+        # Escribir datos
+        for row_num, row_data in enumerate(df.values, start=4):
+            for col_num, cell_value in enumerate(row_data):
+                worksheet.write(row_num, col_num, cell_value)
+
+        # Ajustar ancho de columnas
+        for i, col in enumerate(df.columns):
+            max_len = max(df[col].astype(str).map(len).max(), len(col)) + 2
+            worksheet.set_column(i, i, min(max_len, 50))  # Limitar ancho máximo
  
     def listar_plantillas_excel(self):
         """Lista todas las plantillas de Excel disponibles"""

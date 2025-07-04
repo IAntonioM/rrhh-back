@@ -201,6 +201,7 @@ def actualizar_estado_control_contrato():
     data = request.get_json()
 
     id_list = data.get('id_list')
+    motivo_reemplazo = data.get('motivo_reemplazo')
     estado = data.get('estado')  # 👈 nuevo parámetro obligatorio
 
     if not id_list or estado not in [2, 3]:
@@ -211,7 +212,7 @@ def actualizar_estado_control_contrato():
 
     # Llamar al modelo para actualizar estado de los contratos
     success, message = RegistroLocadorModel.actualizar_control_contrato(
-        id_list, estado, current_user, request.remote_addr
+        id_list, estado, current_user, request.remote_addr,motivo_reemplazo
     )
 
     return jsonify({'success': success, 'message': message}), 200 if success else 409

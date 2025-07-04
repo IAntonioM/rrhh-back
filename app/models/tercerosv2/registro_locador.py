@@ -386,7 +386,7 @@ class RegistroLocadorModel:
             conn.close()
 
     @staticmethod
-    def actualizar_control_contrato(id_list, estado, current_user, remote_addr):
+    def actualizar_control_contrato(id_list, estado, current_user, remote_addr,motivo_reemplazo):
         """Duplica registros de control_contrato para una nueva programación de mes/año"""
         if not id_list:
             return False, "La lista de IDs no puede estar vacía"
@@ -395,7 +395,8 @@ class RegistroLocadorModel:
             # Datos de auditoría
             data = {
                 'id_list': id_list,
-                'operador_registro': current_user
+                'operador_registro': current_user,
+                'motivo_reemplazo':motivo_reemplazo
             }
             data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
 
@@ -404,13 +405,15 @@ class RegistroLocadorModel:
                 EXEC [Locadores].[sp_contrato]
                     @accion = 77,
                     @id_list = ?,
-                    @estado = ?,
+                    @estado = ?,    
+                    @motivo_reemplazo = ?,
                     @fecha_registro = ?,
                     @estacion_registro = ?,
                     @operador_registro = ?
             ''', (
                 id_list,
                 estado,
+                motivo_reemplazo,
                 data['fecha_registro'],
                 data['estacion_registro'],
                 data['operador_registro']
