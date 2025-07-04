@@ -5,17 +5,18 @@ from ...utils.error_handlers import handle_response
 
 asistencias_bp = Blueprint('asistencias', __name__)
 
-@asistencias_bp.route('/consulta-simple', methods=['POST'])
+@asistencias_bp.route('/asistencias-por-empleado', methods=['POST'])
 @jwt_required()
 @handle_response(include_data=True)
-def consulta_simple():
+def consulta_asistencias_por_empleado():
     """
-    Consulta simple de asistencias
+    Consulta asistencias por empleado
+    Campos: idEmpleado (requerido), nombreEmpleado, idArea, idcondicion, dni, fecha_desde, fecha_hasta
     """
     data = request.get_json() or {}
     
     try:
-        result = Asistencia.consulta_simple(data)
+        result = Asistencia.consulta_asistencias_por_empleado(data)
         
         if result['success']:
             return jsonify({
@@ -31,21 +32,21 @@ def consulta_simple():
     except Exception as e:
         return jsonify({
             'success': False, 
-            'message': f'Error al realizar consulta simple: {str(e)}'
+            'message': f'Error al consultar asistencias por empleado: {str(e)}'
         }), 500
 
-@asistencias_bp.route('/empleados', methods=['POST'])
+@asistencias_bp.route('/asistencias-detalladas-por-empleado', methods=['POST'])
 @jwt_required()
 @handle_response(include_data=True)
-def consulta_asistencia_empleados():
+def consulta_asistencias_detalladas_por_empleado():
     """
-    Consulta asistencia por empleados
-    Campos opcionales: fechaInicio, fechaFin, idArea, dni, apellidos, nombres, idcondicion, dataxmlEmpleados
+    Consulta asistencias detalladas por empleado
+    Campos: idEmpleado (requerido), nombreEmpleado, idArea, idcondicion, dni, fecha_desde, fecha_hasta
     """
     data = request.get_json() or {}
     
     try:
-        result = Asistencia.consulta_asistencia_empleados(data)
+        result = Asistencia.consulta_asistencias_detalladas_por_empleado(data)
         
         if result['success']:
             return jsonify({
@@ -61,125 +62,7 @@ def consulta_asistencia_empleados():
     except Exception as e:
         return jsonify({
             'success': False, 
-            'message': f'Error al consultar asistencia de empleados: {str(e)}'
-        }), 500
-
-@asistencias_bp.route('/empleados-detalle', methods=['POST'])
-@jwt_required()
-@handle_response(include_data=True)
-def consulta_asistencia_empleados_detalle():
-    """
-    Consulta asistencia por empleados con detalle completo
-    Campos opcionales: fechaInicio, fechaFin, idArea, dni, apellidos, nombres, idcondicion, dataxmlEmpleados
-    """
-    data = request.get_json() or {}
-    
-    try:
-        result = Asistencia.consulta_asistencia_empleados_detalle(data)
-        
-        if result['success']:
-            return jsonify({
-                'success': True,
-                'data': result['data']
-            }), 200
-        else:
-            return jsonify({
-                'success': False, 
-                'message': result.get('message', 'Error en la consulta')
-            }), 500
-            
-    except Exception as e:
-        return jsonify({
-            'success': False, 
-            'message': f'Error al consultar detalle de asistencia: {str(e)}'
-        }), 500
-
-@asistencias_bp.route('/faltas-dia', methods=['POST'])
-@jwt_required()
-@handle_response(include_data=True)
-def consulta_faltas_del_dia():
-    """
-    Consulta faltas del día actual
-    """
-    data = request.get_json() or {}
-    
-    try:
-        result = Asistencia.consulta_faltas_del_dia(data)
-        
-        if result['success']:
-            return jsonify({
-                'success': True,
-                'data': result['data']
-            }), 200
-        else:
-            return jsonify({
-                'success': False, 
-                'message': result.get('message', 'Error en la consulta')
-            }), 500
-            
-    except Exception as e:
-        return jsonify({
-            'success': False, 
-            'message': f'Error al consultar faltas del día: {str(e)}'
-        }), 500
-
-@asistencias_bp.route('/tardanzas-dia', methods=['POST'])
-@jwt_required()
-@handle_response(include_data=True)
-def consulta_tardanzas_del_dia():
-    """
-    Consulta tardanzas del día actual
-    """
-    data = request.get_json() or {}
-    
-    try:
-        result = Asistencia.consulta_tardanzas_del_dia(data)
-        
-        if result['success']:
-            return jsonify({
-                'success': True,
-                'data': result['data']
-            }), 200
-        else:
-            return jsonify({
-                'success': False, 
-                'message': result.get('message', 'Error en la consulta')
-            }), 500
-            
-    except Exception as e:
-        return jsonify({
-            'success': False, 
-            'message': f'Error al consultar tardanzas del día: {str(e)}'
-        }), 500
-
-@asistencias_bp.route('/consolidado', methods=['POST'])
-@jwt_required()
-@handle_response(include_data=True)
-def consulta_asistencia_consolidado():
-    """
-    Consulta asistencia consolidada
-    Campos opcionales: fechaInicio, fechaFin, idArea, dni, apellidos, nombres, idcondicion, dataxmlEmpleados
-    """
-    data = request.get_json() or {}
-    
-    try:
-        result = Asistencia.consulta_asistencia_consolidado(data)
-        
-        if result['success']:
-            return jsonify({
-                'success': True,
-                'data': result['data']
-            }), 200
-        else:
-            return jsonify({
-                'success': False, 
-                'message': result.get('message', 'Error en la consulta')
-            }), 500
-            
-    except Exception as e:
-        return jsonify({
-            'success': False, 
-            'message': f'Error al consultar asistencia consolidada: {str(e)}'
+            'message': f'Error al consultar asistencias detalladas por empleado: {str(e)}'
         }), 500
 
 @asistencias_bp.route('/empleados-list', methods=['POST'])
@@ -188,7 +71,7 @@ def consulta_asistencia_consolidado():
 def consulta_empleados():
     """
     Consulta empleados con filtros
-    Campos opcionales: idArea, idcondicion, dni, apellidos, nombres
+    Campos opcionales: idArea, idcondicion, dni, nombreEmpleado
     """
     data = request.get_json() or {}
     
@@ -210,63 +93,4 @@ def consulta_empleados():
         return jsonify({
             'success': False, 
             'message': f'Error al consultar empleados: {str(e)}'
-        }), 500
-
-@asistencias_bp.route('/empleados-count', methods=['POST'])
-@jwt_required()
-@handle_response(include_data=True)
-def conteo_empleados():
-    """
-    Conteo de empleados activos
-    """
-    data = request.get_json() or {}
-    
-    try:
-        result = Asistencia.conteo_empleados(data)
-        
-        if result['success']:
-            return jsonify({
-                'success': True,
-                'total': result['total']
-            }), 200
-        else:
-            return jsonify({
-                'success': False, 
-                'message': result.get('message', 'Error en la consulta')
-            }), 500
-            
-    except Exception as e:
-        return jsonify({
-            'success': False, 
-            'message': f'Error al contar empleados: {str(e)}'
-        }), 500
-
-@asistencias_bp.route('/consolidado-test', methods=['POST'])
-@jwt_required()
-@handle_response(include_data=True)
-def consulta_asistencia_consolidado_test():
-    """
-    Consulta asistencia consolidada con errores (versión test)
-    Campos opcionales: fechaInicio, fechaFin, idArea, dni, apellidos, nombres, idcondicion, dataxmlEmpleados
-    """
-    data = request.get_json() or {}
-    
-    try:
-        result = Asistencia.consulta_asistencia_consolidado_test(data)
-        
-        if result['success']:
-            return jsonify({
-                'success': True,
-                'data': result['data']
-            }), 200
-        else:
-            return jsonify({
-                'success': False, 
-                'message': result.get('message', 'Error en la consulta')
-            }), 500
-            
-    except Exception as e:
-        return jsonify({
-            'success': False, 
-            'message': f'Error al consultar asistencia consolidada test: {str(e)}'
         }), 500

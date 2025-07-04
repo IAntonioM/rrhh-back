@@ -42,7 +42,9 @@ class Papeleta:
                 'nombres': '',
                 'apellidos': '',
                 'solicitante': '',
-                'idEmpleado': 0
+                'idEmpleado': 0,
+                'fecha_desde': '1900-01-01',
+                'fecha_hasta': '1900-01-01',
             }
             
             # Actualizar con parámetros proporcionados
@@ -80,7 +82,9 @@ class Papeleta:
                     @nombres = ?,
                     @apellidos = ?,
                     @solicitante = ?,
-                    @idEmpleado = ?
+                    @idEmpleado = ?,
+                    @fecha_desde = ?,
+                    @fecha_hasta = ?
             ''', (
                 default_params['mquery'],
                 default_params['idPapeleta'],
@@ -111,7 +115,9 @@ class Papeleta:
                 default_params['nombres'],
                 default_params['apellidos'],
                 default_params['solicitante'],
-                default_params['idEmpleado']
+                default_params['idEmpleado'],
+                default_params['fecha_desde'],
+                default_params['fecha_hasta']
             ))
 
             # Para operaciones de inserción, edición y eliminación (mquery 1, 2, 30)
