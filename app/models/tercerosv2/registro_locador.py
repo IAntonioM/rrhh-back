@@ -405,7 +405,7 @@ class RegistroLocadorModel:
                 EXEC [Locadores].[sp_contrato]
                     @accion = 77,
                     @id_list = ?,
-                    @estado = ?,    
+                    @estado = ?,
                     @motivo_reemplazo = ?,
                     @fecha_registro = ?,
                     @estacion_registro = ?,
