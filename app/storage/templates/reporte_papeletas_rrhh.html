@@ -161,34 +161,25 @@
         <thead>
           <tr>
             <th class="col-nro">Nro</th>
+            <th class="col-area">Nro Papeleta</th>
+            <th class="col-area">Tipo Papeleta</th>
             <th class="col-area">Área</th>
-            <th class="col-cargo">Cargo</th>
-            <th class="col-dni">DNI</th>
-            <th class="col-apellidos">Apellidos</th>
-            <th class="col-nombres">Nombres</th>
+            <th class="col-apellidos">Solicitante</th>
             <th class="col-fecha">Fecha</th>
-            <th class="col-hora">Hora</th>
-            <th class="col-papeleta">Nro Papeleta</th>
+            <th class="col-hora">Motivo</th>
           </tr>
         </thead>
         <tbody>
           {% for row in tablas[0].data %}
           <tr>
             <td class="col-nro">{{ loop.index }}</td>
+            <td class="col-area">{{ row.nro or '' }}</td>
+            <td class="col-area">{{ row.tipoPapeleta or '' }}</td>
             <td class="col-area">{{ row.centro_costo or '' }}</td>
-            <td class="col-cargo">{{ row.cargo or '' }}</td>
-            <td class="col-dni">{{ row.dni or '' }}</td>
-            <td class="col-apellidos">{{ row.apellidos or '' }}</td>
-            <td class="col-nombres">{{ row.nombres or '' }}</td>
-            <td class="col-fecha">{{ row.fecha or '' }}</td>
-            <td class="col-hora">{{ row.hora or '' }}</td>
-            <td class="col-papeleta">
-              {% if row.nro and row.anio %}
-                <span class="papeleta-activa">{{ row.nro }}/{{ row.anio }}</span>
-              {% else %}
-                <span class="papeleta-na">N/A</span>
-              {% endif %}
-            </td>
+            <td class="col-apellidos">{{ row.solicitante or '' }}</td>
+            <td class="col-fecha">{{ row.fecha_salida or '' }}</td>
+            <td class="col-fecha">{{ row.motivo_salida or '' }}</td>
+            
           </tr>
           {% endfor %}
         </tbody>
