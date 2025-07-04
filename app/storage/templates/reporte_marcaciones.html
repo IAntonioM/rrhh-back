@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reporte de Marcaciones - General</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 9px;
+        margin: 10px;
+        background-color: #f9f9f9;
+        color: #333;
+      }
+      .container {
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+        font-size: 14px;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #e0f7fa;
+      }
+      h2 {
+        color: #34495e;
+        font-size: 12px;
+        margin-top: 15px;
+        margin-bottom: 8px;
+        padding-bottom: 3px;
+        border-bottom: 1px solid #bdc3c7;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 8px;
+        margin-bottom: 10px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 4px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background-color: #3498db;
+        color: white;
+        font-weight: bold;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      tr:hover {
+        background-color: #e0f7fa;
+      }
+      .footer {
+        text-align: center;
+        font-size: 8px;
+        color: #7f8c8d;
+        margin-top: 10px;
+      }
+      
+      /* Anchos específicos de columnas */
+      .col-nro {
+        width: 6%;
+      }
+      .col-area {
+        width: 12%;
+      }
+      .col-cargo {
+        width: 10%;
+      }
+      .col-dni {
+        width: 8%;
+      }
+      .col-apellidos {
+        width: 18%;
+      }
+      .col-nombres {
+        width: 18%;
+      }
+      .col-fecha {
+        width: 10%;
+      }
+      .col-hora {
+        width: 8%;
+      }
+      .col-papeleta {
+        width: 10%;
+      }
+      
+      /* Tabla resumen */
+      .resumen-table th {
+        background-color: #9b59b6;
+        font-size: 8px;
+      }
+      .resumen-table .total-row {
+        background-color: #e74c3c;
+        color: white;
+        font-weight: bold;
+      }
+      .resumen-table .total-row td {
+        text-align: center;
+      }
+      
+      /* Separador visual */
+      .section-divider {
+        margin: 15px 0;
+        border-top: 1px solid #e0f7fa;
+      }
+      
+      /* Estilos para papeletas */
+      .papeleta-activa {
+        background-color: #e8f5e8;
+        color: #4caf50;
+        padding: 2px 4px;
+        border-radius: 2px;
+        font-weight: bold;
+      }
+      .papeleta-na {
+        background-color: #f5f5f5;
+        color: #757575;
+        padding: 2px 4px;
+        border-radius: 2px;
+      }
+      
+      /* Optimización para PDF */
+      @media print {
+        body {
+          margin: 5px;
+        }
+        .container {
+          padding: 5px;
+          max-width: 100%;
+          box-shadow: none;
+        }
+        table {
+          font-size: 7px;
+        }
+        th,
+        td {
+          padding: 2px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Reporte de Marcaciones - General</h1>
+
+      {% if tablas and tablas|length > 0 and tablas[0].data|length > 0 %}
+      
+      <h2>Detalle de Marcaciones</h2>
+      <table>
+        <thead>
+          <tr>
+            <th class="col-nro">Nro</th>
+            <th class="col-area">Área</th>
+            <th class="col-cargo">Cargo</th>
+            <th class="col-dni">DNI</th>
+            <th class="col-apellidos">Apellidos</th>
+            <th class="col-nombres">Nombres</th>
+            <th class="col-fecha">Fecha</th>
+            <th class="col-hora">Hora</th>
+            <th class="col-papeleta">Nro Papeleta</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in tablas[0].data %}
+          <tr>
+            <td class="col-nro">{{ loop.index }}</td>
+            <td class="col-area">{{ row.centro_costo or '' }}</td>
+            <td class="col-cargo">{{ row.cargo or '' }}</td>
+            <td class="col-dni">{{ row.dni or '' }}</td>
+            <td class="col-apellidos">{{ row.apellidos or '' }}</td>
+            <td class="col-nombres">{{ row.nombres or '' }}</td>
+            <td class="col-fecha">{{ row.fecha or '' }}</td>
+            <td class="col-hora">{{ row.hora or '' }}</td>
+            <td class="col-papeleta">
+              {% if row.nro and row.anio %}
+                <span class="papeleta-activa">{{ row.nro }}/{{ row.anio }}</span>
+              {% else %}
+                <span class="papeleta-na">N/A</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="section-divider"></div>
+
+      <!-- Resumen por Área -->
+      <h2>Resumen por Área</h2>
+      <table class="resumen-table">
+        <thead>
+          <tr>
+            <th>Área</th>
+            <th>Cantidad</th>
+            <th>Porcentaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set areas_count = {} %}
+          {% set total_marcaciones = tablas[0].data|length %}
+          
+          {% for row in tablas[0].data %}
+            {% if row.centro_costo %}
+              {% set area = row.centro_costo %}
+              {% set current_count = areas_count.get(area, 0) %}
+              {% set _ = areas_count.update({area: current_count + 1}) %}
+            {% endif %}
+          {% endfor %}
+          
+          {% for area, cantidad in areas_count.items() %}
+          <tr>
+            <td>{{ area }}</td>
+            <td>{{ cantidad }}</td>
+            <td>{{ "%.1f"|format((cantidad / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
+          </tr>
+          {% endfor %}
+          
+          <tr class="total-row">
+            <td>TOTAL</td>
+            <td>{{ total_marcaciones }}</td>
+            <td>100.0%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Resumen por Cargo -->
+      <div class="section-divider"></div>
+      <h2>Resumen por Cargo</h2>
+      <table class="resumen-table">
+        <thead>
+          <tr>
+            <th>Cargo</th>
+            <th>Cantidad</th>
+            <th>Porcentaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set cargos_count = {} %}
+          
+          {% for row in tablas[0].data %}
+            {% if row.cargo %}
+              {% set cargo = row.cargo %}
+              {% set current_count = cargos_count.get(cargo, 0) %}
+              {% set _ = cargos_count.update({cargo: current_count + 1}) %}
+            {% endif %}
+          {% endfor %}
+          
+          {% for cargo, cantidad in cargos_count.items() %}
+          <tr>
+            <td>{{ cargo }}</td>
+            <td>{{ cantidad }}</td>
+            <td>{{ "%.1f"|format((cantidad / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
+          </tr>
+          {% endfor %}
+          
+          <tr class="total-row">
+            <td>TOTAL</td>
+            <td>{{ total_marcaciones }}</td>
+            <td>100.0%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Resumen por Fecha -->
+      <div class="section-divider"></div>
+      <h2>Resumen por Fecha</h2>
+      <table class="resumen-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Cantidad</th>
+            <th>Porcentaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set fechas_count = {} %}
+          
+          {% for row in tablas[0].data %}
+            {% if row.fecha %}
+              {% set fecha = row.fecha %}
+              {% set current_count = fechas_count.get(fecha, 0) %}
+              {% set _ = fechas_count.update({fecha: current_count + 1}) %}
+            {% endif %}
+          {% endfor %}
+          
+          {% for fecha, cantidad in fechas_count.items() %}
+          <tr>
+            <td>{{ fecha }}</td>
+            <td>{{ cantidad }}</td>
+            <td>{{ "%.1f"|format((cantidad / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
+          </tr>
+          {% endfor %}
+          
+          <tr class="total-row">
+            <td>TOTAL</td>
+            <td>{{ total_marcaciones }}</td>
+            <td>100.0%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Resumen de Papeletas -->
+      <div class="section-divider"></div>
+      <h2>Resumen de Papeletas</h2>
+      <table class="resumen-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Porcentaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set con_papeleta = 0 %}
+          {% set sin_papeleta = 0 %}
+          
+          {% for row in tablas[0].data %}
+            {% if row.nro and row.anio %}
+              {% set con_papeleta = con_papeleta + 1 %}
+            {% else %}
+              {% set sin_papeleta = sin_papeleta + 1 %}
+            {% endif %}
+          {% endfor %}
+          
+          <tr>
+            <td>Con Papeleta</td>
+            <td>{{ con_papeleta }}</td>
+            <td>{{ "%.1f"|format((con_papeleta / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
+          </tr>
+          <tr>
+            <td>Sin Papeleta</td>
+            <td>{{ sin_papeleta }}</td>
+            <td>{{ "%.1f"|format((sin_papeleta / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
+          </tr>
+          
+          <tr class="total-row">
+            <td>TOTAL</td>
+            <td>{{ total_marcaciones }}</td>
+            <td>100.0%</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      {% else %}
+      <div
+        style="
+          text-align: center;
+          color: #e74c3c;
+          font-weight: bold;
+          margin: 20px;
+        "
+      >
+        <p>No se encontraron marcaciones para mostrar.</p>
+        <p>
+          Verifique los filtros aplicados o el rango de fechas seleccionado.
+        </p>
+      </div>
+      {% endif %}
+
+      <div class="footer">
+        Generado el {{ fecha_generacion }} | Reporte de Marcaciones - General
+      </div>
+    </div>
+  </body>
+</html>

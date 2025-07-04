@@ -1,0 +1,22 @@
+{
+    "procedure_name": "sp_papeleta_rrhh",
+    "filename_template": "REPORTE_PAPELETAS.xlsx",
+    "columns": {
+        "DNI": "DNI",
+        "locador_nombres": "Locador",
+        "centroCosto_nombre": "Area",
+        "cargo_nombre": "Cargo",
+        "monto": "Monto"
+    },
+
+    "column_formats": {
+
+    },
+    "styles": {
+        "header": {
+            "bold": true,
+            "bg_color": "#2ea2cc",
+            "font_color": "white"
+        }
+    }
+}
