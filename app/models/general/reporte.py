@@ -15,7 +15,6 @@ class ReporteModel:
         'reporte_terceros.html':'Locadores.sp_control_contrato',
         'reporte_terceros_sexo.html':'Locadores.sp_control_contrato',
         'reporte_terceros_distrito.html':'Locadores.sp_control_contrato',
-        'reporte_terceros_sexo.html':'Locadores.sp_control_contrato',
     }
 
     @staticmethod

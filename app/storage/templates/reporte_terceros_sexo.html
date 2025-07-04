@@ -131,12 +131,11 @@
         <table>
             <thead>
                 <tr>
-                    <th class="col-os">OS</th>
+                    <th class="col-dni">DNI</th>
+                    <th class="col-nombres">Nombres Completos</th>
                     <th class="col-area">Área</th>
                     <th class="col-cargo">Cargo</th>
                     <th class="col-estado">Estado</th>
-                    <th class="col-nombres">Nombres Completos</th>
-                    <th class="col-dni">DNI</th>
                     <th class="col-monto">Monto Total</th>
                     <th class="col-fecha">Fecha Inicio</th>
                     <th class="col-fecha">Fecha Fin</th>
@@ -146,12 +145,11 @@
             <tbody>
                 {% for row in tablas[0].data %}
                 <tr>
-                    <td>{{ row.OS if row.OS else '' }}</td>
+                    <td>{{ row.dni if row.dni else '' }}</td>
+                    <td>{{ row.nombres_completos if row.nombres_completos else '' }}</td>
                     <td>{{ row.area if row.area else '' }}</td>
                     <td>{{ row.cargo if row.cargo else '' }}</td>
                     <td>{{ row.estado_recepcion_nombres if row.estado_recepcion_nombres else '' }}</td>
-                    <td>{{ row.nombres_completos if row.nombres_completos else '' }}</td>
-                    <td>{{ row.dni if row.dni else '' }}</td>
                     <td class="monto-total">{{ "%.2f"|format(row.monto_total|float) if row.monto_total else '0.00' }}</td>
                     <td>{{ row.fecha_inicio if row.fecha_inicio else '' }}</td>
                     <td>{{ row.fecha_fin if row.fecha_fin else '' }}</td>
@@ -195,12 +193,11 @@
         <table>
             <thead>
                 <tr>
-                    <th class="col-os">OS</th>
+                    <th class="col-dni">DNI</th>
+                    <th class="col-nombres">Nombres Completos</th>
                     <th class="col-area">Área</th>
                     <th class="col-cargo">Cargo</th>
                     <th class="col-estado">Estado</th>
-                    <th class="col-nombres">Nombres Completos</th>
-                    <th class="col-dni">DNI</th>
                     <th class="col-monto">Monto Total</th>
                     <th class="col-fecha">Fecha Inicio</th>
                     <th class="col-fecha">Fecha Fin</th>
@@ -210,12 +207,11 @@
             <tbody>
                 {% for row in datos %}
                 <tr>
-                    <td>{{ row.OS if row.OS else '' }}</td>
+                    <td>{{ row.dni if row.dni else '' }}</td>
+                    <td>{{ row.nombres_completos if row.nombres_completos else '' }}</td>
                     <td>{{ row.area if row.area else '' }}</td>
                     <td>{{ row.cargo if row.cargo else '' }}</td>
                     <td>{{ row.estado_recepcion_nombres if row.estado_recepcion_nombres else '' }}</td>
-                    <td>{{ row.nombres_completos if row.nombres_completos else '' }}</td>
-                    <td>{{ row.dni if row.dni else '' }}</td>
                     <td class="monto-total">{{ "%.2f"|format(row.monto_total|float) if row.monto_total else '0.00' }}</td>
                     <td>{{ row.fecha_inicio if row.fecha_inicio else '' }}</td>
                     <td>{{ row.fecha_fin if row.fecha_fin else '' }}</td>
