@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Reporte de Papeletas RRHH - General</title>
+    <title>Reporte de Marcaciones - General</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -68,61 +68,31 @@
       
       /* Anchos específicos de columnas */
       .col-nro {
-        width: 8%;
-      }
-      .col-tipo {
-        width: 10%;
-      }
-      .col-sede {
-        width: 8%;
+        width: 6%;
       }
       .col-area {
         width: 12%;
       }
-      .col-fecha-salida {
+      .col-cargo {
+        width: 10%;
+      }
+      .col-dni {
         width: 8%;
       }
-      .col-solicitante {
-        width: 15%;
+      .col-apellidos {
+        width: 18%;
       }
-      .col-motivo {
-        width: 20%;
+      .col-nombres {
+        width: 18%;
       }
-      .col-fecha-registro {
+      .col-fecha {
+        width: 10%;
+      }
+      .col-hora {
         width: 8%;
       }
-      .col-estado {
-        width: 11%;
-      }
-      
-      /* Estilos para estados */
-      .estado-registrado {
-        background-color: #e8f4f8;
-        color: #2196f3;
-        padding: 2px 4px;
-        border-radius: 2px;
-        font-weight: bold;
-      }
-      .estado-aprobado {
-        background-color: #e8f5e8;
-        color: #4caf50;
-        padding: 2px 4px;
-        border-radius: 2px;
-        font-weight: bold;
-      }
-      .estado-rechazado {
-        background-color: #ffebee;
-        color: #f44336;
-        padding: 2px 4px;
-        border-radius: 2px;
-        font-weight: bold;
-      }
-      .estado-salio {
-        background-color: #fff3e0;
-        color: #ff9800;
-        padding: 2px 4px;
-        border-radius: 2px;
-        font-weight: bold;
+      .col-papeleta {
+        width: 10%;
       }
       
       /* Tabla resumen */
@@ -143,6 +113,21 @@
       .section-divider {
         margin: 15px 0;
         border-top: 1px solid #e0f7fa;
+      }
+      
+      /* Estilos para papeletas */
+      .papeleta-activa {
+        background-color: #e8f5e8;
+        color: #4caf50;
+        padding: 2px 4px;
+        border-radius: 2px;
+        font-weight: bold;
+      }
+      .papeleta-na {
+        background-color: #f5f5f5;
+        color: #757575;
+        padding: 2px 4px;
+        border-radius: 2px;
       }
       
       /* Optimización para PDF */
@@ -167,53 +152,41 @@
   </head>
   <body>
     <div class="container">
-      <h1>Reporte de Papeletas RRHH - General</h1>
+      <h1>Reporte de Marcaciones - General</h1>
 
       {% if tablas and tablas|length > 0 and tablas[0].data|length > 0 %}
       
-      <h2>Detalle de Papeletas</h2>
+      <h2>Detalle de Marcaciones</h2>
       <table>
         <thead>
           <tr>
-            <th class="col-nro">Nro. Papeleta</th>
-            <th class="col-tipo">Tipo Papeleta</th>
-            <th class="col-sede">Sede</th>
+            <th class="col-nro">Nro</th>
             <th class="col-area">Área</th>
-            <th class="col-fecha-salida">Fecha Salida</th>
-            <th class="col-solicitante">Solicitante</th>
-            <th class="col-motivo">Motivo de Salida</th>
-            <th class="col-fecha-registro">Fecha Registro</th>
-            <th class="col-estado">Estado</th>
+            <th class="col-cargo">Cargo</th>
+            <th class="col-dni">DNI</th>
+            <th class="col-apellidos">Apellidos</th>
+            <th class="col-nombres">Nombres</th>
+            <th class="col-fecha">Fecha</th>
+            <th class="col-hora">Hora</th>
+            <th class="col-papeleta">Nro Papeleta</th>
           </tr>
         </thead>
         <tbody>
           {% for row in tablas[0].data %}
           <tr>
-            <td class="col-nro">{{ row.nro or '' }}</td>
-            <td class="col-tipo">{{ row.tipoPapeleta or '' }}</td>
-            <td class="col-sede">{{ row.sede or '' }}</td>
+            <td class="col-nro">{{ loop.index }}</td>
             <td class="col-area">{{ row.centro_costo or '' }}</td>
-            <td class="col-fecha-salida">{{ row.fecha_salida or '' }}</td>
-            <td class="col-solicitante">{{ row.solicitante or '' }}</td>
-            <td class="col-motivo">
-              {{ row.motivo_salida[:50] ~ '...' if row.motivo_salida and row.motivo_salida|length > 50
-              else row.motivo_salida or '' }}
-            </td>
-            <td class="col-fecha-registro">{{ row.fecha_registro or '' }}</td>
-            <td class="col-estado">
-              {% if row.valor %}
-                {% set estado = row.valor %}
-                {% if 'REGISTRADO' in estado %}
-                  <span class="estado-registrado">{{ estado }}</span>
-                {% elif 'APROB' in estado %}
-                  <span class="estado-aprobado">{{ estado }}</span>
-                {% elif 'RECHAZADO' in estado %}
-                  <span class="estado-rechazado">{{ estado }}</span>
-                {% elif 'SALIÓ' in estado or 'REGRESÓ' in estado %}
-                  <span class="estado-salio">{{ estado }}</span>
-                {% else %}
-                  <span class="estado-registrado">{{ estado }}</span>
-                {% endif %}
+            <td class="col-cargo">{{ row.cargo or '' }}</td>
+            <td class="col-dni">{{ row.dni or '' }}</td>
+            <td class="col-apellidos">{{ row.apellidos or '' }}</td>
+            <td class="col-nombres">{{ row.nombres or '' }}</td>
+            <td class="col-fecha">{{ row.fecha or '' }}</td>
+            <td class="col-hora">{{ row.hora or '' }}</td>
+            <td class="col-papeleta">
+              {% if row.nro and row.anio %}
+                <span class="papeleta-activa">{{ row.nro }}/{{ row.anio }}</span>
+              {% else %}
+                <span class="papeleta-na">N/A</span>
               {% endif %}
             </td>
           </tr>
@@ -223,47 +196,7 @@
 
       <div class="section-divider"></div>
 
-      <!-- Resumen por Estado -->
-      <h2>Resumen por Estado</h2>
-      <table class="resumen-table">
-        <thead>
-          <tr>
-            <th>Estado</th>
-            <th>Cantidad</th>
-            <th>Porcentaje</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% set estados_count = {} %}
-          {% set total_papeletas = tablas[0].data|length %}
-          
-          {% for row in tablas[0].data %}
-            {% if row.valor %}
-              {% set estado = row.valor %}
-              {% set current_count = estados_count.get(estado, 0) %}
-              {% set _ = estados_count.update({estado: current_count + 1}) %}
-            {% endif %}
-          {% endfor %}
-          
-          {% for estado, cantidad in estados_count.items() %}
-          <tr>
-            <td>{{ estado }}</td>
-            <td>{{ cantidad }}</td>
-            <td>{{ "%.1f"|format((cantidad / total_papeletas * 100)) if total_papeletas > 0 else '0.0' }}%</td>
-          </tr>
-          {% endfor %}
-          
-          <tr class="total-row">
-            <td>TOTAL</td>
-            <td>{{ total_papeletas }}</td>
-            <td>100.0%</td>
-          </tr>
-        </tbody>
-      </table>
-
       <!-- Resumen por Área -->
-      {% if tablas[0].data|length > 0 %}
-      <div class="section-divider"></div>
       <h2>Resumen por Área</h2>
       <table class="resumen-table">
         <thead>
@@ -275,6 +208,7 @@
         </thead>
         <tbody>
           {% set areas_count = {} %}
+          {% set total_marcaciones = tablas[0].data|length %}
           
           {% for row in tablas[0].data %}
             {% if row.centro_costo %}
@@ -288,18 +222,135 @@
           <tr>
             <td>{{ area }}</td>
             <td>{{ cantidad }}</td>
-            <td>{{ "%.1f"|format((cantidad / total_papeletas * 100)) if total_papeletas > 0 else '0.0' }}%</td>
+            <td>{{ "%.1f"|format((cantidad / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
           </tr>
           {% endfor %}
           
           <tr class="total-row">
             <td>TOTAL</td>
-            <td>{{ total_papeletas }}</td>
+            <td>{{ total_marcaciones }}</td>
             <td>100.0%</td>
           </tr>
         </tbody>
       </table>
-      {% endif %}
+
+      <!-- Resumen por Cargo -->
+      <div class="section-divider"></div>
+      <h2>Resumen por Cargo</h2>
+      <table class="resumen-table">
+        <thead>
+          <tr>
+            <th>Cargo</th>
+            <th>Cantidad</th>
+            <th>Porcentaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set cargos_count = {} %}
+          
+          {% for row in tablas[0].data %}
+            {% if row.cargo %}
+              {% set cargo = row.cargo %}
+              {% set current_count = cargos_count.get(cargo, 0) %}
+              {% set _ = cargos_count.update({cargo: current_count + 1}) %}
+            {% endif %}
+          {% endfor %}
+          
+          {% for cargo, cantidad in cargos_count.items() %}
+          <tr>
+            <td>{{ cargo }}</td>
+            <td>{{ cantidad }}</td>
+            <td>{{ "%.1f"|format((cantidad / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
+          </tr>
+          {% endfor %}
+          
+          <tr class="total-row">
+            <td>TOTAL</td>
+            <td>{{ total_marcaciones }}</td>
+            <td>100.0%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Resumen por Fecha -->
+      <div class="section-divider"></div>
+      <h2>Resumen por Fecha</h2>
+      <table class="resumen-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Cantidad</th>
+            <th>Porcentaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set fechas_count = {} %}
+          
+          {% for row in tablas[0].data %}
+            {% if row.fecha %}
+              {% set fecha = row.fecha %}
+              {% set current_count = fechas_count.get(fecha, 0) %}
+              {% set _ = fechas_count.update({fecha: current_count + 1}) %}
+            {% endif %}
+          {% endfor %}
+          
+          {% for fecha, cantidad in fechas_count.items() %}
+          <tr>
+            <td>{{ fecha }}</td>
+            <td>{{ cantidad }}</td>
+            <td>{{ "%.1f"|format((cantidad / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
+          </tr>
+          {% endfor %}
+          
+          <tr class="total-row">
+            <td>TOTAL</td>
+            <td>{{ total_marcaciones }}</td>
+            <td>100.0%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Resumen de Papeletas -->
+      <div class="section-divider"></div>
+      <h2>Resumen de Papeletas</h2>
+      <table class="resumen-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Porcentaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set con_papeleta = 0 %}
+          {% set sin_papeleta = 0 %}
+          
+          {% for row in tablas[0].data %}
+            {% if row.nro and row.anio %}
+              {% set con_papeleta = con_papeleta + 1 %}
+            {% else %}
+              {% set sin_papeleta = sin_papeleta + 1 %}
+            {% endif %}
+          {% endfor %}
+          
+          <tr>
+            <td>Con Papeleta</td>
+            <td>{{ con_papeleta }}</td>
+            <td>{{ "%.1f"|format((con_papeleta / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
+          </tr>
+          <tr>
+            <td>Sin Papeleta</td>
+            <td>{{ sin_papeleta }}</td>
+            <td>{{ "%.1f"|format((sin_papeleta / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
+          </tr>
+          
+          <tr class="total-row">
+            <td>TOTAL</td>
+            <td>{{ total_marcaciones }}</td>
+            <td>100.0%</td>
+          </tr>
+        </tbody>
+      </table>
       
       {% else %}
       <div
@@ -310,7 +361,7 @@
           margin: 20px;
         "
       >
-        <p>No se encontraron papeletas para mostrar.</p>
+        <p>No se encontraron marcaciones para mostrar.</p>
         <p>
           Verifique los filtros aplicados o el rango de fechas seleccionado.
         </p>
@@ -318,7 +369,7 @@
       {% endif %}
 
       <div class="footer">
-        Generado el {{ fecha_generacion }} | Reporte de Papeletas RRHH - General
+        Generado el {{ fecha_generacion }} | Reporte de Marcaciones - General
       </div>
     </div>
   </body>
