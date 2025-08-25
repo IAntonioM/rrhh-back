@@ -12,7 +12,7 @@ ALLOWED_FILE_TYPES = ['cv', 'perfil_img']
 # Extensiones permitidas por tipo
 ALLOWED_EXTENSIONS = {
     'cv': ['.pdf', '.docx'],
-    'perfil_img': ['.jpg', '.jpeg', '.png']
+    'perfil_img': ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff', '.svg', '.jfif', '.pjpeg', '.pjp', '.avif']
 }
 
 # Función para verificar si el archivo tiene una extensión permitida
