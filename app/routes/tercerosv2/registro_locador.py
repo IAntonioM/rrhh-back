@@ -5,6 +5,7 @@ from ...utils.error_handlers import handle_response
 from ...request.terceros.UpdateContratoRequest1 import UpdateContratoRequest1
 from ...request.terceros.UpdateContratoRequest2 import UpdateContratoRequest2
 from ...request.terceros.UpdateContratoRequest3 import UpdateContratoRequest3
+from ...request.terceros.UpdateContratoRequest21 import UpdateContratoRequest21
 from ...request.terceros.createContratoRequest import CreateContratoRequest
 
 locador_contrato_bp = Blueprint('locador_contrato', __name__)
@@ -77,6 +78,15 @@ def update_contrato(id):
 
         success, message = RegistroLocadorModel.renew(data, current_user, request.remote_addr)
 
+    elif criterio == 21:
+        print('criterio 21 - tesoreia')
+        # Validación simple para renovación
+        valid_data, error_message = UpdateContratoRequest21.validate(data)
+        if not valid_data:
+            return jsonify({'success': False, 'message': error_message}), 409
+
+        success, message = RegistroLocadorModel.update(data, current_user, request.remote_addr)
+        
     else:
         return jsonify({'success': False, 'message': 'Criterio no válido'}), 400
 

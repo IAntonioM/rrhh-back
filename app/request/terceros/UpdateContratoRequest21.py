@@ -1,17 +1,13 @@
 import re
 
-class UpdateContratoRequest2:
+class UpdateContratoRequest21:
     @staticmethod
     def validate(data):
         field_messages = {
             'id': 'el id contrato es obligatorio es obligatorio.',
-            'nro_orden_servicio': 'El Nro O/S es obligatorio.',
-            #'id_concepto': 'El concepto es obligatorio.',
-            'fecha_orden': 'La fecha de Orden es obligatorio.',
-            'fecha_inicio': 'La fecha de Inicio es obligatorio.',
-            'fecha_fin': 'La fecha de Fin es obligatorio.',
-            'id_cargo': 'El Servicio es obligatorio.',
-            'nro_siaf': 'El Nro de Siaf es obligatorio.',
+    'n_comprobante': 'El número de comprobante es obligatorio.',
+    'fecha_comprobante': 'La fecha de comprobante es obligatoria.',
+    'flag_recepcion': 'El campo recepción es obligatorio.'
         }
         for field, message in field_messages.items():
             value = data.get(field)
