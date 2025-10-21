@@ -46,6 +46,7 @@ from app.routes.controlAsistencias.asistenciasRoute import asistencias_bp
 from app.routes.general.registro_tiempo import tiempo_procesamiento_bp
 from app.routes.planilla.periodoRoute import periodo_bp
 from app.routes.planilla.subsidiosRoute import subsidio_bp
+from app.routes.planilla.grupo import grupo_bp
 
 
 # Función para registrar todas las rutas
@@ -96,6 +97,7 @@ def register_blueprints(app):
     app.register_blueprint(tiempo_procesamiento_bp, url_prefix='/api/tiempo-procesamiento')
     app.register_blueprint(periodo_bp, url_prefix='/api/periodo')
     app.register_blueprint(subsidio_bp, url_prefix='/api/subsidio')
+    app.register_blueprint(grupo_bp, url_prefix='/api/grupo')
 
 
 

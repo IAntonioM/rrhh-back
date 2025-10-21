@@ -63,7 +63,8 @@ class TercerosModel:
                     @estacion_act = ?, 
                     @operador_act = ?,
                     @flag_estado = 1,
-                    @flag_terceros = ?
+                    @flag_terceros = ?,
+                    @inicio_tiempo_proc = ?
                     
             ''', (
                 data['codEmpleado'], data['idCondicionLaboral'], current_date.strftime('%Y-%m-%d %H:%M:%S'), data['idEstado'], 
@@ -73,7 +74,8 @@ class TercerosModel:
                 data['celular'], data['dni'], data['ruc'], data['idDistrito'], 
                 data['direccion'], data['email'], data['foto'], data['cv'], data['fecha_reg'], 
                 data['estacion_reg'], data['operador_reg'], data['fecha_act'], 
-                data['estacion_act'], data['operador_act'], data['flag_terceros']
+                data['estacion_act'], data['operador_act'], data['flag_terceros'],
+                data['inicio_tiempo_proc'],
             ))
 
             conn.commit()
