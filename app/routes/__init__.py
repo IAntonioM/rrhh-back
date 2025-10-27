@@ -100,6 +100,12 @@ def register_blueprints(app):
     app.register_blueprint(subsidio_bp, url_prefix='/api/subsidio')
     app.register_blueprint(grupo_bp, url_prefix='/api/grupo')
     app.register_blueprint(reporte_ia_bp, url_prefix='/api/reporte-ia')
+    
+    
+    #     app.register_blueprint(periodo_bp, url_prefix='/api/periodo')
+    # app.register_blueprint(subsidio_bp, url_prefix='/api/subsidio')
+    # app.register_blueprint(grupo_bp, url_prefix='/api/grupo')
+    # app.register_blueprint(reporte_ia_bp, url_prefix='/api/reporte-ia')
 
 
 
