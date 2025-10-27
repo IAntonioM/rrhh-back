@@ -49,7 +49,7 @@ def list_periodos():
     
     # Obtener parámetros de paginación y filtros del body
     page = data.get('current_page', 1)
-    per_page = data.get('per_page', 10)
+    per_page = data.get('per_page', 9999999)
     
     # Filtros válidos
     valid_filters = ['anio']
