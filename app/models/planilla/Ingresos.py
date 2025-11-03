@@ -1,5 +1,4 @@
 import pyodbc
-import re
 from config import get_db_connection
 from ...utils.auditv2 import AuditFieldsv2
 
@@ -10,20 +9,20 @@ class Ingresos:
         try:
             cursor = conn.cursor()
             cursor.execute('''
-                EXEC [dbo].[sp_Ingresos] 
-                    @accion = ?, 
-                    @idConcepto = ?, 
-                    @idCondicionLaboral = ?, 
-                    @ccodcpto_Anterior = ?, 
-                    @codigoPDT = ?, 
-                    @codigoInterno = ?, 
-                    @concepto = ?, 
-                    @tipo = 'I', 
-                    @tipoCalculo = ?, 
-                    @idTipoMonto = ?, 
-                    @flag_ATM = ?, 
-                    @monto = ?, 
-                    @flag_estado = ?, 
+                EXEC [dbo].[sp_Ingresos]
+                    @accion = ?,
+                    @idConcepto = ?,
+                    @idCondicionLaboral = ?,
+                    @ccodcpto_Anterior = ?,
+                    @codigoPDT = ?,
+                    @codigoInterno = ?,
+                    @concepto = ?,
+                    @tipo = 'I',
+                    @tipoCalculo = ?,
+                    @idTipoMonto = ?,
+                    @flag_ATM = ?,
+                    @monto = ?,
+                    @flag_estado = ?,
                     @flag_apldialab = ?,
                     @current_page = ?,
                     @per_page = ?
@@ -44,14 +43,12 @@ class Ingresos:
                 params.get('current_page', 1),
                 params.get('per_page', 10)
             ))
-
+            
             if accion in ['CREATE', 'UPDATE', 'DELETE']:
-                conn.commit()
                 result = cursor.fetchone()
-                return {
-                    'success': True,
-                    'message': result[0] if result else 'Operación exitosa'
-                }
+                conn.commit()
+                message = result[0] if result else 'Operación exitosa'
+                return {'success': True, 'message': message}
             else:  # Para LIST
                 columns = [column[0] for column in cursor.description]
                 results = cursor.fetchall()
@@ -67,7 +64,7 @@ class Ingresos:
                             'total': 0
                         }
                     }
-
+                
                 # Convertir los resultados a diccionario
                 data = []
                 pagination = {}
@@ -81,36 +78,36 @@ class Ingresos:
                         else:
                             row_dict[column_name] = value
                     data.append(row_dict)
-
+                
                 return {
                     'success': True,
                     'data': data,
                     'pagination': pagination
                 }
-
+                
         except Exception as e:
-            print(f"Error en execute_sp: {str(e)}")  # Para debugging
+            print(f"Error en execute_sp: {str(e)}")
             return {
                 'success': False,
                 'message': str(e)
             }
         finally:
             conn.close()
-
+    
     @staticmethod
     def create_Ingreso(data, current_user, remote_addr):
         data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
         return Ingresos.execute_sp('CREATE', data)
-
+    
     @staticmethod
     def update_Ingreso(data, current_user, remote_addr):
         data = AuditFieldsv2.add_audit_fields(data, current_user, remote_addr)
         return Ingresos.execute_sp('UPDATE', data)
-
+    
     @staticmethod
     def delete_Ingreso(idConcepto):
         return Ingresos.execute_sp('DELETE', {'idConcepto': idConcepto, 'flag_estado': 0})
-
+    
     @staticmethod
     def list_ingresos(filtros=None):
         filtros = filtros or {}

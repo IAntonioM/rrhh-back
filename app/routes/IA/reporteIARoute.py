@@ -194,3 +194,107 @@ def estado_modelo():
         'success': True,
         'data': estado
     }), 200
+# reporteIARoute.py - Actualizar diagnóstico
+
+@reporte_ia_bp.route('/diagnostico', methods=['GET'])
+@jwt_required()
+@handle_response
+def diagnostico_datos():
+    """
+    Diagnóstico de datos reales de marcaciones
+    """
+    from config import get_db_connection
+    
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # 1. Contar marcaciones
+        cursor.execute("SELECT COUNT(*) FROM marcaciones WHERE flag_estado = 1")
+        total_marcaciones = cursor.fetchone()[0]
+        
+        # 2. Contar empleados activos
+        cursor.execute("SELECT COUNT(*) FROM planilla.empleado WHERE flag_estado = 1")
+        total_empleados = cursor.fetchone()[0]
+        
+        # 3. Rango de fechas
+        cursor.execute("""
+            SELECT 
+                MIN(CAST(fecha AS DATE)) as fecha_min,
+                MAX(CAST(fecha AS DATE)) as fecha_max,
+                COUNT(DISTINCT idEmpleado) as empleados_con_marcaciones
+            FROM marcaciones 
+            WHERE flag_estado = 1 AND fecha IS NOT NULL
+        """)
+        row = cursor.fetchone()
+        fecha_min, fecha_max, emp_con_marc = row[0], row[1], row[2]
+        
+        # 4. Muestra de marcaciones recientes
+        cursor.execute("""
+            SELECT TOP 10
+                m.idEmpleado,
+                m.dni,
+                m.fecha,
+                m.hora,
+                m.sn
+            FROM marcaciones m
+            WHERE m.flag_estado = 1 
+                AND m.fecha IS NOT NULL
+            ORDER BY m.fecha DESC, m.hora DESC
+        """)
+        
+        muestra_marcaciones = []
+        for row in cursor.fetchall():
+            muestra_marcaciones.append({
+                'idEmpleado': row[0],
+                'dni': row[1],
+                'fecha': str(row[2]),
+                'hora': str(row[3]),
+                'tipo': row[4]  # E=Entrada, S=Salida
+            })
+        
+        # 5. Verificar si existe tabla datos_personales
+        cursor.execute("""
+            SELECT COUNT(*) 
+            FROM INFORMATION_SCHEMA.TABLES 
+            WHERE TABLE_SCHEMA = 'planilla' 
+                AND TABLE_NAME = 'datos_personales'
+        """)
+        tiene_datos_personales = cursor.fetchone()[0] > 0
+        
+        # 6. Distribución de marcaciones por tipo
+        cursor.execute("""
+            SELECT 
+                sn as tipo,
+                COUNT(*) as cantidad
+            FROM marcaciones
+            WHERE flag_estado = 1 AND sn IS NOT NULL
+            GROUP BY sn
+        """)
+        
+        tipos_marcacion = {row[0]: row[1] for row in cursor.fetchall()}
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'total_marcaciones': total_marcaciones,
+                'total_empleados': total_empleados,
+                'empleados_con_marcaciones': emp_con_marc,
+                'rango_fechas': {
+                    'min': str(fecha_min) if fecha_min else None,
+                    'max': str(fecha_max) if fecha_max else None
+                },
+                'tipos_marcacion': tipos_marcacion,
+                'tiene_datos_personales': tiene_datos_personales,
+                'muestra_marcaciones': muestra_marcaciones,
+                'nota': 'Las marcaciones se agruparán por día para crear registros de asistencia'
+            }
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error en diagnóstico: {str(e)}'
+        }), 500
+    finally:
+        conn.close()

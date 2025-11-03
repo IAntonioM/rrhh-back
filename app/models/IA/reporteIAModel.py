@@ -17,44 +17,83 @@ class ReporteIAModel:
     MODEL_PATH = os.path.join(os.path.dirname(__file__), '../../ml/models/random_forest.pkl')
     DATA_PATH = os.path.join(os.path.dirname(__file__), '../../ml/data')
     
+    # reporteIAModel.py - REEMPLAZAR get_datos_asistencias
+
     @staticmethod
     def get_datos_asistencias(fecha_inicio=None, fecha_fin=None):
         """
-        Obtiene datos de asistencias desde la BD para análisis
+        Transforma marcaciones en datos de asistencia diaria
         """
         conn = get_db_connection()
         try:
             cursor = conn.cursor()
             
-            # Query para obtener datos de asistencias
+            # ✅ Query que agrupa marcaciones por empleado y día
             query = '''
-                SELECT 
-                    e.nombre_empleado,
-                    a.fecha,
-                    a.hora_entrada_teorica,
-                    a.hora_entrada_real,
-                    a.hora_salida_teorica,
-                    a.hora_salida_real,
-                    a.tardanza_min,
-                    a.ausencia,
-                    e.idEmpleado,
-                    e.idCargo,
-                    e.idSede,
-                    e.idCentroCosto
-                FROM asistencias a
-                INNER JOIN empleados e ON a.idEmpleado = e.idEmpleado
-                WHERE 1=1
+                WITH MarcacionesDiarias AS (
+                    SELECT 
+                        m.idEmpleado,
+                        m.dni,
+                        CAST(m.fecha AS DATE) as fecha,
+                        MIN(CASE WHEN m.sn = 'E' THEN m.hora END) as primera_entrada,
+                        MAX(CASE WHEN m.sn = 'S' THEN m.hora END) as ultima_salida,
+                        COUNT(*) as total_marcaciones
+                    FROM marcacion m
+                    WHERE m.flag_estado = 1
+                        AND m.fecha IS NOT NULL
             '''
             
             params = []
             if fecha_inicio:
-                query += ' AND a.fecha >= ?'
+                query += ' AND CAST(m.fecha AS DATE) >= ?'
                 params.append(fecha_inicio)
             if fecha_fin:
-                query += ' AND a.fecha <= ?'
+                query += ' AND CAST(m.fecha AS DATE) <= ?'
                 params.append(fecha_fin)
                 
-            query += ' ORDER BY a.fecha DESC'
+            query += '''
+                    GROUP BY m.idEmpleado, m.dni, CAST(m.fecha AS DATE)
+                )
+                SELECT 
+                    e.idEmpleado,
+                    CONCAT(dp.nombres, ' ', dp.apellido_paterno, ' ', dp.apellido_materno) as nombre_empleado,
+                    md.fecha,
+                    
+                    -- Horarios teóricos (ajusta según tu negocio)
+                    '08:00:00' as hora_entrada_teorica,
+                    '17:00:00' as hora_salida_teorica,
+                    
+                    -- Horarios reales
+                    md.primera_entrada as hora_entrada_real,
+                    md.ultima_salida as hora_salida_real,
+                    
+                    -- Calcular tardanza (minutos después de las 8:00)
+                    CASE 
+                        WHEN md.primera_entrada IS NULL THEN 0
+                        WHEN md.primera_entrada > '08:00:00' 
+                            THEN DATEDIFF(MINUTE, '08:00:00', md.primera_entrada)
+                        ELSE 0
+                    END as tardanza_min,
+                    
+                    -- Clasificar ausencia
+                    CASE 
+                        WHEN md.primera_entrada IS NULL THEN 'Ausente'
+                        WHEN DATEDIFF(MINUTE, '08:00:00', md.primera_entrada) > 15 THEN 'Tardanza'
+                        ELSE 'Presente'
+                    END as ausencia,
+                    
+                    -- Datos adicionales
+                    e.idCargo,
+                    e.idSede,
+                    e.idCentroCosto,
+                    md.total_marcaciones
+                    
+                FROM MarcacionesDiarias md
+                INNER JOIN planilla.empleado e ON md.idEmpleado = e.idEmpleado
+                LEFT JOIN planilla.datos_personales dp ON e.idDatosPersonales = dp.idDatosPersonales
+                WHERE e.flag_estado = 1
+                ORDER BY md.fecha DESC, e.idEmpleado
+            '''
             
             if params:
                 cursor.execute(query, params)
@@ -64,13 +103,24 @@ class ReporteIAModel:
             columns = [column[0] for column in cursor.description]
             data = cursor.fetchall()
             
-            # Convertir a DataFrame
+            if not data:
+                print("⚠️ No se encontraron marcaciones en el rango especificado")
+                return None
+            
             df = pd.DataFrame.from_records(data, columns=columns)
+            
+            print(f"✅ Datos procesados: {len(df)} registros de asistencia")
+            print(f"   Empleados únicos: {df['idEmpleado'].nunique()}")
+            print(f"   Rango: {df['fecha'].min()} a {df['fecha'].max()}")
+            print(f"\n📊 Distribución de ausencias:")
+            print(df['ausencia'].value_counts())
             
             return df
             
         except Exception as e:
-            print(f"Error al obtener datos: {str(e)}")
+            print(f"❌ Error al obtener datos: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return None
         finally:
             conn.close()

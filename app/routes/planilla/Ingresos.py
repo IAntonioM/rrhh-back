@@ -12,60 +12,75 @@ def create_ingreso():
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
+    
     data = request.get_json()
+    
     # Validar campos requeridos según el SP
     required_fields = [
-        'idCondicionLaboral', 'codigoPDT', 'codigoInterno', 
-        'concepto', 'tipoCalculo', 'idTipoMonto', 
-        'flag_ATM', 'monto', 'flag_apldialab'
+        'idCondicionLaboral', 'codigoPDT', 'concepto', 
+        'tipoCalculo', 'idTipoMonto', 'flag_ATM', 
+        'monto', 'flag_apldialab'
     ]
+    
     for field in required_fields:
         if field not in data:
             return jsonify({'success': False, 'message': f'Campo requerido: {field}'}), 400
+    
+    result = Ingresos.create_Ingreso(data, current_user, request.remote_addr)
+    return jsonify(result), 201 if result.get('success') else 409
 
-    success, message = Ingresos.create_Ingreso(data, current_user, request.remote_addr)
-    return jsonify({'success': success, 'message': message}), 201 if success else 409
 
-@ingresos_bp.route('/update/<int:idConcepto>', methods=['PUT'])
+@ingresos_bp.route('/update', methods=['PUT'])
 @jwt_required()
 @handle_response
-def update_ingreso(idConcepto):
+def update_ingreso():
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
-
+    
     data = request.get_json()
-    data['idConcepto'] = idConcepto
-    success, message = Ingresos.update_Ingreso(data, current_user, request.remote_addr)
-    return jsonify({'success': success, 'message': message}), 200 if success else 409
+    
+    # Validar que venga el idConcepto
+    if 'idConcepto' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: idConcepto'}), 400
+    
+    result = Ingresos.update_Ingreso(data, current_user, request.remote_addr)
+    return jsonify(result), 200 if result.get('success') else 409
 
-@ingresos_bp.route('/status/<int:idConcepto>', methods=['PUT'])
+
+@ingresos_bp.route('/delete', methods=['DELETE'])
 @jwt_required()
 @handle_response
-def change_status_ingreso(idConcepto):
+def delete_ingreso():
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+    
+    data = request.get_json()
+    
+    # Validar que venga el idConcepto
+    if 'idConcepto' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: idConcepto'}), 400
+    
+    result = Ingresos.delete_Ingreso(data['idConcepto'])
+    return jsonify(result), 200 if result.get('success') else 409
 
-    success, message = Ingresos.delete_Ingreso(idConcepto)  # Internamente hace el update de flag_estado
-    return jsonify({'success': success, 'message': message}), 200 if success else 409
 
-@ingresos_bp.route('/list', methods=['GET'])
+@ingresos_bp.route('/list', methods=['POST'])
 @jwt_required()
-@handle_response(include_data=True)
-def list_Egresos():
-    # Obtener parámetros de paginación
-    page = request.args.get('current_page', 1, type=int)
-    per_page = request.args.get('per_page', 10, type=int)
+@handle_response
+def list_ingresos():
+    data = request.get_json()
     
-    # Solo permitir los filtros válidos
-    valid_filters = ['idCondicionLaboral', 'codigoPDT', 'codigoInterno', 'concepto']
-    filtros = {k: v for k, v in request.args.items() if k in valid_filters}
-    
-    # Agregar parámetros de paginación a los filtros
-    filtros['current_page'] = page
-    filtros['per_page'] = per_page
+    # Obtener parámetros de paginación y filtros del body
+    filtros = {
+        'current_page': data.get('current_page', 1),
+        'per_page': data.get('per_page', 10),
+        'idCondicionLaboral': data.get('idCondicionLaboral'),
+        'codigoPDT': data.get('codigoPDT'),
+        'codigoInterno': data.get('codigoInterno'),
+        'concepto': data.get('concepto')
+    }
     
     result = Ingresos.list_ingresos(filtros)
     
@@ -74,7 +89,7 @@ def list_Egresos():
             'success': False,
             'message': result.get('message', 'Error al obtener los datos')
         }), 500
-        
+    
     return jsonify({
         'success': True,
         'data': result.get('data', []),
