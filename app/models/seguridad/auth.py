@@ -113,7 +113,7 @@ class UserModel:
                 'fecha_act': user[7],
                 'operador_act': user[8],
                 'estacion_act': user[9],
-                'IdPersonal': user[10]  # Suponiendo que el IdPersonal está en la columna 10
+                'IdPersonal': user[10]  
             }
             
         finally:

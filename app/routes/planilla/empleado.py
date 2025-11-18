@@ -14,12 +14,6 @@ def handle_sql_error(e):
     matches = re.search(r'\[SQL Server\](.*?)(?:\(|\[|$)', error_msg)
     return matches.group(1).strip() if matches else 'Error en la operación'
 
-
-
-
-
-
-
 import os
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -36,7 +30,6 @@ def save_employee_image(file):
     file.save(filepath)
 
     return os.path.join('app','storage', 'img_perfil', secure_filename_result)
-
 
 @empleado_bp.route('/imagen', methods=['POST'])
 @jwt_required()
@@ -101,10 +94,6 @@ def update_datos(id):
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
     data = request.get_json()
-    
-    print(f"Received data: {data}")  # Debug: print received data
-    
-    # Validate that 'updateTipo' is present in the data
     updateTipo = data.get('updateTipo', None)
 
     if not updateTipo:
@@ -137,7 +126,6 @@ def update_datos(id):
         'success': success,
         'message': message
     }), 200 if success else 409
-
 
 
 @empleado_bp.route('/update-e/<int:id>', methods=['PUT'])
