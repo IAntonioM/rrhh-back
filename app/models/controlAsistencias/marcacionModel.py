@@ -18,7 +18,7 @@ class Marcaciones:
                     m.idMarcacion,
                     e.idCentroCosto,
                     cc.centro_costo,
-                    e.idcargo,
+                    e.id_cargo,
                     tc.cargo,
                     m.dni,
                     (dp.apellido_paterno + ' ' + dp.apellido_materno) as apellidos,
@@ -29,12 +29,12 @@ class Marcaciones:
                     m.id_marca_movil,
                     m.observacion,
                     m.fecha_registro
-                FROM marcacion m
-                LEFT JOIN datosPersonales dp ON dp.dni = m.dni
-                LEFT JOIN Planilla.empleado e ON dp.idDatosPersonales = e.idDatosPersonales
-                LEFT JOIN tblCentroCosto cc ON cc.idCentroCosto = e.idCentroCosto
-                LEFT JOIN tblCargo tc ON tc.idCargo = e.idCargo
-                WHERE m.flag_estado = 1
+                FROM marcacion m				
+                INNER JOIN locadores.contrato e ON m.idEmpleado = e.id
+                INNER JOIN datosPersonales dp ON dp.idDatosPersonales = e.id_datos_personales
+                INNER JOIN tblCentroCosto cc ON cc.idCentroCosto = e.idCentroCosto
+                INNER JOIN tblCargo tc ON tc.idCargo = e.id_cargo
+                WHERE m.flag_estado = 1 
             """
             
             # Construir condiciones WHERE dinámicamente
@@ -115,11 +115,11 @@ class Marcaciones:
             # Construir la consulta de conteo
             base_query = """
                 SELECT COUNT(*) as total
-                FROM marcacion m
-                LEFT JOIN datosPersonales dp ON dp.dni = m.dni
-                LEFT JOIN Planilla.empleado e ON dp.idDatosPersonales = e.idDatosPersonales
-                LEFT JOIN tblCentroCosto cc ON cc.idCentroCosto = e.idCentroCosto
-                LEFT JOIN tblCargo tc ON tc.idCargo = e.idCargo
+                FROM marcacion m				
+                INNER JOIN locadores.contrato e ON m.idEmpleado = e.id
+                INNER JOIN datosPersonales dp ON dp.idDatosPersonales = e.id_datos_personales
+                INNER JOIN tblCentroCosto cc ON cc.idCentroCosto = e.idCentroCosto
+                INNER JOIN tblCargo tc ON tc.idCargo = e.id_cargo
                 WHERE m.flag_estado = 1
             """
             
@@ -289,7 +289,7 @@ class Marcaciones:
             params = {
                 'fechaMarcacion': data.get('fechaMarcacion'),
                 'horaMarcacion': data.get('horaMarcacion'),
-                'idEmpleado': int(data.get('idEmpleado')),
+                'idEmpleado': data.get('idEmpleado'),
                 'observacion': data.get('observacion', ''),
                 'estacion': data.get('estacion', remote_addr),
                 'operador': data.get('operador', current_user)

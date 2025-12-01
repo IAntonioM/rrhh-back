@@ -218,8 +218,6 @@ class EmpleadoModel:
         finally:
             conn.close()
 
-
-
     @staticmethod
     def get_empleados_filtrar(filtros, current_page, per_page):
         conn = get_db_connection()
@@ -251,14 +249,14 @@ class EmpleadoModel:
 
             # Convertir los resultados a una lista de diccionarios
             return [{
-                # Datos de la tabla de empleados
-                'idEmpleado': e[0],
-                'codEmpleado': e[1],
-                'fecha_ingreso': e[2],
-                'fecha_cese': e[3],
-                'fecha_suspension': e[4],
-                'fecha_reingreso': e[5],
-                'idEstado': e[6],
+                # Datos de la tabla de contratos
+                'id': e[0],
+                'nro_orden_servicio': e[1],
+                'fecha_inicio': e[2],
+                'fecha_fin': e[3],
+                'fecha_fin2': e[4],
+                'fecha_orden': e[5],
+                'estado': e[6],
                 'idMeta': e[7],
                 'descMeta': e[8],
 
@@ -278,31 +276,27 @@ class EmpleadoModel:
                 'direccion': e[21],
                 'foto': e[22],
 
-                # Datos de tblCentroCosto (nombre del centro de costo)
+                # Datos de tblCentroCosto
                 'centroCosto_nombre': e[23],
 
-                # Datos de tblCondicionLaboral (nombre de la condición laboral)
-                'condicionLaboral_nombre': e[24],
-
-                # Datos de tblCargo (nombre del cargo)
-                'cargo_nombre': e[25],
+                # Datos de tblCargo
+                'cargo_nombre': e[24],
 
                 # Estado de empleado
-                'estado': e[26],
+                'idEstado': e[25],
 
                 # Información de paginación
-                'current_page': e[27],
-                'last_page': e[28],
-                'per_page': e[29],
-                'total': e[30],
+                'current_page': e[26],
+                'last_page': e[27],
+                'per_page': e[28],
+                'total': e[29],
 
                 # Relaciones adicionales
-                'idCargo': e[31],
-                'idCondicionLaboral': e[32],
-                'idCentroCosto': e[33],
-                'idEstadoCivil':e[34]
+                'idCargo': e[30],
+                'idCondicionLaboral': e[31],
+                'idCentroCosto': e[32],
+                'idEstadoCivil': e[33]
             } for e in empleados]
-
 
         except pyodbc.ProgrammingError as e:
             error_msg = str(e)
