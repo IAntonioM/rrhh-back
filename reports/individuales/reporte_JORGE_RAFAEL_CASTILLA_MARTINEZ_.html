@@ -1,0 +1,1725 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Reporte Individual - JORGE RAFAEL CASTILLA MARTINEZ . .</title>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 20px;
+                min-height: 100vh;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 15px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                overflow: hidden;
+            }
+            .header {
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+                color: white;
+                padding: 40px;
+                text-align: center;
+            }
+            .header h1 { font-size: 32px; margin-bottom: 10px; }
+            .header h2 { font-size: 24px; opacity: 0.9; margin-bottom: 5px; }
+            .header p { opacity: 0.7; font-size: 14px; }
+            .summary {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 20px;
+                padding: 30px;
+                background: #f8f9fa;
+            }
+            .card {
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                text-align: center;
+            }
+            .card h3 {
+                font-size: 12px;
+                color: #7f8c8d;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+            }
+            .card .value {
+                font-size: 32px;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            .card .percentage { font-size: 14px; color: #95a5a6; }
+            .content { padding: 30px; }
+            h2 {
+                color: #2c3e50;
+                margin: 30px 0 20px 0;
+                padding-bottom: 10px;
+                border-bottom: 3px solid #3498db;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            th {
+                background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+                color: white;
+                padding: 12px;
+                text-align: left;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 11px;
+            }
+            td { padding: 10px 12px; border-bottom: 1px solid #ecf0f1; }
+            tr:hover { background-color: #f8f9fa; }
+            .badge {
+                padding: 5px 10px;
+                border-radius: 15px;
+                font-weight: bold;
+                font-size: 10px;
+                text-transform: uppercase;
+            }
+            .badge-presente { background: #d4edda; color: #155724; }
+            .badge-tardanza { background: #fff3cd; color: #856404; }
+            .prob-bar {
+                height: 6px;
+                background: #ecf0f1;
+                border-radius: 3px;
+                overflow: hidden;
+                margin-top: 5px;
+            }
+            .prob-fill { height: 100%; }
+            .prob-fill-yellow { background: linear-gradient(90deg, #f39c12, #e67e22); }
+            .prob-fill-green { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+            .high-risk { background-color: #fff5f5 !important; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>📊 Reporte Individual de Asistencia</h1>
+                <h2>JORGE RAFAEL CASTILLA MARTINEZ . .</h2>
+                <p>ID: BD044579-BFF1-48DD-AFB9-F451340F9E54 | Generado: 03/12/2025 14:53:31</p>
+            </div>
+
+            <div class="summary">
+                <div class="card">
+                    <h3>Total Días</h3>
+                    <div class="value" style="color: #3498db;">131</div>
+                </div>
+                <div class="card">
+                    <h3>🟢 Días Presente</h3>
+                    <div class="value" style="color: #27ae60;">79</div>
+                    <div class="percentage">60.3%</div>
+                </div>
+                <div class="card">
+                    <h3>🟡 Días Tardanza</h3>
+                    <div class="value" style="color: #f39c12;">2</div>
+                    <div class="percentage">1.5%</div>
+                </div>
+            </div>
+
+            <div class="content">
+                <h2>📅 Estadísticas Mensuales</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mes</th>
+                            <th>Año</th>
+                            <th>Días Laborados</th>
+                            <th>Tardanzas</th>
+                            <th>Prob. Tardanza</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    
+                        <tr class="">
+                            <td><strong>Enero</strong></td>
+                            <td>2025</td>
+                            <td>5 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Febrero</strong></td>
+                            <td>2025</td>
+                            <td>4 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Marzo</strong></td>
+                            <td>2025</td>
+                            <td>5 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Abril</strong></td>
+                            <td>2025</td>
+                            <td>5 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>7.1%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 7.123865221570205%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Mayo</strong></td>
+                            <td>2025</td>
+                            <td>4 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.17172360251283036%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Junio</strong></td>
+                            <td>2025</td>
+                            <td>4 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.1%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.10320628569291675%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Julio</strong></td>
+                            <td>2025</td>
+                            <td>4 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Agosto</strong></td>
+                            <td>2025</td>
+                            <td>4 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.04881721285999109%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Septiembre</strong></td>
+                            <td>2025</td>
+                            <td>4 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.22076100826584932%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Octubre</strong></td>
+                            <td>2025</td>
+                            <td>5 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.1%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.11297847018245162%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Noviembre</strong></td>
+                            <td>2025</td>
+                            <td>5 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>Diciembre</strong></td>
+                            <td>2025</td>
+                            <td>4 días</td>
+                            <td><strong style="color: #f39c12;">0</strong> días</td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                    </tbody>
+                </table>
+
+                <h2>📋 Historial Detallado (Últimos 100 días)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Día</th>
+                            <th>Mes</th>
+                            <th>Predicción</th>
+                            <th>Prob. Tardanza</th>
+                            <th>Tardanza (min)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    
+                        <tr>
+                            <td><strong>11/12/2025</strong></td>
+                            <td>Jue</td>
+                            <td>Diciembre</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>19</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>09/12/2025</strong></td>
+                            <td>Mar</td>
+                            <td>Diciembre</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>18</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>08/12/2025</strong></td>
+                            <td>Lun</td>
+                            <td>Diciembre</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-9</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>06/12/2025</strong></td>
+                            <td>Sáb</td>
+                            <td>Diciembre</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-5</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>11/11/2025</strong></td>
+                            <td>Mar</td>
+                            <td>Noviembre</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>19</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>09/11/2025</strong></td>
+                            <td>Dom</td>
+                            <td>Noviembre</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>5</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>08/11/2025</strong></td>
+                            <td>Sáb</td>
+                            <td>Noviembre</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>25</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>07/11/2025</strong></td>
+                            <td>Vie</td>
+                            <td>Noviembre</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>12</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>06/11/2025</strong></td>
+                            <td>Jue</td>
+                            <td>Noviembre</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-2</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>11/10/2025</strong></td>
+                            <td>Sáb</td>
+                            <td>Octubre</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>30</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>10/10/2025</strong></td>
+                            <td>Vie</td>
+                            <td>Octubre</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>20</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>09/10/2025</strong></td>
+                            <td>Jue</td>
+                            <td>Octubre</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.213992572961926%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-5</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>07/10/2025</strong></td>
+                            <td>Mar</td>
+                            <td>Octubre</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.4%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.3508997779503321%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-4</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>06/10/2025</strong></td>
+                            <td>Lun</td>
+                            <td>Octubre</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-10</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>10/09/2025</strong></td>
+                            <td>Mié</td>
+                            <td>Septiembre</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.7%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.687775181623433%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-8</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>09/09/2025</strong></td>
+                            <td>Mar</td>
+                            <td>Septiembre</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>29</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>07/09/2025</strong></td>
+                            <td>Dom</td>
+                            <td>Septiembre</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>28</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>06/09/2025</strong></td>
+                            <td>Sáb</td>
+                            <td>Septiembre</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.19526885143996436%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-4</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>10/08/2025</strong></td>
+                            <td>Dom</td>
+                            <td>Agosto</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>5</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>09/08/2025</strong></td>
+                            <td>Sáb</td>
+                            <td>Agosto</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.19526885143996436%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-3</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>08/08/2025</strong></td>
+                            <td>Vie</td>
+                            <td>Agosto</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>21</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>07/08/2025</strong></td>
+                            <td>Jue</td>
+                            <td>Agosto</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>15</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>11/07/2025</strong></td>
+                            <td>Vie</td>
+                            <td>Julio</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>16</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>10/07/2025</strong></td>
+                            <td>Jue</td>
+                            <td>Julio</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>30</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>08/07/2025</strong></td>
+                            <td>Mar</td>
+                            <td>Julio</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>16</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>07/07/2025</strong></td>
+                            <td>Lun</td>
+                            <td>Julio</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>25</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>11/06/2025</strong></td>
+                            <td>Mié</td>
+                            <td>Junio</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.4%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.412825142771667%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-7</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>10/06/2025</strong></td>
+                            <td>Mar</td>
+                            <td>Junio</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>18</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>08/06/2025</strong></td>
+                            <td>Dom</td>
+                            <td>Junio</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-6</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>06/06/2025</strong></td>
+                            <td>Vie</td>
+                            <td>Junio</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>27</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>11/05/2025</strong></td>
+                            <td>Dom</td>
+                            <td>Mayo</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>18</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>09/05/2025</strong></td>
+                            <td>Vie</td>
+                            <td>Mayo</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>10</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>08/05/2025</strong></td>
+                            <td>Jue</td>
+                            <td>Mayo</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-9</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>06/05/2025</strong></td>
+                            <td>Mar</td>
+                            <td>Mayo</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.7%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.6868944100513215%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-4</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>11/04/2025</strong></td>
+                            <td>Vie</td>
+                            <td>Abril</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>35.6%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 35.61932610785103%"></div>
+                                </div>
+                            </td>
+                            <td><strong>0</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>09/04/2025</strong></td>
+                            <td>Mié</td>
+                            <td>Abril</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>26</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>08/04/2025</strong></td>
+                            <td>Mar</td>
+                            <td>Abril</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>14</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>07/04/2025</strong></td>
+                            <td>Lun</td>
+                            <td>Abril</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>24</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>06/04/2025</strong></td>
+                            <td>Dom</td>
+                            <td>Abril</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-6</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>11/03/2025</strong></td>
+                            <td>Mar</td>
+                            <td>Marzo</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>13</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>10/03/2025</strong></td>
+                            <td>Lun</td>
+                            <td>Marzo</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>18</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>09/03/2025</strong></td>
+                            <td>Dom</td>
+                            <td>Marzo</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>30</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>07/03/2025</strong></td>
+                            <td>Vie</td>
+                            <td>Marzo</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>17</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>06/03/2025</strong></td>
+                            <td>Jue</td>
+                            <td>Marzo</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>5</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>12/02/2025</strong></td>
+                            <td>Mié</td>
+                            <td>Febrero</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>14</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>10/02/2025</strong></td>
+                            <td>Lun</td>
+                            <td>Febrero</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>18</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>09/02/2025</strong></td>
+                            <td>Dom</td>
+                            <td>Febrero</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>30</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>07/02/2025</strong></td>
+                            <td>Vie</td>
+                            <td>Febrero</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-1</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>12/01/2025</strong></td>
+                            <td>Dom</td>
+                            <td>Enero</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>24</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>10/01/2025</strong></td>
+                            <td>Vie</td>
+                            <td>Enero</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>17</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>09/01/2025</strong></td>
+                            <td>Jue</td>
+                            <td>Enero</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>4</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>08/01/2025</strong></td>
+                            <td>Mié</td>
+                            <td>Enero</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-6</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>07/01/2025</strong></td>
+                            <td>Mar</td>
+                            <td>Enero</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>5</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>21</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>16</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-4</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>4</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>23</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>1</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-1</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>24</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-3</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>9</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>10</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>12</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>23</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>25</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>19</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>6</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>17</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>26</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>11</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>10</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>10</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>22</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>4</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-6</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-10</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>51.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 51.17322610495002%"></div>
+                                </div>
+                            </td>
+                            <td><strong>0</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-6</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>11</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-2</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>14</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>24</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>10</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>27</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>29</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>11</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>8</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>2</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>11</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>29</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>51.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 51.17322610495002%"></div>
+                                </div>
+                            </td>
+                            <td><strong>0</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>14</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>21</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-2</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>5</strong> min</td>
+                        </tr>
+        
+                        <tr>
+                            <td><strong>nan</strong></td>
+                            <td>Lun</td>
+                            <td>nan</td>
+                            <td><span class="badge badge-presente">PRESENTE</span></td>
+                            <td>
+                                <strong>0.0%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 0.0%"></div>
+                                </div>
+                            </td>
+                            <td><strong>-5</strong> min</td>
+                        </tr>
+        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+    </html>
+    

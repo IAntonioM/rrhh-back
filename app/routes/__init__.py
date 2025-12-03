@@ -47,8 +47,8 @@ from app.routes.general.registro_tiempo import tiempo_procesamiento_bp
 from app.routes.planilla.periodoRoute import periodo_bp
 from app.routes.planilla.subsidiosRoute import subsidio_bp
 from app.routes.planilla.grupo import grupo_bp
-from app.routes.IA.reporteIARoute import reporte_ia_bp
 from app.routes.tercerosv2.emp_horario import emp_horario_bp
+from app.routes.reportes.prediccion_ausencias_bp import prediccion_ausencias_bp
 
 
 # Función para registrar todas las rutas
@@ -100,8 +100,8 @@ def register_blueprints(app):
     app.register_blueprint(periodo_bp, url_prefix='/api/periodo')
     app.register_blueprint(subsidio_bp, url_prefix='/api/subsidio')
     app.register_blueprint(grupo_bp, url_prefix='/api/grupo')
-    app.register_blueprint(reporte_ia_bp, url_prefix='/api/reporte-ia')
-    app.register_blueprint(emp_horario_bp, url_prefix='/api/emp_horario')
+    app.register_blueprint(emp_horario_bp, url_prefix='/api/emp_horario')    
+    app.register_blueprint(prediccion_ausencias_bp, url_prefix='/api/reportes/prediccion')
     
     
     #     app.register_blueprint(periodo_bp, url_prefix='/api/periodo')
