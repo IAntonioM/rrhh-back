@@ -33,19 +33,18 @@ def create_horario():
     else:
         return jsonify(result), 409
 
-@emp_horario_bp.route('/update/<int:idEmpHorario>', methods=['PUT'])
+@emp_horario_bp.route('/update', methods=['POST'])
 @jwt_required()
 @handle_response
-def update_horario(idEmpHorario):
+def update_horario():
     current_user = get_jwt_identity()
     if not current_user:
         return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
 
     data = request.get_json()
-    data['idEmpHorario'] = idEmpHorario
-    
+
     # Validar campos requeridos
-    required_fields = ['idHorario', 'idEmpleado', 'idTipoHorario', 'fechaDesde']
+    required_fields = ['idHorario', 'idEmpleado', 'idTipoHorario', 'fechaDesde','idEmpHorario']
     
     for field in required_fields:
         if field not in data or not data[field]:
