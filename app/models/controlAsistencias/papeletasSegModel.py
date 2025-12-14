@@ -16,7 +16,7 @@ class PapeletaSeg:
                 'idSede': 0,
                 'idArea': '',
                 'idsuperior': '',
-                'idSolicitante': 0,
+                'idSolicitante': '',
                 'idTipoSalida': 0,
                 'motivoSalida': '',
                 'fecha_salida': '1900-01-01',
@@ -131,6 +131,41 @@ class PapeletaSeg:
                     data = dict(zip([column[0] for column in cursor.description], result))
                     return {'data': data}
                 return {'data': None}
+            # Para registro de hora (mquery 30 y 40)
+            elif mquery in (30, 40):
+                try:
+                    # El SP ejecuta UPDATE y luego SELECT con el mensaje
+                    # Necesitamos llegar al último conjunto de resultados
+                    message = None
+                    
+                    # Leer el primer conjunto de resultados (del UPDATE)
+                    try:
+                        cursor.fetchall()  # Consumir resultados del UPDATE si los hay
+                    except:
+                        pass
+                    
+                    # Avanzar al siguiente conjunto de resultados (el SELECT con el mensaje)
+                    if cursor.nextset():
+                        row = cursor.fetchone()
+                        if row:
+                            message = row[0]
+                    
+                    conn.commit()
+                    
+                    if message:
+                        # Verificar si el mensaje indica éxito
+                        if 'correctamente' in message.lower():
+                            return {'success': True, 'message': message}
+                        else:
+                            return {'success': True, 'message': message}
+                    
+                    return {'success': False, 'message': 'No se recibió respuesta del servidor'}
+                except Exception as e:
+                    try:
+                        conn.rollback()
+                    except:
+                        pass
+                    return {'success': False, 'message': f'Error al registrar: {str(e)}'}
             
         except Exception as e:
             return {'success': False, 'message': f'Error en stored procedure: {str(e)}'}
@@ -156,3 +191,35 @@ class PapeletaSeg:
     def obtener_papeleta_seg(idPapeleta):
         """Obtener papeleta individual para Seguridad (mquery = 20)"""
         return PapeletaSeg.execute_sp(20, {'idPapeleta': idPapeleta})
+    
+    @staticmethod
+    def registrar_hora_salida(idPapeleta, idUsuario_seg, estacion):
+        """Registrar hora de salida en Seguridad (mquery = 30)"""
+        params = {
+            'idPapeleta': idPapeleta,
+            'idUsuario_seg': idUsuario_seg,
+            'estacion': estacion
+        }
+        result = PapeletaSeg.execute_sp(30, params)
+        
+        # El SP retorna un mensaje en la primera columna
+        if result and 'data' in result and result['data']:
+            message = result['data'][0] if isinstance(result['data'], list) else list(result['data'].values())[0]
+            return {'success': True, 'message': message}
+        return result
+
+    @staticmethod
+    def registrar_hora_retorno(idPapeleta, idUsuario_seg, estacion):
+        """Registrar hora de retorno en Seguridad (mquery = 40)"""
+        params = {
+            'idPapeleta': idPapeleta,
+            'idUsuario_seg': idUsuario_seg,
+            'estacion': estacion
+        }
+        result = PapeletaSeg.execute_sp(40, params)
+        
+        # El SP retorna un mensaje en la primera columna
+        if result and 'data' in result and result['data']:
+            message = result['data'][0] if isinstance(result['data'], list) else list(result['data'].values())[0]
+            return {'success': True, 'message': message}
+        return result

@@ -131,6 +131,9 @@ class ReporteService:
                 stylesheets=css_files
             )
             
+            print(f"DEBUG - PDF escrito en: {output_file}")  # AGREGAR ESTE LOG
+            print(f"DEBUG - Tamaño del archivo: {os.path.getsize(output_file)} bytes")  # AGREGAR ESTE LOG
+
             return output_file, f'reporte_{timestamp}.pdf'
         
         finally:

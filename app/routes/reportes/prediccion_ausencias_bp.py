@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ...models.reportes.PrediccionAusencias import PrediccionAusencias
 from ...utils.error_handlers import handle_response
+from datetime import datetime, date
 import os
 
 prediccion_ausencias_bp = Blueprint('prediccion_ausencias', __name__)
@@ -20,7 +21,7 @@ def generar_reportes():
     
     print(f"🔄 Generación manual de reportes iniciada por: {current_user}")
     
-    # Ejecutar pipeline
+    # Ejecutar pipeline (las fechas se definen dentro del método)
     result = PrediccionAusencias.ejecutar_pipeline_ml()
     
     if result['success']:
@@ -38,6 +39,26 @@ def generar_reportes():
             'message': result['message']
         }), 500
 
+@staticmethod
+def ejecutar_pipeline_ml():
+    try:
+        print("🚀 Iniciando pipeline de ML...")
+        
+        # Definir fechas aquí dentro
+        fecha_inicio = '2025-02-01'
+        fecha_fin = datetime.now().strftime('%Y-%m-%d')
+        
+        # 1. Obtener datos
+        print("📊 Obteniendo datos de fichajes...")
+        result = PrediccionAusencias.obtener_datos_fichajes(fecha_inicio, fecha_fin)
+    except Exception as e:
+            print(f"❌ Error en pipeline: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return {
+                'success': False,
+                'message': f'Error en pipeline: {str(e)}'
+            }
 
 @prediccion_ausencias_bp.route('/ultimo', methods=['GET'])
 @jwt_required()
@@ -112,7 +133,7 @@ def listar_reportes():
     
     # Parámetros de paginación
     page = request.args.get('current_page', 1, type=int)
-    per_page = request.args.get('per_page', 10, type=int)
+    per_page = request.args.get('per_page', 9999999, type=int)
     tipo_filtro = request.args.get('tipo', None)  # 'general' o 'individual'
     
     # Obtener reportes

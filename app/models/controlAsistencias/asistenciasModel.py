@@ -12,7 +12,7 @@ class Asistencia:
             # Preparar parámetros con valores por defecto para el nuevo SP
             default_params = {
                 'mquery': mquery,
-                'idEmpleado': 0,
+                'idEmpleado': '',
                 'nombreEmpleado': None,
                 'idArea': None,
                 'idcondicion': None,

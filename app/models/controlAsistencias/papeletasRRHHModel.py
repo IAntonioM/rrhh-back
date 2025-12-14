@@ -16,7 +16,7 @@ class PapeletaRRHH:
                 'idSede': 0,
                 'idArea': '',
                 'idsuperior': '',
-                'idSolicitante': 0,
+                'idSolicitante': '',
                 'idTipoSalida': 0,
                 'motivoSalida': '',
                 'fecha_salida': '1900-01-01',

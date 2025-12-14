@@ -86,3 +86,68 @@ def get_papeleta_seg():
             'success': False, 
             'message': 'Papeleta no encontrada'
         }), 404
+
+@papeletas_seg_bp.route('/registrar-salida', methods=['POST'])
+@jwt_required()
+@handle_response(include_data=True)
+def registrar_salida():
+    data = request.get_json()
+    current_user = get_jwt_identity()
+    
+    # Validar campos requeridos
+    if 'idPapeleta' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: idPapeleta'}), 400
+    
+    if 'estacion' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: estacion'}), 400
+    
+    try:
+        result = PapeletaSeg.registrar_hora_salida(
+            idPapeleta=data['idPapeleta'],
+            idUsuario_seg=current_user,
+            estacion=data['estacion']
+        )
+        
+        if result.get('success'):
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error al registrar hora de salida: {str(e)}'
+        }), 500
+
+
+@papeletas_seg_bp.route('/registrar-retorno', methods=['POST'])
+@jwt_required()
+@handle_response(include_data=True)
+def registrar_retorno():
+    data = request.get_json()
+    current_user = get_jwt_identity()
+    
+    # Validar campos requeridos
+    if 'idPapeleta' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: idPapeleta'}), 400
+    
+    if 'estacion' not in data:
+        return jsonify({'success': False, 'message': 'Campo requerido: estacion'}), 400
+    
+    try:
+        result = PapeletaSeg.registrar_hora_retorno(
+            idPapeleta=data['idPapeleta'],
+            idUsuario_seg=current_user,
+            estacion=data['estacion']
+        )
+        
+        if result.get('success'):
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error al registrar hora de retorno: {str(e)}'
+        }), 500

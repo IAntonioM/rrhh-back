@@ -168,7 +168,6 @@
             <th class="col-nombres">Nombres</th>
             <th class="col-fecha">Fecha</th>
             <th class="col-hora">Hora</th>
-            <th class="col-papeleta">Nro Papeleta</th>
           </tr>
         </thead>
         <tbody>
@@ -181,14 +180,7 @@
             <td class="col-apellidos">{{ row.apellidos or '' }}</td>
             <td class="col-nombres">{{ row.nombres or '' }}</td>
             <td class="col-fecha">{{ row.fecha or '' }}</td>
-            <td class="col-hora">{{ row.hora or '' }}</td>
-            <td class="col-papeleta">
-              {% if row.nro and row.anio %}
-                <span class="papeleta-activa">{{ row.nro }}/{{ row.anio }}</span>
-              {% else %}
-                <span class="papeleta-na">N/A</span>
-              {% endif %}
-            </td>
+            <td class="col-hora">{{ row.hora or '' }}</td>            
           </tr>
           {% endfor %}
         </tbody>
@@ -234,123 +226,6 @@
         </tbody>
       </table>
 
-      <!-- Resumen por Cargo -->
-      <div class="section-divider"></div>
-      <h2>Resumen por Cargo</h2>
-      <table class="resumen-table">
-        <thead>
-          <tr>
-            <th>Cargo</th>
-            <th>Cantidad</th>
-            <th>Porcentaje</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% set cargos_count = {} %}
-          
-          {% for row in tablas[0].data %}
-            {% if row.cargo %}
-              {% set cargo = row.cargo %}
-              {% set current_count = cargos_count.get(cargo, 0) %}
-              {% set _ = cargos_count.update({cargo: current_count + 1}) %}
-            {% endif %}
-          {% endfor %}
-          
-          {% for cargo, cantidad in cargos_count.items() %}
-          <tr>
-            <td>{{ cargo }}</td>
-            <td>{{ cantidad }}</td>
-            <td>{{ "%.1f"|format((cantidad / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
-          </tr>
-          {% endfor %}
-          
-          <tr class="total-row">
-            <td>TOTAL</td>
-            <td>{{ total_marcaciones }}</td>
-            <td>100.0%</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Resumen por Fecha -->
-      <div class="section-divider"></div>
-      <h2>Resumen por Fecha</h2>
-      <table class="resumen-table">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Cantidad</th>
-            <th>Porcentaje</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% set fechas_count = {} %}
-          
-          {% for row in tablas[0].data %}
-            {% if row.fecha %}
-              {% set fecha = row.fecha %}
-              {% set current_count = fechas_count.get(fecha, 0) %}
-              {% set _ = fechas_count.update({fecha: current_count + 1}) %}
-            {% endif %}
-          {% endfor %}
-          
-          {% for fecha, cantidad in fechas_count.items() %}
-          <tr>
-            <td>{{ fecha }}</td>
-            <td>{{ cantidad }}</td>
-            <td>{{ "%.1f"|format((cantidad / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
-          </tr>
-          {% endfor %}
-          
-          <tr class="total-row">
-            <td>TOTAL</td>
-            <td>{{ total_marcaciones }}</td>
-            <td>100.0%</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Resumen de Papeletas -->
-      <div class="section-divider"></div>
-      <h2>Resumen de Papeletas</h2>
-      <table class="resumen-table">
-        <thead>
-          <tr>
-            <th>Tipo</th>
-            <th>Cantidad</th>
-            <th>Porcentaje</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% set con_papeleta = 0 %}
-          {% set sin_papeleta = 0 %}
-          
-          {% for row in tablas[0].data %}
-            {% if row.nro and row.anio %}
-              {% set con_papeleta = con_papeleta + 1 %}
-            {% else %}
-              {% set sin_papeleta = sin_papeleta + 1 %}
-            {% endif %}
-          {% endfor %}
-          
-          <tr>
-            <td>Con Papeleta</td>
-            <td>{{ con_papeleta }}</td>
-            <td>{{ "%.1f"|format((con_papeleta / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
-          </tr>
-          <tr>
-            <td>Sin Papeleta</td>
-            <td>{{ sin_papeleta }}</td>
-            <td>{{ "%.1f"|format((sin_papeleta / total_marcaciones * 100)) if total_marcaciones > 0 else '0.0' }}%</td>
-          </tr>
-          
-          <tr class="total-row">
-            <td>TOTAL</td>
-            <td>{{ total_marcaciones }}</td>
-            <td>100.0%</td>
-          </tr>
-        </tbody>
-      </table>
       
       {% else %}
       <div

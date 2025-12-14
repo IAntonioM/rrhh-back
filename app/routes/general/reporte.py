@@ -48,12 +48,23 @@ def generar_reporte():
             if not reporte_service.verificar_plantilla(plantilla_nombre):
                 return jsonify({'error': f'Plantilla PDF {plantilla_nombre} no encontrada'}), 404
             
-            # Generar PDF
-            datos = reporte_service.ejecutar_procedimiento(parametros, plantilla_nombre)
-            output_file, download_name = reporte_service.generar_pdf(
-                plantilla_nombre, parametros, datos, usuario_current
-            )
-            content_type = 'application/pdf'
+            try:
+                # Generar PDF
+                datos = reporte_service.ejecutar_procedimiento(parametros, plantilla_nombre)
+                print(f"DEBUG - Generando PDF con {len(datos)} tablas")
+                
+                output_file, download_name = reporte_service.generar_pdf(
+                    plantilla_nombre, parametros, datos, usuario_current
+                )
+                
+                print(f"DEBUG - PDF generado exitosamente: {output_file}")
+                content_type = 'application/pdf'
+                
+            except Exception as e:
+                print(f"ERROR COMPLETO al generar PDF: {str(e)}")
+                import traceback
+                traceback.print_exc()
+                return jsonify({'error': f'Error al generar PDF: {str(e)}'}), 500
         
         elif tipo_reporte == 'excel':
             if not reporte_service.verificar_plantilla_excel(plantilla_nombre):

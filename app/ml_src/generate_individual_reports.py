@@ -246,6 +246,11 @@ def generar_reporte_html_empleado(empleado_id: str, nombre: str, datos: pd.DataF
                     <div class="value" style="color: #f39c12;">{dias_tardanza}</div>
                     <div class="percentage">{dias_tardanza/total_dias*100:.1f}%</div>
                 </div>
+                <div class="card">
+                    <h3>⏱️ Tardanza Promedio</h3>
+                    <div class="value" style="color: #e74c3c;">{tardanza_promedio:.0f}</div>
+                    <div class="percentage">minutos</div>
+                </div>
             </div>
 
             <div class="content">
@@ -258,6 +263,7 @@ def generar_reporte_html_empleado(empleado_id: str, nombre: str, datos: pd.DataF
                             <th>Días Laborados</th>
                             <th>Tardanzas</th>
                             <th>Prob. Tardanza</th>
+                            <th>Tardanza Promedio</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -278,6 +284,7 @@ def generar_reporte_html_empleado(empleado_id: str, nombre: str, datos: pd.DataF
                                     <div class="prob-fill prob-fill-yellow" style="width: {min(row['prob_tardanza_pct'], 100)}%"></div>
                                 </div>
                             </td>
+                            <td>{tardanza_display}</td>
                         </tr>
         """
     

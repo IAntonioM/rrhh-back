@@ -82,10 +82,7 @@ class Marcaciones:
             # Agregar paginación si se especifica
             if params.get('inicio', 0) != 0 and params.get('final', 0) != 0:
                 base_query += f" OFFSET {params['inicio'] - 1} ROWS FETCH NEXT {params['final'] - params['inicio'] + 1} ROWS ONLY"
-            
-            print(f"DEBUG: Ejecutando consulta: {base_query}")
-            print(f"DEBUG: Parámetros: {query_params}")
-            
+
             cursor.execute(base_query, query_params)
             results = cursor.fetchall()
             columns = [column[0] for column in cursor.description] if cursor.description else []
