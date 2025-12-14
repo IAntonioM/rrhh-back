@@ -1,0 +1,511 @@
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      {% if parametros.TipoReporte == '1' %}
+        Reporte de Asistencia Diaria Detallada
+      {% elif parametros.TipoReporte == '2' %}
+        Reporte de Resumen Mensual
+      {% elif parametros.TipoReporte == '3' %}
+        Reporte de Marcaciones Irregulares
+      {% elif parametros.TipoReporte == '4' %}
+        Reporte de Ranking de Puntualidad por Cargo
+      {% elif parametros.TipoReporte == '5' %}
+        Reporte de Ausentismo por Día de Semana
+      {% elif parametros.TipoReporte == '6' %}
+        Reporte de Cumplimiento de Horario
+      {% elif parametros.TipoReporte == '7' %}
+        Reporte de Horas Trabajadas vs Programadas
+      {% elif parametros.TipoReporte == '8' %}
+        Reporte de Empleados por Turno
+      {% elif parametros.TipoReporte == '9' %}
+        Reporte de Control de Refrigerio
+      {% else %}
+        Reporte de Asistencias
+      {% endif %}
+    </title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 9px;
+        margin: 10px;
+        background-color: #f9f9f9;
+        color: #333;
+      }
+      .container {
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+        font-size: 14px;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #3498db;
+      }
+      .info-section {
+        margin-bottom: 15px;
+        padding: 8px;
+        background-color: #ecf0f1;
+        border-radius: 3px;
+      }
+      .info-section p {
+        margin: 3px 0;
+        font-size: 9px;
+      }
+      .info-section strong {
+        color: #2c3e50;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 8px;
+        margin-bottom: 10px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 4px;
+        text-align: left;
+      }
+      th {
+        background-color: #3498db;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      tr:hover {
+        background-color: #e0f7fa;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .text-right {
+        text-align: right;
+      }
+      .footer {
+        text-align: center;
+        font-size: 8px;
+        color: #7f8c8d;
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px solid #e0e0e0;
+      }
+      .no-data {
+        text-align: center;
+        color: #e74c3c;
+        font-weight: bold;
+        margin: 20px;
+        padding: 20px;
+        background-color: #fadbd8;
+        border-radius: 4px;
+      }
+      /* Estilos específicos para diferentes reportes */
+      .estado-presente {
+        color: #27ae60;
+        font-weight: bold;
+      }
+      .estado-ausente {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+      .estado-tarde {
+        color: #f39c12;
+        font-weight: bold;
+      }
+      .highlight-row {
+        background-color: #fff3cd !important;
+      }
+      /* Optimización para PDF */
+      @media print {
+        body {
+          margin: 5px;
+        }
+        .container {
+          padding: 5px;
+          box-shadow: none;
+        }
+        table {
+          font-size: 7px;
+        }
+        th,
+        td {
+          padding: 2px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>
+        {% if tipo_reporte == '1' %}
+          Reporte de Asistencia Diaria Detallada
+        {% elif tipo_reporte == '2' %}
+          Reporte de Resumen Mensual
+        {% elif tipo_reporte == '3' %}
+          Reporte de Marcaciones Irregulares
+        {% elif tipo_reporte == '4' %}
+          Reporte de Ranking de Puntualidad por Cargo
+        {% elif tipo_reporte == '5' %}
+          Reporte de Ausentismo por Día de Semana
+        {% elif tipo_reporte == '6' %}
+          Reporte de Cumplimiento de Horario
+        {% elif tipo_reporte == '7' %}
+          Reporte de Horas Trabajadas vs Programadas
+        {% elif tipo_reporte == '8' %}
+          Reporte de Empleados por Turno
+        {% elif tipo_reporte == '9' %}
+          Reporte de Control de Refrigerio
+        {% else %}
+          Reporte de Asistencias
+        {% endif %}
+      </h1>
+
+      <!-- Sección de información de filtros -->
+      <div class="info-section">
+        {% if parametros.FechaInicio and parametros.FechaFin %}
+          <p><strong>Período:</strong> {{ parametros.FechaInicio }} al {{ parametros.FechaFin }}</p>
+        {% elif parametros.Mes and parametros.Anio %}
+          <p><strong>Período:</strong> {{ parametros.Mes }}/{{ parametros.Anio }}</p>
+        {% elif parametros.Fecha %}
+          <p><strong>Fecha:</strong> {{ parametros.Fecha }}</p>
+        {% endif %}
+        <p><strong>Fecha de generación:</strong> {{ fecha_generacion }}</p>
+        
+        <!-- DEBUG: Quitar después -->
+        <p style="color: red;"><strong>DEBUG - TipoReporte:</strong> {{ parametros.TipoReporte }}</p>
+        <p style="color: red;"><strong>DEBUG - Tablas length:</strong> {{ tablas|length if tablas else 'None' }}</p>
+        <p style="color: red;"><strong>DEBUG - Datos length:</strong> {{ tablas[0].data|length if tablas and tablas|length > 0 else 'None' }}</p>
+      </div>
+
+      {% if tablas and tablas|length > 0 and tablas[0].data|length > 0 %}
+        
+        <!-- REPORTE 1: Asistencia Diaria Detallada -->
+        {% if parametros.TipoReporte == '1' %}
+          <table>
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>DNI</th>
+                <th>Fecha</th>
+                <th>Día Semana</th>
+                <th>Estado Marcación</th>
+                <th>Hora Marcación</th>
+                <th>Estación</th>
+                <th>Observación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in tablas[0].data %}
+              <tr>
+                <td>{{ row.Empleado }}</td>
+                <td class="text-center">{{ row.DNI }}</td>
+                <td class="text-center">{{ row.Fecha  }}</td>
+                <td class="text-center">{{ row.DiaSemana }}</td>
+                <td class="text-center">{{ row.EstadoMarcacion}}</td>
+                <td class="text-center">{{ row.HoraMarcacion}}</td>
+                <td>{{ row.Estacion}}</td>
+                <td>{{ row.Observacion}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        <!-- REPORTE 2: Resumen Mensual -->
+        {% elif parametros.TipoReporte == '2' %}
+          <table>
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>DNI</th>
+                <th>Días Asistidos</th>
+                <th>Días Faltados</th>
+                <th>Llegadas Tarde</th>
+                <th>Hora Más Temprana</th>
+                <th>Hora Más Tarde</th>
+                <th>ID Cargo</th>
+                <th>Salario</th>
+                <th>% Asistencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in tablas[0].data %}
+              <tr>
+                <td>{{ row.Empleado }}</td>
+                <td class="text-center">{{ row.DNI }}</td>
+                <td class="text-center">{{ row.DiasAsistidos}}</td>
+                <td class="text-center">{{ row.DiasFaltados}}</td>
+                <td class="text-center">{{ row.LlegadasTarde}}</td>
+                <td class="text-center">{{ row.HoraMasTemplana}}</td>
+                <td class="text-center">{{ row.HoraMasTarde}}</td>
+                <td class="text-center">{{ row.id_cargo}}</td>
+                <td class="text-right">{{ "%.2f"|format(row.Salario|float) if row.Salario else '0.00' }}</td>
+                <td class="text-center">{{ "%.2f"|format(row.PorcentajeAsistencia|float) if row.PorcentajeAsistencia else '0.00' }}%</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        <!-- REPORTE 3: Marcaciones Irregulares -->
+        {% elif parametros.TipoReporte == '3' %}
+          <table>
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>DNI</th>
+                <th>Fecha</th>
+                <th>Cantidad Marcaciones</th>
+                <th>Todas las Horas</th>
+                <th>Tipo Anomalía</th>
+                <th>Estación</th>
+                <th>Observación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in tablas[0].data %}
+              <tr>
+                <td>{{ row.Empleado }}</td>
+                <td class="text-center">{{ row.dni}}</td>
+                <td class="text-center">{{ row.Fecha  }}</td>
+                <td class="text-center">{{ row.CantidadMarcaciones}}</td>
+                <td class="text-center">{{ row.TodasLasHoras}}</td>
+                <td class="text-center">{{ row.TipoAnomalia}}</td>
+                <td>{{ row.Estacion}}</td>
+                <td>{{ row.observacion}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        <!-- REPORTE 4: Ranking Puntualidad -->
+        {% elif parametros.TipoReporte == '4' %}
+          <table>
+            <thead>
+              <tr>
+                <th>Cargo</th>
+                <th>Total Empleados</th>
+                <th>Empleados con Marcación</th>
+                <th>% Asistencia</th>
+                <th>% Llegadas Tarde</th>
+                <th>Hora Promedio Entrada</th>
+                <th>Total Marcaciones</th>
+                <th>Total Salarios</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in tablas[0].data %}
+              <tr>
+                <td>{{ row.Cargo}}</td>
+                <td class="text-center">{{ row.TotalEmpleados}}</td>
+                <td class="text-center">{{ row.EmpleadosConMarcacion}}</td>
+                <td class="text-center">{{ "%.2f"|format(row.PorcentajeAsistencia|float) if row.PorcentajeAsistencia else '0.00' }}%</td>
+                <td class="text-center">{{ "%.2f"|format(row.PorcentajeLlegadasTarde|float) if row.PorcentajeLlegadasTarde else '0.00' }}%</td>
+                <td class="text-center">{{ row.HoraPromedioEntrada}}</td>
+                <td class="text-center">{{ row.TotalMarcaciones}}</td>
+                <td class="text-right">{{ "%.2f"|format(row.TotalSalarios|float) if row.TotalSalarios else '0.00' }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        <!-- REPORTE 5: Ausentismo por Día -->
+        {% elif parametros.TipoReporte == '5' %}
+          <table>
+            <thead>
+              <tr>
+                <th>Día Semana</th>
+                <th>Núm. Día</th>
+                <th>Total Empleados Activos</th>
+                <th>Empleados que Marcaron</th>
+                <th>Empleados Ausentes</th>
+                <th>% Asistencia</th>
+                <th>% Llegadas Tarde</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in tablas[0].data %}
+              <tr>
+                <td>{{ row.DiaSemana }}</td>
+                <td class="text-center">{{ row.NumDia }}</td>
+                <td class="text-center">{{ row.TotalEmpleadosActivos }}</td>
+                <td class="text-center">{{ row.EmpleadosQueMarcaron}}</td>
+                <td class="text-center">{{ row.EmpleadosAusentes}}</td>
+                <td class="text-center">{{ "%.2f"|format(row.PorcentajeAsistencia|float) if row.PorcentajeAsistencia else '0.00' }}%</td>
+                <td class="text-center">{{ "%.2f"|format(row.PorcentajeLlegadasTarde|float) if row.PorcentajeLlegadasTarde else '0.00' }}%</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        <!-- REPORTE 6: Cumplimiento Horario -->
+        {% elif parametros.TipoReporte == '6' %}
+          <table>
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>DNI</th>
+                <th>Fecha</th>
+                <th>Día Semana</th>
+                <th>Nombre Horario</th>
+                <th>Horario Entrada</th>
+                <th>Horario Salida</th>
+                <th>Hora Marcación</th>
+                <th>Minutos Tarde</th>
+                <th>Estado</th>
+                <th>Observación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in tablas[0].data %}
+              <tr>
+                <td>{{ row.Empleado }}</td>
+                <td class="text-center">{{ row.dni}}</td>
+                <td class="text-center">{{ row.Fecha  }}</td>
+                <td class="text-center">{{ row.DiaSemana }}</td>
+                <td>{{ row.NombreHorario}}</td>
+                <td class="text-center">{{ row.HorarioEntrada}}</td>
+                <td class="text-center">{{ row.HorarioSalida}}</td>
+                <td class="text-center">{{ row.HoraMarcacion}}</td>
+                <td class="text-center">{{ row.MinutosTarde}}</td>
+                <td class="text-center">{{ row.Estado}}</td>
+                <td>{{ row.observacion}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        <!-- REPORTE 7: Horas Trabajadas -->
+        {% elif parametros.TipoReporte == '7' %}
+          <table>
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>DNI</th>
+                <th>Tipo Horario</th>
+                <th>Horas Programadas</th>
+                <th>Horas Trabajadas</th>
+                <th>Diferencia Horas</th>
+                <th>Días Asistidos</th>
+                <th>Días Faltados</th>
+                <th>% Cumplimiento</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in tablas[0].data %}
+              <tr>
+                <td>{{ row.Empleado }}</td>
+                <td class="text-center">{{ row.dni}}</td>
+                <td>{{ row.TipoHorario}}</td>
+                <td class="text-center">{{ "%.2f"|format(row.HorasProgramadas|float) if row.HorasProgramadas else '0.00' }}</td>
+                <td class="text-center">{{ "%.2f"|format(row.HorasTrabajadas|float) if row.HorasTrabajadas else '0.00' }}</td>
+                <td class="text-center">{{ "%.2f"|format(row.DiferenciaHoras|float) if row.DiferenciaHoras else '0.00' }}</td>
+                <td class="text-center">{{ row.DiasAsistidos}}</td>
+                <td class="text-center">{{ row.DiasFaltados}}</td>
+                <td class="text-center">{{ "%.2f"|format(row.PorcentajeCumplimiento|float) if row.PorcentajeCumplimiento else '0.00' }}%</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        <!-- REPORTE 8: Empleados por Turno -->
+        {% elif parametros.TipoReporte == '8' %}
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo Horario</th>
+                <th>Hora Entrada</th>
+                <th>Hora Salida</th>
+                <th>Día Semana</th>
+                <th>Cantidad Empleados</th>
+                <th>Empleados</th>
+                <th>Horas Turno</th>
+                <th>Tiene Refrigerio</th>
+                <th>Inicio Refrigerio</th>
+                <th>Fin Refrigerio</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in tablas[0].data %}
+              <tr>
+                <td>{{ row.TipoHorario}}</td>
+                <td class="text-center">{{ row.HoraEntrada}}</td>
+                <td class="text-center">{{ row.HoraSalida}}</td>
+                <td class="text-center">{{ row.DiaSemana }}</td>
+                <td class="text-center">{{ row.CantidadEmpleados}}</td>
+                <td>{{ row.Empleados}}</td>
+                <td class="text-center">{{ "%.2f"|format(row.HorasTurno|float) if row.HorasTurno else '0.00' }}</td>
+                <td class="text-center">{{ row.TieneRefrigerio}}</td>
+                <td class="text-center">{{ row.InicioRefrigerio}}</td>
+                <td class="text-center">{{ row.FinRefrigerio}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        <!-- REPORTE 9: Control Refrigerio -->
+        {% elif parametros.TipoReporte == '9' %}
+          <table>
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>DNI</th>
+                <th>Fecha</th>
+                <th>Tipo Horario</th>
+                <th>Hora Entrada</th>
+                <th>Salida Refrigerio</th>
+                <th>Refrigerio Programado</th>
+                <th>Retorno Refrigerio</th>
+                <th>Retorno Programado</th>
+                <th>Min. Refrigerio</th>
+                <th>Min. Programados</th>
+                <th>Diferencia</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in tablas[0].data %}
+              <tr>
+                <td>{{ row.empleado}}</td>
+                <td class="text-center">{{ row.dni}}</td>
+                <td class="text-center">{{ row.fecha}}</td>
+                <td>{{ row.tipo_horario}}</td>
+                <td class="text-center">{{ row.hora_entrada}}</td>
+                <td class="text-center">{{ row.salida_refrigerio}}</td>
+                <td class="text-center">{{ row.refrigerio_programado}}</td>
+                <td class="text-center">{{ row.retorno_refrigerio}}</td>
+                <td class="text-center">{{ row.retorno_programado}}</td>
+                <td class="text-center">{{ row.minutos_refrigerio}}</td>
+                <td class="text-center">{{ row.minutos_programados}}</td>
+                <td class="text-center">{{ row.diferencia_minutos}}</td>
+                <td class="text-center">{{ row.estado}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+
+        <!-- Resumen de registros -->
+        <div class="info-section">
+          <p><strong>Total de registros:</strong> {{ tablas[0].data|length }}</p>
+        </div>
+
+      {% else %}
+        <div class="no-data">
+          <p>No se encontraron datos para mostrar en el reporte.</p>
+        </div>
+      {% endif %}
+
+      <div class="footer">
+        Generado el {{ fecha_generacion }} | Sistema de Control de Asistencias
+      </div>
+    </div>
+  </body>
+</html>

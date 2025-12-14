@@ -19,6 +19,7 @@ class ReporteModel:
         'reporte_papeletas.html':'sp_papeleta2',
         'reporte_marcaciones.html':'SP_MARCACIONES',
         'reporte_asistencias.html':'sp_asistencias2',
+        'reporte_asistencia1.html':'sp_ReportesAsistencia',
     }
 
     @staticmethod
