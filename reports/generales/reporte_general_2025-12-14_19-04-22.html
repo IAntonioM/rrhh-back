@@ -1,0 +1,1705 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Reporte de Predicción de Asistencia</title>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 20px;
+                min-height: 100vh;
+            }
+            .container {
+                max-width: 1400px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 15px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                overflow: hidden;
+            }
+            .header {
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+                color: white;
+                padding: 30px;
+                text-align: center;
+            }
+            .header h1 { font-size: 36px; margin-bottom: 10px; }
+            .header p { opacity: 0.9; font-size: 14px; }
+            .summary {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+                padding: 30px;
+                background: #f8f9fa;
+            }
+            .card {
+                background: white;
+                padding: 25px;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                text-align: center;
+                transition: transform 0.3s;
+            }
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+            }
+            .card h3 {
+                font-size: 14px;
+                color: #7f8c8d;
+                margin-bottom: 15px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .card .value {
+                font-size: 42px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            .card .percentage { font-size: 16px; color: #95a5a6; }
+            .content { padding: 30px; }
+            h2 {
+                color: #2c3e50;
+                margin: 30px 0 20px 0;
+                padding-bottom: 10px;
+                border-bottom: 3px solid #3498db;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            th {
+                background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+                color: white;
+                padding: 15px;
+                text-align: left;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 12px;
+                letter-spacing: 1px;
+            }
+            td { padding: 12px 15px; border-bottom: 1px solid #ecf0f1; }
+            tr:hover { background-color: #f8f9fa; }
+            tr:last-child td { border-bottom: none; }
+            .badge {
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-weight: bold;
+                font-size: 11px;
+                text-transform: uppercase;
+                display: inline-block;
+            }
+            .badge-presente { background: #d4edda; color: #155724; }
+            .badge-tardanza { background: #fff3cd; color: #856404; }
+            .high-risk { background-color: #fff5f5 !important; }
+            .prob-bar {
+                height: 8px;
+                background: #ecf0f1;
+                border-radius: 4px;
+                overflow: hidden;
+                margin-top: 5px;
+            }
+            .prob-fill { height: 100%; transition: width 0.3s; }
+            .prob-fill-yellow { background: linear-gradient(90deg, #f39c12, #e67e22); }
+            .prob-fill-green { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>📊 Reporte de Predicción de Asistencia</h1>
+                <p>Generado: 14/12/2025 19:04:08</p>
+            </div>
+
+            <div class="summary">
+                <div class="card">
+                    <h3>Total Registros</h3>
+                    <div class="value" style="color: #3498db;">57,687</div>
+                </div>
+                <div class="card">
+                    <h3>🟢 Presentes</h3>
+                    <div class="value" style="color: #27ae60;">28,733</div>
+                    <div class="percentage">49.8%</div>
+                </div>
+                <div class="card">
+                    <h3>🟡 Tardanzas</h3>
+                    <div class="value" style="color: #f39c12;">8,260</div>
+                    <div class="percentage">14.3%</div>
+                </div>
+            </div>
+
+            <div class="content">
+                <h2>📅 Probabilidad Mensual por Empleado (Top 50)</h2>
+                <p style="color: #7f8c8d; margin-bottom: 15px; font-size: 14px;">
+                    📊 Top 50 empleados con mayor probabilidad de tardanza mensual
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre Empleado</th>
+                            <th>Mes</th>
+                            <th>Año</th>
+                            <th>🟢 Prob. Asistencia</th>
+                            <th>🟡 Prob. Tardanza</th>
+                            <th>Días Laborales</th>
+                            <th>Tardanzas Predichas</th>
+                            <th>Nivel de Riesgo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    
+                        <tr class="">
+                            <td><strong>524675F4...</strong></td>
+                            <td><strong>CHRISTIAN ZEVALLOS COSME . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>537692B7...</strong></td>
+                            <td><strong>MURAYARI GARCIA BRIAN JUNIOR  . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>D9E2CC26...</strong></td>
+                            <td><strong>GALLARDO ARIAS JUAN CARLOS . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>78A9C9DC...</strong></td>
+                            <td><strong>JERI COZME MARGARITA CANDELARIA  . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>1607C5D6...</strong></td>
+                            <td><strong>LEANDRO TORRES ANTONIO . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>03B86624...</strong></td>
+                            <td><strong>MARIA HILDA MARTINEZ PISFIL . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>44BD7D58...</strong></td>
+                            <td><strong>AVALOS SANTOS OSCAR  ARTURO . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>6F5BC9FE...</strong></td>
+                            <td><strong>LUIS ALBERTO MARTINEZ VARGAS . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>0F1EE0C5...</strong></td>
+                            <td><strong>RAMIREZ QUISPE JORGE LUIS   . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>CA2A4872...</strong></td>
+                            <td><strong>HECTOR EDUARDO MEDINA SAAVEDRA  . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>18D1AA05...</strong></td>
+                            <td><strong>KAREN ELIZABETH ABURTO CAMBAR . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>DA7533A8...</strong></td>
+                            <td><strong>ROJAS MELGAREJO ALVARO ANDRES CARLOS . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>55F9A2D8...</strong></td>
+                            <td><strong>ARANGO GUTIERREZ VILMA DIANA  . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>0CD7E175...</strong></td>
+                            <td><strong>MIGUEL ANGEL GARCES MUÑOZ  . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>1471529B...</strong></td>
+                            <td><strong>VILMA CRISTINA BALDEON COLONIA . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>391658AB...</strong></td>
+                            <td><strong>NUÑEZ RAMIREZ , WALTER  . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>0C6FEF41...</strong></td>
+                            <td><strong>MARCO ANDRES VERGARA TORRES . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>1B179EF5...</strong></td>
+                            <td><strong>MARIANO LLIH CARRASCO CAPCHA . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>7A601739...</strong></td>
+                            <td><strong>JULIO CESAR VALER CHAVEZ . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>75806B22...</strong></td>
+                            <td><strong>RAFAEL CLAVER MICHUY PASCUAL . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>756ACDB0...</strong></td>
+                            <td><strong>HILDA LOPEZ ROMAN . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>F307E1F9...</strong></td>
+                            <td><strong>REY EFRAIN CERRON MARCAQUISPE . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>1DA238AB...</strong></td>
+                            <td><strong>JONATHAN CCAMA FLORES  . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>278919C9...</strong></td>
+                            <td><strong>OCAS HINOSTROZA ROUSMAN LUIS . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>9A3E4662...</strong></td>
+                            <td><strong>CARLOS TORRES GRIJALVA . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>3FA6A18E...</strong></td>
+                            <td><strong>LANDA DE LA CRUZ OSCAR EPIFANIO . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">40.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 40.781464738182876%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">59.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 59.21853526181711%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>63E2D6EC...</strong></td>
+                            <td><strong>FERNANDEZ HUAYRE JUNIOR . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">21.5%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 21.4932102612004%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>6F1889F9...</strong></td>
+                            <td><strong>TORRES LINARES LUIS ALFREDO . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>8C0086F4...</strong></td>
+                            <td><strong>ROBERTHA URIBE ROJAS . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>C09ED070...</strong></td>
+                            <td><strong>JANETT MARLENE CERVANTES MERGONI  . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>52352177...</strong></td>
+                            <td><strong>TAN FERNANDEZ ANIBAL . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">21.5%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 21.4932102612004%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>36DAD99C...</strong></td>
+                            <td><strong>Somos unos desarrolladores y queremos mejorar día a día</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">21.5%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 21.4932102612004%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>8F67C632...</strong></td>
+                            <td><strong>ESPIRITU GONZALES MARIA ELENA . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>79CEB544...</strong></td>
+                            <td><strong>CUBAS FARRO JOHNNY HERNAN . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>389771D7...</strong></td>
+                            <td><strong>SOTO GARAY JEFFERSON JOEL . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">21.5%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 21.4932102612004%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>8D7060F5...</strong></td>
+                            <td><strong>OSCAR ANTONIO MENDEZ ORTEGA . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">21.5%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 21.4932102612004%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>06E7B8F7...</strong></td>
+                            <td><strong>TUCTO SOLORZANO DANITZA ANDRES . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">21.5%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 21.4932102612004%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>3880E717...</strong></td>
+                            <td><strong>FERMIN CHANCO ZAMORA . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>19EDDC4F...</strong></td>
+                            <td><strong>RICHARD RAMOS ESTRADA . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>51D70F38...</strong></td>
+                            <td><strong>CUCHO CHACMANA VICTOR ALDAIR . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>EEF1A849...</strong></td>
+                            <td><strong>VIERA HUANAY MIGUEL ANGEL . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>465664A7...</strong></td>
+                            <td><strong>VALERIE ANTONELLA STEINHAUSE FISCHER . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>6E8AF193...</strong></td>
+                            <td><strong>CABELLO TINCO MARIA SOLEDAD . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">21.5%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 21.4932102612004%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>4148FC57...</strong></td>
+                            <td><strong>GUZMAN BARRETO DANIEL ALEXANDER . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>E6A06E5C...</strong></td>
+                            <td><strong>REQUEJO MORALES LILIAM FRIDA . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>7F69CF41...</strong></td>
+                            <td><strong>RODRIGUEZ ESTEBAN BRYAN SMITH . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">21.5%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 21.4932102612004%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>4CC880F7...</strong></td>
+                            <td><strong>CALDERON ASTO ARTURO  . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>6DE1F307...</strong></td>
+                            <td><strong>PAUL JOHN DIAZ ALATA . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>E637173B...</strong></td>
+                            <td><strong>CHIRRE OSORIO GLORIA MARIA . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">54.8%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 54.826543594533725%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                        <tr class="">
+                            <td><strong>81F85E62...</strong></td>
+                            <td><strong>ELIZABETH YOLANDA RUEDA LEON . .</strong></td>
+                            <td>Diciembre</td>
+                            <td>2025</td>
+                            <td>
+                                <strong style="color: #27ae60; font-size: 16px;">21.5%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-green" style="width: 21.4932102612004%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #f39c12; font-size: 16px;">45.2%</strong>
+                                <div class="prob-bar">
+                                    <div class="prob-fill prob-fill-yellow" style="width: 45.173456405466275%"></div>
+                                </div>
+                            </td>
+                            <td><strong>3</strong> días</td>
+                            <td><strong style="color: #f39c12;">1</strong> días</td>
+                            <td><strong>⚠️ MEDIO</strong></td>
+                        </tr>
+        
+                    </tbody>
+                </table>
+
+                <h2>🟡 Empleados con Mayor Riesgo de Tardanza (Top 30 Días)</h2>
+    
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Fecha</th>
+                            <th>Día</th>
+                            <th>Predicción</th>
+                            <th>Probabilidad Tardanza</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        
+                            <tr>
+                                <td><strong>104179EB...</strong></td>
+                                <td><strong>MARIBEL EVA PASTRANA BELLEZA . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>41502722...</strong></td>
+                                <td><strong>CACERES DOMINGUEZ CARLOS ENRIQUE   . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>2A741A4C...</strong></td>
+                                <td><strong>CYNTHIA CARMELA HERRERA ZAMUDIO . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>D78C7E1E...</strong></td>
+                                <td><strong>CLEMENTE EDUARDO CONCEPCION ESPINOZA . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>1942FE85...</strong></td>
+                                <td><strong>PAIMA ROMERO EDINSON JUNIOR . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>78866FFA...</strong></td>
+                                <td><strong>ALEX SEGOBIA . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>87D0B31C...</strong></td>
+                                <td><strong>ALEXANDER PAUL CABEZAS HUAMAN  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>DADCB3C9...</strong></td>
+                                <td><strong>MARTINA SANTIAGO VDA DE SIANCAS . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>C4FFBA46...</strong></td>
+                                <td><strong>BRYAN LEE PONCE TORRES . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>391658AB...</strong></td>
+                                <td><strong>NUÑEZ RAMIREZ , WALTER  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>A1F9B8D4...</strong></td>
+                                <td><strong>CANDELA ISLA MILAGROS MARLEN . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>5508E2AA...</strong></td>
+                                <td><strong>MINCHAN LOPEZ VERONICA LILIANA  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>E6A06E5C...</strong></td>
+                                <td><strong>REQUEJO MORALES LILIAM FRIDA . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>BBDF4AAD...</strong></td>
+                                <td><strong>GUTIERREZ SILVERA JORGE LUIS . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>85B4842D...</strong></td>
+                                <td><strong>PORRAS CUYA ANGIE ESTEFANY  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>2DD4EC5B...</strong></td>
+                                <td><strong>VICTOR OBREGON TITO . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>9FB7252A...</strong></td>
+                                <td><strong>MURGA BERNAOLA RAUL MAXIMO  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>93C42E78...</strong></td>
+                                <td><strong>GALARRETA CASTILLO CARLOS ENRIQUE  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>0423A237...</strong></td>
+                                <td><strong>APARICIO VICTOR TRUJILLO LUJAN    . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>00F4444A...</strong></td>
+                                <td><strong>QUISPE PILLANCA MARGARITA  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>B422BB30...</strong></td>
+                                <td><strong>PABLO PEDRO ZUAREZ CASTRO . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>3423B0AA...</strong></td>
+                                <td><strong>RAUL MIGUEL HUINCHO LIZAN . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>28B00217...</strong></td>
+                                <td><strong>ARANCIBIA CAPCHA OSCAR JULIAN  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>911DFC43...</strong></td>
+                                <td><strong>RIOS VILLACORTA JASAELA . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>AAA3430E...</strong></td>
+                                <td><strong>GUERRA BLAS RICARDO RAFAEL  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>2D8E44A3...</strong></td>
+                                <td><strong>CORREA JIMENEZ VICTOR HUGO  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>D37DEFDA...</strong></td>
+                                <td><strong>SANCHEZ CALVO VICTOR RAMON  . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>DC35729E...</strong></td>
+                                <td><strong>ROXANA EUDALIA ANCAJIMA CURAY . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>C2808A65...</strong></td>
+                                <td><strong>VENDETTA GAMBOA NAJADDY LINSAY . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td><strong>41D85B3A...</strong></td>
+                                <td><strong>PEDRO ALFREDO VILLADEZA PRINCIPE . .</strong></td>
+                                <td>09/09/2025</td>
+                                <td>Mar</td>
+                                <td><span class="badge badge-tardanza">TARDANZA</span></td>
+                                <td>
+                                    <strong>91.2%</strong>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill prob-fill-yellow" style="width: 91.22530835289412%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                    </tbody>
+                </table>
+        
+            </div>
+        </div>
+    </body>
+    </html>
+    

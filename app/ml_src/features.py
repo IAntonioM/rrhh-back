@@ -7,10 +7,14 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     df['fecha'] = pd.to_datetime(df['fecha'], errors='coerce', dayfirst=True)
 
     # Crear features temporales
-    df['mes'] = df['fecha'].dt.month
-    df['anio'] = df['fecha'].dt.year
-    df['dia_mes'] = df['fecha'].dt.day
-    df['semana_anio'] = df['fecha'].dt.isocalendar().week
+    df['mes'] = df['fecha'].dt.month.fillna(1).astype(int)  # ✅ Crear Y llenar en la misma línea
+    df['anio'] = df['fecha'].dt.year.fillna(2025).astype(int)
+    df['dia_mes'] = df['fecha'].dt.day.fillna(1).astype(int)
+    df['semana_anio'] = df['fecha'].dt.isocalendar().week.fillna(1).astype(int)
+    
+    # ✅ Asegurar que tardanza_min no tenga negativos
+    if 'tardanza_min' in df.columns:
+        df['tardanza_min'] = df['tardanza_min'].fillna(0).clip(lower=0)
     
     # Features de días
     df['es_viernes'] = (df['dia_semana'] == 4).astype(int)
@@ -28,7 +32,7 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
         'hora_entrada_real',
         'hora_salida_teorica',
         'hora_salida_real',
-        'nombre_empleado'  # ← Por si acaso quedó
+        'nombre_empleado'
     ]
     
     df = df.drop(columns=columnas_a_eliminar, errors='ignore')

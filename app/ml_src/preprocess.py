@@ -1,3 +1,4 @@
+#preprocess.py
 import pandas as pd
 import numpy as np
 
@@ -21,9 +22,10 @@ def load_and_clean_data(csv_path: str) -> pd.DataFrame:
             diff = (
                 pd.to_datetime(str(entrada_real)) - pd.to_datetime(str(entrada_teo))
             ).total_seconds() / 60
-            return diff
+            # ✅ NUEVO: Si llegó antes de la hora, poner 0 en lugar de negativo
+            return max(0, diff)
         except:
-            return np.nan
+            return 0  # ✅ Cambiar np.nan por 0
 
     df['tardanza_min'] = df.apply(time_diff, axis=1)
 
@@ -56,6 +58,14 @@ def load_and_clean_data(csv_path: str) -> pd.DataFrame:
 
     # Quitar columnas no útiles
     df = df.drop(columns=['nombre_empleado'], errors='ignore')
+
+    if df['fecha'].isna().any():
+        print(f"⚠️ ADVERTENCIA: {df['fecha'].isna().sum()} fechas inválidas detectadas")
+        print("Registros con fechas inválidas:")
+        print(df[df['fecha'].isna()][['empleado_id', 'nombre_empleado', 'ausencia']])
+        # Eliminar registros con fechas inválidas
+        df = df.dropna(subset=['fecha'])
+        print(f"✅ Registros válidos restantes: {len(df)}")
 
     return df
 

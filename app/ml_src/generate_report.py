@@ -52,31 +52,54 @@ def generate_html_report(input_path: str, original_csv_path: str = "data/raw/fic
 
     # Crear DataFrame con resultados
     print("   Creando DataFrame de resultados...")
+    # Crear DataFrame con resultados
     reporte = pd.DataFrame({
         'empleado_id': df_original['empleado_id'].fillna('Sin ID').astype(str),
         'nombre_empleado': df_original['nombre_empleado'].fillna('Sin nombre'),
         'fecha': df_original['fecha'],
         'fecha_str': df_original['fecha'].dt.strftime('%d/%m/%Y'),
         'dia_semana': df['dia_semana'].fillna(0).astype(int).map(dias_map),
-        'mes': df['mes'].fillna(0).astype(int),
-        'anio': df_original['fecha'].dt.year,
-        'tardanza_min': df['tardanza_min'].fillna(0),
+        'mes': df_original['fecha'].dt.month.fillna(1).astype(int),  # ✅ Cambié a 1
+        'anio': df_original['fecha'].dt.year.fillna(2025).astype(int),  # ✅ Año actual
+        'tardanza_min': df['tardanza_min'].fillna(0).clip(lower=0),  # ✅ Sin negativos
         'prediccion': predictions,
         'prob_presente': probabilities[:, 0],
-        'prob_tardanza': probabilities[:, 1]  # ✅ Solo 2 clases
+        'prob_tardanza': probabilities[:, 1]
     })
+
+    # ✅ NUEVO: Eliminar duplicados por empleado/fecha antes de agrupar
+    print(f"\n📊 Total registros antes de limpiar duplicados: {len(reporte)}")
+    reporte = reporte.drop_duplicates(subset=['empleado_id', 'fecha'], keep='first')
+    print(f"📊 Total registros después de limpiar duplicados: {len(reporte)}")
+
+    # ✅ NUEVO: Validar datos antes de agrupamiento
+    print(f"\n📊 Rango de fechas: {reporte['fecha'].min()} a {reporte['fecha'].max()}")
+    print(f"📊 Empleados únicos: {reporte['empleado_id'].nunique()}")
+    print(f"📊 Promedio de registros por empleado: {len(reporte) / reporte['empleado_id'].nunique():.1f}")
 
     # ✅ CALCULAR PROBABILIDAD MENSUAL POR EMPLEADO
     print("   Calculando probabilidades mensuales...")
-    reporte_mensual = reporte.groupby(['empleado_id', 'nombre_empleado', 'mes', 'anio']).agg({
+
+    # ✅ NUEVO: Agrupar por fecha única (sin duplicados)
+    reporte_mensual = reporte.groupby(['empleado_id', 'nombre_empleado', 'mes', 'anio'], dropna=False).agg({
         'prob_tardanza': 'mean',
         'prob_presente': 'mean',
-        'prediccion': ['count', lambda x: (x == 1).sum()]
+        'fecha': 'nunique',  # ✅ Contar fechas únicas en lugar de total de registros
+        'prediccion': lambda x: (x == 1).sum()
     }).reset_index()
-    
+
     reporte_mensual.columns = ['empleado_id', 'nombre_empleado', 'mes', 'anio', 
                                 'prob_tardanza_promedio', 'prob_asistencia_promedio', 
                                 'total_dias', 'dias_tardanza_predichos']
+
+    # ✅ Debug: Mostrar algunos empleados para validar
+    print("\n📊 Ejemplo de empleados (primeros 3):")
+    for emp_id in reporte['empleado_id'].unique()[:3]:
+        emp_data = reporte[reporte['empleado_id'] == emp_id]
+        print(f"\nEmpleado {emp_id}:")
+        print(f"  - Total registros: {len(emp_data)}")
+        print(f"  - Fechas únicas: {emp_data['fecha'].nunique()}")
+        print(f"  - Rango: {emp_data['fecha'].min()} a {emp_data['fecha'].max()}")
     reporte_mensual['prob_tardanza_promedio'] = reporte_mensual['prob_tardanza_promedio'] * 100
     reporte_mensual['prob_asistencia_promedio'] = reporte_mensual['prob_asistencia_promedio'] * 100
     reporte_mensual = reporte_mensual.sort_values('prob_tardanza_promedio', ascending=False)
@@ -318,7 +341,6 @@ def generate_html_report(input_path: str, original_csv_path: str = "data/raw/fic
                             <th>Día</th>
                             <th>Predicción</th>
                             <th>Probabilidad Tardanza</th>
-                            <th>Minutos de Tardanza</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -345,7 +367,6 @@ def generate_html_report(input_path: str, original_csv_path: str = "data/raw/fic
                                         <div class="prob-fill prob-fill-yellow" style="width: {prob_pct}%"></div>
                                     </div>
                                 </td>
-                                <td><strong>{tardanza:.0f}</strong> min</td>
                             </tr>
             """)
         

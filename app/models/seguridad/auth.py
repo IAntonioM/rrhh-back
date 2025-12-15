@@ -142,7 +142,9 @@ class UserModel:
                 'rol_id': user[2],
                 'estado': user[3],
                 'idEmpleado': user[4],
-                'idCentroCosto': user[5] # IdPersonal está en el índice 10 (columna 11)
+                'idCentroCosto': user[5], # IdPersonal está en el índice 10 (columna 11)
+                'idEmpeleado2': user[6],
+                'nombres': user[7]
             }
             
         finally:

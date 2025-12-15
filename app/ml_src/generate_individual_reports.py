@@ -1,3 +1,4 @@
+#generate_individual_reports
 import pandas as pd
 import pickle
 from datetime import datetime
@@ -66,9 +67,9 @@ def generate_individual_reports(input_path: str, original_csv_path: str = "data/
         'fecha': df_original['fecha'],
         'fecha_str': df_original['fecha'].dt.strftime('%d/%m/%Y'),
         'dia_semana': df['dia_semana'].fillna(0).astype(int).map(dias_map),
-        'mes': df_original['fecha'].dt.month.fillna(0).astype(int),  # CORREGIDO: usar fecha de df_original
-        'mes_nombre': df_original['fecha'].dt.month.fillna(0).astype(int).map(meses_map),  # CORREGIDO
-        'anio': df_original['fecha'].dt.year.fillna(0).astype(int),  # CORREGIDO
+        'mes': df_original['fecha'].dt.month.fillna(1).astype(int),  # 1 en lugar de 0
+        'mes_nombre': df_original['fecha'].dt.month.fillna(1).astype(int).map(meses_map),
+        'anio': df_original['fecha'].dt.year.fillna(2025).astype(int),  # Año actual en lugar de 0
         'tardanza_min': df['tardanza_min'].fillna(0),
         'prediccion': predictions,
         'prob_presente': probabilities[:, 0],
@@ -95,28 +96,54 @@ def generate_individual_reports(input_path: str, original_csv_path: str = "data/
 
 
 def generar_reporte_html_empleado(empleado_id: str, nombre: str, datos: pd.DataFrame):
-    # Calcular estadísticas
-    total_dias = len(datos)
+    # ✅ DEBUG: Ver qué valores tiene prediccion
+    print(f"\n🔍 DEBUG - Empleado: {nombre}")
+    print(f"   Valores únicos en 'prediccion': {datos['prediccion'].unique()}")
+    print(f"   Conteo por predicción:")
+    print(datos['prediccion'].value_counts().sort_index())
+    
+    # ✅ CORRECCIÓN: Tardanza es prediccion == 2, no == 1
+    total_dias = datos['fecha'].nunique()
     dias_presente = (datos['prediccion'] == 0).sum()
-    dias_tardanza = (datos['prediccion'] == 1).sum()
+    dias_ausente = (datos['prediccion'] == 1).sum()  # ✅ Ausente
+    dias_tardanza = (datos['prediccion'] == 2).sum()  # ✅ Tardanza (era == 1)
+    
     prob_tardanza_promedio = datos['prob_tardanza'].mean() * 100
     prob_presente_promedio = datos['prob_presente'].mean() * 100
-    tardanza_promedio = datos['tardanza_min'].mean()
+    
+    # ✅ Filtrar días con TARDANZA (prediccion == 2)
+    dias_con_tardanza = datos[datos['prediccion'] == 2]
+    tardanza_promedio = dias_con_tardanza['tardanza_min'].mean() if len(dias_con_tardanza) > 0 else 0
+    
+    print(f"   📊 Estadísticas:")
+    print(f"      - Total días: {total_dias}")
+    print(f"      - Presente: {dias_presente}")
+    print(f"      - Ausente: {dias_ausente}")
+    print(f"      - Tardanza: {dias_tardanza}")
+    print(f"      - Tardanza promedio: {tardanza_promedio:.1f} min")
     
     # Estadísticas mensuales
     stats_mensuales = datos.groupby(['mes', 'mes_nombre', 'anio']).agg({
-        'prediccion': ['count', lambda x: (x == 1).sum()],
-        'prob_tardanza': 'mean',
-        'tardanza_min': lambda x: x[datos.loc[x.index, 'prediccion'] == 1].mean() if (datos.loc[x.index, 'prediccion'] == 1).any() else 0
+        'fecha': 'nunique',
+        'prediccion': lambda x: (x == 2).sum(),  # ✅ Tardanza == 2
+        'prob_tardanza': 'mean'
     }).reset_index()
-    
-    stats_mensuales.columns = ['mes', 'mes_nombre', 'anio', 'total_dias', 'dias_tardanza', 'prob_tardanza_pct', 'tardanza_promedio']
+
+    stats_mensuales.columns = ['mes', 'mes_nombre', 'anio', 'total_dias', 'dias_tardanza', 'prob_tardanza_pct']
+
+    # Calcular tardanza promedio SOLO de días con prediccion == 2
+    tardanza_por_mes = datos[datos['prediccion'] == 2].groupby(['mes', 'anio'])['tardanza_min'].mean().reset_index()
+    tardanza_por_mes.columns = ['mes', 'anio', 'tardanza_promedio']
+
+    # Hacer merge
+    stats_mensuales = stats_mensuales.merge(tardanza_por_mes, on=['mes', 'anio'], how='left')
+    stats_mensuales['tardanza_promedio'] = stats_mensuales['tardanza_promedio'].fillna(0)
     stats_mensuales['prob_tardanza_pct'] *= 100
     
     # Ordenar datos por fecha descendente
     datos_ordenados = datos.sort_values('fecha', ascending=False)
     
-    # Generar HTML
+    # Generar HTML (el resto sigue igual hasta el loop de la tabla detallada)
     html = f"""
     <!DOCTYPE html>
     <html>
@@ -176,7 +203,7 @@ def generar_reporte_html_empleado(empleado_id: str, nombre: str, datos: pd.DataF
             .card .percentage {{ font-size: 14px; color: #95a5a6; }}
             .content {{ padding: 30px; }}
             h2 {{
-                color: #2c3e50;
+                color: white;
                 margin: 30px 0 20px 0;
                 padding-bottom: 10px;
                 border-bottom: 3px solid #3498db;
@@ -209,6 +236,7 @@ def generar_reporte_html_empleado(empleado_id: str, nombre: str, datos: pd.DataF
                 text-transform: uppercase;
             }}
             .badge-presente {{ background: #d4edda; color: #155724; }}
+            .badge-ausente {{ background: #f8d7da; color: #721c24; }}
             .badge-tardanza {{ background: #fff3cd; color: #856404; }}
             .prob-bar {{
                 height: 6px;
@@ -228,7 +256,7 @@ def generar_reporte_html_empleado(empleado_id: str, nombre: str, datos: pd.DataF
             <div class="header">
                 <h1>📊 Reporte Individual de Asistencia</h1>
                 <h2>{nombre}</h2>
-                <p>ID: {empleado_id} | Generado: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</p>
+                <p>Generado: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</p>
             </div>
 
             <div class="summary">
@@ -309,8 +337,17 @@ def generar_reporte_html_empleado(empleado_id: str, nombre: str, datos: pd.DataF
     
     for _, row in datos_ordenados.head(100).iterrows():
         pred = int(row['prediccion'])
-        badge_class = 'badge-presente' if pred == 0 else 'badge-tardanza'
-        badge_text = 'PRESENTE' if pred == 0 else 'TARDANZA'
+        # ✅ CORRECCIÓN: Mapeo correcto de predicciones
+        if pred == 0:
+            badge_class = 'badge-presente'
+            badge_text = 'PRESENTE'
+        elif pred == 1:
+            badge_class = 'badge-ausente'
+            badge_text = 'AUSENTE'
+        else:  # pred == 2
+            badge_class = 'badge-tardanza'
+            badge_text = 'TARDANZA'
+        
         prob_pct = row['prob_tardanza'] * 100
         
         html += f"""
